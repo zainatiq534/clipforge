@@ -98,10 +98,10 @@ export function EnergyField() {
       aria-hidden
     >
       <Canvas
+        className="h-full w-full"
         dpr={[1, 1.5]}
         camera={{ position: [0, 0, 6], fov: 45 }}
         gl={{ antialias: true, alpha: true }}
-        style={{ width: "100%", height: "100%" }}
       >
         <Scene />
       </Canvas>
