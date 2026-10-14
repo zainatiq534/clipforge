@@ -18,15 +18,16 @@ export function Logo({ className, href = "#" }: LogoProps) {
       aria-label="ClipForge home"
     >
       <span
-        className="relative block h-11 w-11 shrink-0 overflow-hidden rounded-[0.85rem] shadow-[0_8px_24px_rgba(124,58,237,0.45)]"
+        className="relative isolate block h-11 w-11 shrink-0 overflow-hidden rounded-[13px] shadow-[0_8px_24px_rgba(124,58,237,0.45)]"
         aria-hidden
       >
         <Image
           src="/clipforge-icon.png"
           alt=""
-          fill
-          sizes="44px"
-          className="object-cover object-center"
+          width={88}
+          height={88}
+          quality={100}
+          className="absolute inset-0 h-full w-full max-w-none object-cover object-center"
         />
       </span>
       <Typography as="span" size="nav" tone="white" weight="bold" className="text-lg">

@@ -1,7 +1,4 @@
-"use client";
-
 import { ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/Button";
 import { Typography } from "@/components/ui/Typography";
@@ -20,28 +17,17 @@ type HeaderProps = {
 
 export function Header({ className }: HeaderProps) {
   return (
-    <motion.header
+    <header
       className={cn(
         "relative z-20 mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-5 sm:px-8",
         className,
       )}
-      initial={{ opacity: 0, y: -14 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
     >
       <Logo />
 
       <nav className="hidden items-center gap-7 md:flex" aria-label="Primary">
-        {navLinks.map((link, index) => (
-          <motion.a
-            key={link.href}
-            href={link.href}
-            className="group"
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.12 + index * 0.05, duration: 0.4 }}
-            whileHover={{ y: -1 }}
-          >
+        {navLinks.map((link) => (
+          <a key={link.href} href={link.href} className="group">
             <Typography
               as="span"
               size="nav"
@@ -50,7 +36,7 @@ export function Header({ className }: HeaderProps) {
             >
               {link.label}
             </Typography>
-          </motion.a>
+          </a>
         ))}
       </nav>
 
@@ -69,6 +55,6 @@ export function Header({ className }: HeaderProps) {
           <span className="sm:hidden">Start</span>
         </Button>
       </div>
-    </motion.header>
+    </header>
   );
 }

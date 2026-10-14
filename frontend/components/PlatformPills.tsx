@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { Typography } from "@/components/ui/Typography";
 import { cn } from "@/lib/cn";
 
@@ -66,18 +63,14 @@ export function PlatformPills({ className }: PlatformPillsProps) {
       )}
     >
       {platforms.map((platform) => (
-        <motion.li
-          key={platform.name}
-          whileHover={{ y: -2, scale: 1.03 }}
-          transition={{ type: "spring", stiffness: 400, damping: 22 }}
-        >
+        <li key={platform.name}>
           <span className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-white/90 backdrop-blur-sm">
             {platform.icon}
             <Typography as="span" size="caption" tone="white" className="text-[0.8rem]">
               {platform.name}
             </Typography>
           </span>
-        </motion.li>
+        </li>
       ))}
     </ul>
   );
