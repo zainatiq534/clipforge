@@ -1,27 +1,21 @@
-import type { ReactNode } from "react";
 import { BarChart3, Bolt, Users } from "lucide-react";
+import { Icon, IconBadge } from "@/components/ui/Icon";
 import { Typography } from "@/components/ui/Typography";
 import { cn } from "@/lib/cn";
 
-type Stat = {
-  icon: ReactNode;
-  emphasis: string;
-  label: string;
-};
-
-const stats: Stat[] = [
+const stats = [
   {
-    icon: <Bolt className="h-4 w-4" strokeWidth={2.25} />,
+    icon: <Icon icon={Bolt} size="md" />,
     emphasis: "10x",
     label: "Faster Editing",
   },
   {
-    icon: <Users className="h-4 w-4" strokeWidth={2.25} />,
+    icon: <Icon icon={Users} size="md" />,
     emphasis: "5–10",
     label: "Viral Clips per Video",
   },
   {
-    icon: <BarChart3 className="h-4 w-4" strokeWidth={2.25} />,
+    icon: <Icon icon={BarChart3} size="md" />,
     emphasis: "Grow",
     label: "Your Audience",
   },
@@ -41,13 +35,11 @@ export function StatsRow({ className }: StatsRowProps) {
     >
       {stats.map((stat) => (
         <li key={stat.label} className="flex items-center gap-2.5">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#8b5cf6]/20 text-[#c4a1ff]">
-            {stat.icon}
-          </span>
+          <IconBadge>{stat.icon}</IconBadge>
           <div className="text-left">
-            <Typography as="p" size="stat" tone="white" className="leading-tight">
+            <Typography as="p" variant="stat" tone="white" className="leading-tight">
               {stat.emphasis}{" "}
-              <Typography as="span" size="caption" tone="muted" className="font-medium">
+              <Typography as="span" variant="caption" tone="muted" weight="medium">
                 {stat.label}
               </Typography>
             </Typography>

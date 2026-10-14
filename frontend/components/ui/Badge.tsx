@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { cn } from "@/lib/cn";
 import { Typography } from "@/components/ui/Typography";
+import { cn } from "@/lib/cn";
 
 type BadgeProps = {
   icon?: ReactNode;
@@ -17,7 +17,7 @@ export function Badge({ icon, children, className }: BadgeProps) {
       )}
     >
       {icon ? <span className="inline-flex text-[#d4b8ff]">{icon}</span> : null}
-      <Typography as="span" size="label" tone="purple">
+      <Typography as="span" variant="label" tone="purple">
         {children}
       </Typography>
     </div>

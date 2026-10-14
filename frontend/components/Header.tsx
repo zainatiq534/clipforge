@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { Button } from "@/components/ui/Button";
+import { GhostButton, GradientButton } from "@/components/ui/Button";
+import { Icon } from "@/components/ui/Icon";
 import { Typography } from "@/components/ui/Typography";
 import { cn } from "@/lib/cn";
 
@@ -30,7 +31,7 @@ export function Header({ className }: HeaderProps) {
           <a key={link.href} href={link.href} className="group">
             <Typography
               as="span"
-              size="nav"
+              variant="nav"
               tone="muted"
               className="transition-colors group-hover:text-white"
             >
@@ -41,19 +42,17 @@ export function Header({ className }: HeaderProps) {
       </nav>
 
       <div className="flex items-center gap-2 sm:gap-3">
-        <Button variant="ghost" size="sm" href="#login" className="hidden sm:inline-flex">
+        <GhostButton size="sm" href="#login" className="hidden sm:inline-flex">
           Log In
-        </Button>
-        <Button
-          variant="gradient"
+        </GhostButton>
+        <GradientButton
           size="sm"
           href="#start"
-          rightIcon={<ArrowRight className="h-4 w-4" strokeWidth={2.25} />}
-          className="sm:size-auto"
+          rightIcon={<Icon icon={ArrowRight} size="md" />}
         >
           <span className="hidden sm:inline">Start Creating Clips</span>
           <span className="sm:hidden">Start</span>
-        </Button>
+        </GradientButton>
       </div>
     </header>
   );
