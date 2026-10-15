@@ -4,49 +4,63 @@ type SoftAuraBackgroundProps = {
   className?: string;
 };
 
-/** Soft pastel mesh: lavender → blue → cream (features section) */
+/**
+ * Soft aurora background from the Features reference —
+ * lavender / soft purple / sky blue on an off-white base.
+ * Background only (no UI theme).
+ */
 export function SoftAuraBackground({ className }: SoftAuraBackgroundProps) {
   return (
     <div
       className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}
       aria-hidden
     >
+      {/* Base wash */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(165deg, #E8D9FA 0%, #E4ECFB 28%, #F4F0FB 55%, #F7F5F2 100%)",
+            "linear-gradient(160deg, #F5F0FF 0%, #EEF3FC 35%, #F7F5F8 65%, #FBF9FC 100%)",
         }}
       />
+
+      {/* Top lavender glow */}
       <div
-        className="absolute left-1/2 top-[-20%] h-[70%] w-[120%] -translate-x-1/2 rounded-[50%]"
+        className="absolute left-1/2 top-[-25%] h-[75%] w-[130%] -translate-x-1/2 rounded-[50%]"
         style={{
           background:
-            "radial-gradient(ellipse at center, rgba(186,170,245,0.55) 0%, transparent 68%)",
-          filter: "blur(40px)",
+            "radial-gradient(ellipse at center, rgba(196,181,253,0.65) 0%, rgba(221,214,254,0.35) 40%, transparent 70%)",
+          filter: "blur(36px)",
         }}
       />
+
+      {/* Left sky-blue wave */}
       <div
-        className="absolute bottom-[-25%] left-[-10%] h-[65%] w-[70%] rounded-[50%]"
+        className="absolute bottom-[-30%] left-[-15%] h-[70%] w-[75%] rounded-[50%]"
         style={{
           background:
-            "radial-gradient(ellipse at center, rgba(167,200,255,0.5) 0%, transparent 70%)",
+            "radial-gradient(ellipse at center, rgba(147,197,253,0.55) 0%, rgba(191,219,254,0.3) 45%, transparent 72%)",
           filter: "blur(48px)",
         }}
       />
+
+      {/* Right soft orchid / pink */}
       <div
-        className="absolute bottom-[-10%] right-[-5%] h-[55%] w-[55%] rounded-[50%]"
+        className="absolute bottom-[-15%] right-[-12%] h-[60%] w-[60%] rounded-[50%]"
         style={{
           background:
-            "radial-gradient(ellipse at center, rgba(232,180,240,0.35) 0%, transparent 68%)",
+            "radial-gradient(ellipse at center, rgba(244,114,182,0.22) 0%, rgba(216,180,254,0.28) 40%, transparent 70%)",
           filter: "blur(44px)",
         }}
       />
+
+      {/* Center soft white lift */}
       <div
-        className="absolute inset-0 opacity-[0.035] mix-blend-soft-light"
+        className="absolute left-1/2 top-[35%] h-[50%] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-[50%]"
         style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+          background:
+            "radial-gradient(ellipse at center, rgba(255,255,255,0.75) 0%, transparent 68%)",
+          filter: "blur(28px)",
         }}
       />
     </div>

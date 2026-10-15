@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { CaptionsFeature } from "@/components/CaptionsFeature";
 import { Features } from "@/components/Features";
 import { Header } from "@/components/Header";
+import { Hero } from "@/components/Hero";
+import { SoftAuraBackground } from "@/components/SoftAuraBackground";
 import { BackgroundImage } from "@/components/ui/Image";
 
 export const metadata: Metadata = {
@@ -11,13 +14,28 @@ export const metadata: Metadata = {
 
 export default function FeaturesPage() {
   return (
-    <div className="relative flex min-h-full flex-1 flex-col overflow-hidden">
-      <BackgroundImage src="/hero-bg.jpg" />
+    <>
+      {/* Home hero — dark theme */}
+      <div className="relative flex min-h-screen flex-1 flex-col overflow-hidden">
+        <BackgroundImage src="/hero-bg.jpg" />
 
-      <div className="relative z-10 flex min-h-full flex-1 flex-col">
-        <Header />
-        <Features />
+        <div className="relative z-10 flex min-h-screen flex-1 flex-col">
+          <Header />
+          <Hero />
+        </div>
       </div>
-    </div>
+
+      {/* Features — smart clipping */}
+      <div className="relative flex flex-col overflow-hidden">
+        <SoftAuraBackground />
+
+        <div className="relative z-10 flex flex-col">
+          <Features />
+        </div>
+      </div>
+
+      {/* Captions section — layout matches reference */}
+      <CaptionsFeature />
+    </>
   );
 }

@@ -1,10 +1,8 @@
 import { ArrowRight, BarChart3, Bolt, Scissors, Star } from "lucide-react";
 import { FeatureShowcase } from "@/components/FeatureShowcase";
 import { AppImage } from "@/components/ui/Image";
-import { Badge } from "@/components/ui/Badge";
-import { GradientButton, OutlineButton } from "@/components/ui/Button";
+import { GradientButton } from "@/components/ui/Button";
 import { Icon, PlayCircleIcon } from "@/components/ui/Icon";
-import { Typography } from "@/components/ui/Typography";
 import { cn } from "@/lib/cn";
 
 const featureItems = [
@@ -36,6 +34,7 @@ type FeaturesProps = {
   className?: string;
 };
 
+/** Layout unchanged — text colors only adjusted for light aurora background readability */
 export function Features({ className }: FeaturesProps) {
   return (
     <section
@@ -46,53 +45,43 @@ export function Features({ className }: FeaturesProps) {
     >
       <div className="grid w-full items-center gap-12 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-10 xl:gap-14">
         <div className="max-w-xl text-left lg:max-w-none">
-          <Badge icon={<Icon icon={Bolt} size="sm" strokeWidth={2} />}>
-            Powerful Feature
-          </Badge>
-
-          <Typography
-            as="h1"
-            variant="h2"
-            tone="white"
-            className="mt-5 max-w-xl text-balance text-[2.15rem] sm:text-5xl lg:text-[3.15rem]"
-          >
-            AI-Powered{" "}
-            <span className="relative inline-block">
-              <Typography as="span" variant="h2" tone="gradient" className="text-[inherit]">
-                Smart Clipping
-              </Typography>
-              <span
-                className="pointer-events-none absolute -bottom-1 left-0 right-0 h-[0.3rem] rounded-full bg-gradient-to-r from-[#b56cff] via-[#9b6bff] to-transparent opacity-90"
-                aria-hidden
-              />
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#c4b5fd]/70 bg-[#ede9fe]/90 px-3.5 py-1.5 shadow-sm backdrop-blur-sm">
+            <Icon icon={Bolt} size="sm" className="text-[#7c3aed]" />
+            <span className="font-sans text-[0.7rem] font-bold tracking-[0.14em] text-slate-600 uppercase">
+              Powerful Feature
             </span>
-          </Typography>
+          </div>
 
-          <Typography as="p" variant="body" tone="muted" className="mt-5 text-pretty">
+          <h1 className="font-display mt-5 max-w-xl text-balance text-[2.15rem] leading-[1.12] font-bold tracking-tight text-[#0f172a] sm:text-5xl lg:text-[3.15rem]">
+            AI-Powered{" "}
+            <span className="bg-gradient-to-r from-[#8b5cf6] via-[#7c3aed] to-[#3b82f6] bg-clip-text text-transparent">
+              Smart Clipping
+            </span>
+          </h1>
+
+          <p className="mt-5 font-sans text-base leading-relaxed text-slate-600 sm:text-lg">
             ClipForge analyzes your long-form video, finds the highest-performing moments,
             and turns them into short, scroll-stopping clips — automatically.
-          </Typography>
-          <Typography as="p" variant="body" tone="muted" className="mt-3 text-pretty">
+          </p>
+          <p className="mt-3 font-sans text-base leading-relaxed text-slate-600 sm:text-lg">
             Built for creators, podcasters, YouTubers, and agencies who want{" "}
-            <Typography as="span" variant="body" tone="white" weight="semibold">
-              viral-ready content
-            </Typography>{" "}
-            without hours of manual editing.
-          </Typography>
+            <span className="font-semibold text-slate-900">viral-ready content</span> without
+            hours of manual editing.
+          </p>
 
           <ul className="mt-8 space-y-4">
             {featureItems.map((item) => (
               <li key={item.title} className="flex items-start gap-3.5">
-                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#9b7bff]/35 bg-[#8b5cf6]/20 text-[#c4a1ff] shadow-[0_0_24px_rgba(139,92,246,0.18)] backdrop-blur-sm">
+                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#ede9fe] text-[#7c3aed] shadow-sm">
                   <Icon icon={item.icon} size="md" />
                 </span>
                 <div>
-                  <Typography as="p" variant="body" tone="white" weight="bold" className="leading-tight">
+                  <p className="font-sans text-base font-bold text-slate-900 sm:text-lg">
                     {item.title}
-                  </Typography>
-                  <Typography as="p" variant="bodySm" tone="muted" className="mt-0.5">
+                  </p>
+                  <p className="mt-0.5 font-sans text-sm leading-relaxed text-slate-500 sm:text-[0.95rem]">
                     {item.description}
-                  </Typography>
+                  </p>
                 </div>
               </li>
             ))}
@@ -107,20 +96,19 @@ export function Features({ className }: FeaturesProps) {
             >
               Start Creating Clips
             </GradientButton>
-            <OutlineButton
-              size="lg"
+            <a
               href="/#how-it-works"
-              leftIcon={<PlayCircleIcon />}
-              className="w-full sm:w-auto"
+              className="inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-[18px] border border-[#c7d2fe] bg-white/90 px-6 text-base font-semibold text-[#6d28d9] shadow-sm backdrop-blur-sm transition-colors hover:bg-white sm:h-[3.25rem] sm:w-auto sm:rounded-[20px] sm:px-7"
             >
+              <PlayCircleIcon className="border-[#a78bfa] [&_svg]:fill-[#7c3aed]" />
               See How It Works
-            </OutlineButton>
+            </a>
           </div>
 
           <div className="mt-10">
-            <Typography as="p" variant="label" tone="muted">
+            <p className="font-sans text-[0.7rem] font-bold tracking-[0.16em] text-slate-500 uppercase">
               Used by creators, podcasters & agencies
-            </Typography>
+            </p>
 
             <div className="mt-3 flex flex-wrap items-center gap-4">
               <div className="flex items-center">
@@ -128,27 +116,27 @@ export function Features({ className }: FeaturesProps) {
                   <span
                     key={src}
                     className={cn(
-                      "relative h-10 w-10 overflow-hidden rounded-full border-2 border-[#1a1230] shadow-[0_0_16px_rgba(139,92,246,0.25)]",
+                      "relative h-10 w-10 overflow-hidden rounded-full border-2 border-white shadow-sm",
                       i > 0 && "-ml-2.5",
                     )}
                   >
                     <AppImage src={src} alt="" fill className="object-cover" sizes="40px" />
                   </span>
                 ))}
-                <span className="-ml-2.5 inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-[#1a1230] bg-gradient-to-br from-[#a78bfa] to-[#3b82f6] text-[0.65rem] font-bold text-white shadow-[0_0_16px_rgba(99,102,241,0.4)]">
+                <span className="-ml-2.5 inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-[#a78bfa] to-[#3b82f6] text-[0.65rem] font-bold text-white shadow-sm">
                   +10K
                 </span>
               </div>
 
               <div>
-                <div className="flex items-center gap-0.5 text-[#fbbf24]">
+                <div className="flex items-center gap-0.5 text-[#f59e0b]">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Icon key={i} icon={Star} size="sm" fill="currentColor" strokeWidth={0} />
                   ))}
                 </div>
-                <Typography as="p" variant="caption" tone="muted" className="mt-0.5">
+                <p className="mt-0.5 font-sans text-sm text-slate-500">
                   Trusted by 10,000+ creators worldwide
-                </Typography>
+                </p>
               </div>
             </div>
           </div>
