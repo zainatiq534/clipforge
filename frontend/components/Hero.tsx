@@ -1,6 +1,5 @@
 import { ArrowRight, Sparkles } from "lucide-react";
 import { PlatformPills } from "@/components/PlatformPills";
-import { StatsRow } from "@/components/StatsRow";
 import { Badge } from "@/components/ui/Badge";
 import { GradientButton, OutlineButton } from "@/components/ui/Button";
 import { Icon, PlayCircleIcon } from "@/components/ui/Icon";
@@ -77,8 +76,6 @@ export function Hero({ className }: HeroProps) {
           </OutlineButton>
         </div>
       </div>
-
-      <StatsRow className="mt-14 w-full sm:mt-16" />
     </section>
   );
 }

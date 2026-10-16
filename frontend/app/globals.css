@@ -20,3 +20,23 @@ body {
 .font-sans {
   font-family: var(--font-sans);
 }
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(7deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(5.5deg);
+  }
+}
+
+.animate-float {
+  animation: float 5.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float {
+    animation: none;
+  }
+}
