@@ -66,7 +66,7 @@ export function FeatureShowcase({ className }: FeatureShowcaseProps) {
 
         <div className="grid gap-3 p-3 sm:grid-cols-[1.35fr_1fr] sm:p-4">
           <div className="min-w-0">
-            <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-[#050814]">
+            <div className="relative aspect-[16/10] overflow-hidden rounded-2xl border-2 border-[#c4b5fd]/70 bg-[#050814] shadow-[0_0_28px_rgba(139,92,246,0.35)]">
               <AppImage
                 src="/features/speaker.jpg"
                 alt=""
@@ -145,7 +145,7 @@ export function FeatureShowcase({ className }: FeatureShowcaseProps) {
                     {m.score}
                   </span>
                   <div className="flex gap-2 pr-8">
-                    <div className="relative h-11 w-9 shrink-0 overflow-hidden rounded-md bg-white/10">
+                    <div className="relative h-11 w-9 shrink-0 overflow-hidden rounded-md border border-[#c4b5fd]/60 bg-white/10 shadow-[0_0_10px_rgba(139,92,246,0.25)]">
                       <AppImage
                         src="/features/speaker.jpg"
                         alt=""

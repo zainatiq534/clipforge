@@ -68,8 +68,8 @@ export function FloatingClipCards({ className }: FloatingClipCardsProps) {
         <motion.div
           key={clip.caption}
           className={cn(
-            "relative w-[92px] shrink-0 overflow-hidden rounded-[18px] border border-white/20 sm:w-[112px]",
-            "aspect-[9/16] shadow-[0_18px_48px_rgba(5,8,20,0.55)]",
+            "relative w-[92px] shrink-0 overflow-hidden rounded-[18px] border-2 border-[#c4b5fd]/80 sm:w-[112px]",
+            "aspect-[9/16] shadow-[0_0_22px_rgba(139,92,246,0.4),0_18px_48px_rgba(5,8,20,0.55)]",
           )}
           style={{ rotate: clip.rotate }}
           initial={{ opacity: 0, y: 80 + clip.y }}

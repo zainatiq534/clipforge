@@ -3,6 +3,9 @@ import { CaptionsFeature } from "@/components/CaptionsFeature";
 import { Features } from "@/components/Features";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
+import { AiEngineFeature } from "@/components/AiEngineFeature";
+import { PlatformFeature } from "@/components/PlatformFeature";
+import { ReframeFeature } from "@/components/ReframeFeature";
 import { SoftAuraBackground } from "@/components/SoftAuraBackground";
 import { BackgroundImage } from "@/components/ui/Image";
 
@@ -15,7 +18,7 @@ export const metadata: Metadata = {
 export default function FeaturesPage() {
   return (
     <>
-      {/* Home hero — dark theme */}
+      {/* Home hero — previous hero-bg theme */}
       <div className="relative flex min-h-screen flex-1 flex-col overflow-hidden">
         <BackgroundImage src="/hero-bg.jpg" />
 
@@ -34,8 +37,17 @@ export default function FeaturesPage() {
         </div>
       </div>
 
-      {/* Captions section — layout matches reference */}
+      {/* Captions section */}
       <CaptionsFeature />
+
+      {/* Smart Video Reframing */}
+      <ReframeFeature />
+
+      {/* Multi-Platform Video Optimization */}
+      <PlatformFeature />
+
+      {/* ClipForge AI Engine — background theme only */}
+      <AiEngineFeature />
     </>
   );
 }
