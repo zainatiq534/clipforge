@@ -13,7 +13,14 @@ export type TypographyVariant =
   | "stat"
   | "caption";
 
-export type TypographyTone = "white" | "muted" | "purple" | "gradient";
+export type TypographyTone =
+  | "white"
+  | "muted"
+  | "purple"
+  | "gradient"
+  | "ink"
+  | "mutedInk"
+  | "brand";
 export type TypographyWeight = "normal" | "medium" | "semibold" | "bold";
 
 const variantClass: Record<TypographyVariant, string> = {
@@ -36,6 +43,9 @@ const toneClass: Record<TypographyTone, string> = {
   purple: "text-[#c4a1ff]",
   gradient:
     "bg-gradient-to-r from-[#b56cff] via-[#9b6bff] to-[#6ea8ff] bg-clip-text text-transparent",
+  ink: "text-[#1f2937]",
+  mutedInk: "text-[#6b7280]",
+  brand: "text-[#7c3aed]",
 };
 
 const weightClass: Record<TypographyWeight, string> = {

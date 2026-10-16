@@ -16,7 +16,7 @@ export function TikTokIcon({ className }: BrandIconProps) {
     >
       <path d={path} fill="#25F4EE" transform="translate(-0.6, 0.35)" />
       <path d={path} fill="#FE2C55" transform="translate(0.6, -0.35)" />
-      <path d={path} fill="#FFFFFF" />
+      <path d={path} className="fill-current" />
     </svg>
   );
 }

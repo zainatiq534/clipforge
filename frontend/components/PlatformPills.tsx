@@ -3,7 +3,7 @@ import { Typography } from "@/components/ui/Typography";
 import { cn } from "@/lib/cn";
 
 const platforms = [
-  { name: "TikTok", icon: <TikTokIcon /> },
+  { name: "TikTok", icon: <TikTokIcon className="text-white" /> },
   { name: "Instagram Reels", icon: <InstagramIcon /> },
   { name: "YouTube Shorts", icon: <YouTubeIcon /> },
 ];

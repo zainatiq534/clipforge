@@ -17,9 +17,13 @@ export function Badge({ icon, children, className }: BadgeProps) {
       )}
     >
       {icon ? <span className="inline-flex text-[#d4b8ff]">{icon}</span> : null}
-      <Typography as="span" variant="label" tone="purple">
-        {children}
-      </Typography>
+      {typeof children === "string" ? (
+        <Typography as="span" variant="label" tone="purple">
+          {children}
+        </Typography>
+      ) : (
+        children
+      )}
     </div>
   );
 }

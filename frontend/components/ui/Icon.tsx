@@ -62,11 +62,11 @@ export function PlayCircleIcon({ className }: PlayCircleProps) {
   return (
     <span
       className={cn(
-        "inline-flex h-6 w-6 items-center justify-center rounded-full border border-white/40",
+        "inline-flex h-6 w-6 items-center justify-center rounded-full bg-white text-[#050814]",
         className,
       )}
     >
-      <svg viewBox="0 0 12 12" className="h-3 w-3 fill-white" aria-hidden>
+      <svg viewBox="0 0 12 12" className="h-3 w-3 fill-current" aria-hidden>
         <path d="M3 1.5v9l8-4.5-8-4.5z" />
       </svg>
     </span>

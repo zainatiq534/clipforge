@@ -7,10 +7,15 @@
   --font-display: var(--font-outfit), ui-sans-serif, sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans);
+  overflow-x: clip;
 }
 
 .font-display {
@@ -24,10 +29,20 @@ body {
 @keyframes float {
   0%,
   100% {
-    transform: translateY(0) rotate(7deg);
+    transform: translateY(0) rotate(6deg);
   }
   50% {
-    transform: translateY(-12px) rotate(5.5deg);
+    transform: translateY(-10px) rotate(4.5deg);
+  }
+}
+
+@keyframes float-left {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-6deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(-4.5deg);
   }
 }
 
@@ -35,8 +50,13 @@ body {
   animation: float 5.5s ease-in-out infinite;
 }
 
+.animate-float-left {
+  animation: float-left 6.5s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-float {
+  .animate-float,
+  .animate-float-left {
     animation: none;
   }
 }

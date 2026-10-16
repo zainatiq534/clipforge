@@ -24,9 +24,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${outfit.variable} ${plusJakarta.variable} h-full antialiased`}
+      className={`${outfit.variable} ${plusJakarta.variable} antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
+      <body className="min-h-dvh bg-background font-sans text-foreground">
         {children}
       </body>
     </html>
