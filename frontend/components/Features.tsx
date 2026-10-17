@@ -54,16 +54,10 @@ export function Features({ className }: FeaturesProps) {
     <section
       id="features"
       className={cn(
-        "relative isolate overflow-x-clip px-5 py-16 sm:px-8 sm:py-20 lg:overflow-x-visible lg:py-24",
+        "relative overflow-visible px-5 py-16 sm:px-8 sm:py-20 lg:py-24",
         className,
       )}
-      style={{
-        background:
-          "linear-gradient(180deg, #faf9fc 0%, #f7f4fb 42%, #faf8fc 100%)",
-      }}
     >
-      <LightSectionBackdrop />
-
       <div className="relative z-10 mx-auto w-full max-w-6xl">
         <div className="flex flex-col items-center text-center">
           <Badge
@@ -75,17 +69,22 @@ export function Features({ className }: FeaturesProps) {
             </Typography>
           </Badge>
 
-          <Typography
-            as="h2"
-            variant="h2"
-            tone="ink"
-            className="mt-5 max-w-3xl text-balance"
+          <h2
+            className={cn(
+              "mt-6 max-w-4xl text-center font-display font-bold tracking-[-0.03em]",
+              "text-[2.15rem] leading-[1.15] sm:text-[2.85rem] md:text-[3.35rem] lg:text-[3.75rem]",
+            )}
           >
-            Everything You Need to Create{" "}
-            <Typography as="span" variant="h2" tone="brand">
-              High-Performing Clips
-            </Typography>
-          </Typography>
+            <span className="block" style={{ color: "#111827" }}>
+              Everything You Need to
+            </span>
+            <span className="mt-0.5 block sm:mt-1">
+              <span style={{ color: "#111827" }}>Create </span>
+              <span className="bg-gradient-to-r from-[#8b5cf6] via-[#a855f7] to-[#6366f1] bg-clip-text text-transparent">
+                High-Performing Clips
+              </span>
+            </span>
+          </h2>
 
           <Typography
             as="p"
@@ -105,7 +104,9 @@ export function Features({ className }: FeaturesProps) {
             ))}
           </div>
 
-          <FeaturesProductMockup />
+          <div className="overflow-visible py-2 lg:py-4">
+            <FeaturesProductMockup />
+          </div>
         </div>
       </div>
     </section>
@@ -164,32 +165,5 @@ function FeatureCard({ title, description, iconSrc }: FeatureCardProps) {
         {description}
       </Typography>
     </article>
-  );
-}
-
-function LightSectionBackdrop() {
-  return (
-    <>
-      <div
-        className="pointer-events-none absolute inset-0"
-        aria-hidden
-        style={{
-          background: [
-            "radial-gradient(ellipse 70% 55% at 12% 8%, rgba(243, 232, 255, 0.85) 0%, transparent 70%)",
-            "radial-gradient(ellipse 55% 50% at 88% 0%, rgba(237, 233, 254, 0.7) 0%, transparent 65%)",
-            "radial-gradient(ellipse 75% 60% at 92% 92%, rgba(252, 231, 243, 0.7) 0%, transparent 68%)",
-            "radial-gradient(ellipse 60% 45% at 20% 100%, rgba(233, 213, 255, 0.5) 0%, transparent 70%)",
-          ].join(", "),
-        }}
-      />
-      <div
-        className="pointer-events-none absolute -top-20 left-[-4%] h-[22rem] w-[22rem] rounded-full bg-[#f3e8ff]/70 blur-[90px]"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute right-[-2%] -bottom-24 h-[26rem] w-[28rem] rounded-full bg-[#ede9fe]/55 blur-[100px]"
-        aria-hidden
-      />
-    </>
   );
 }

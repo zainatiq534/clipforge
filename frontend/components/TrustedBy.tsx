@@ -40,44 +40,10 @@ export function TrustedBy({ className }: TrustedByProps) {
     <section
       id="trusted-by"
       className={cn(
-        "relative isolate overflow-hidden px-5 py-16 sm:px-8 sm:py-20 lg:py-24",
+        "relative px-5 py-16 sm:px-8 sm:py-20 lg:py-24",
         className,
       )}
-      style={{
-        background:
-          "linear-gradient(180deg, #faf9fc 0%, #f7f4fb 42%, #faf8fc 100%)",
-      }}
     >
-      <div
-        className="pointer-events-none absolute inset-0"
-        aria-hidden
-        style={{
-          background: [
-            "radial-gradient(ellipse 70% 55% at 88% 8%, rgba(243, 232, 255, 0.85) 0%, transparent 70%)",
-            "radial-gradient(ellipse 55% 50% at 12% 0%, rgba(237, 233, 254, 0.7) 0%, transparent 65%)",
-            "radial-gradient(ellipse 75% 60% at 92% 92%, rgba(252, 231, 243, 0.75) 0%, transparent 68%)",
-            "radial-gradient(ellipse 60% 45% at 70% 100%, rgba(233, 213, 255, 0.55) 0%, transparent 70%)",
-            "radial-gradient(ellipse 50% 40% at 20% 85%, rgba(245, 243, 255, 0.65) 0%, transparent 70%)",
-          ].join(", "),
-        }}
-      />
-      <div
-        className="pointer-events-none absolute -top-20 right-[-4%] h-[22rem] w-[22rem] rounded-full bg-[#f3e8ff]/70 blur-[90px]"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute right-[-2%] -bottom-24 h-[26rem] w-[28rem] rounded-full bg-[#fce7f3]/55 blur-[100px]"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute bottom-[-10%] left-[18%] h-72 w-96 rounded-full bg-[#ede9fe]/50 blur-[90px]"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute top-[-8%] left-[-6%] h-64 w-72 rounded-full bg-[#eef2ff]/60 blur-[80px]"
-        aria-hidden
-      />
-
       <div className="relative z-10 mx-auto w-full max-w-6xl">
         <div className="flex flex-col items-center text-center">
           <div className="flex items-center gap-3 sm:gap-4">

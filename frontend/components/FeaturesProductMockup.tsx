@@ -33,12 +33,12 @@ export function FeaturesProductMockup({ className }: FeaturesProductMockupProps)
         }}
       />
 
-      {/* Extra left room so Clip Score is never clipped */}
-      <div className="relative pb-4 pl-9 sm:pb-5 sm:pl-11 lg:pl-12">
-        {/* Editor — defines height; overflow visible so Clip Score shows */}
+      {/* Outer py = how far Insights sticks out above/below the editor */}
+      <div className="relative py-10 pl-9 sm:py-12 sm:pl-11 lg:py-14 lg:pl-12">
+        {/* Editor — sits inside; Insights panel is taller on the outside */}
         <div
           className={cn(
-            "relative z-0 mr-[36%] flex flex-col sm:mr-[37%]",
+            "relative z-0 mr-[32%] flex flex-col sm:mr-[33%]",
             "rounded-[1.35rem] bg-[#0b0d14] sm:rounded-[1.5rem]",
             "shadow-[0_28px_60px_-16px_rgba(76,29,149,0.55)]",
             "ring-1 ring-white/[0.06]",
@@ -128,7 +128,7 @@ export function FeaturesProductMockup({ className }: FeaturesProductMockupProps)
         {/* Clip Score — outside overflow, fully visible */}
         <div
           className={cn(
-            "absolute top-[34%] left-0 z-30 -translate-y-1/2",
+            "absolute top-1/2 left-0 z-30 -translate-y-1/2",
             "rounded-[0.85rem] bg-[#0b0e16] px-2.5 py-2 sm:rounded-xl sm:px-3 sm:py-2.5",
             "shadow-[0_0_0_1.5px_rgba(96,165,250,0.7),0_0_22px_rgba(59,130,246,0.55)]",
           )}
@@ -152,55 +152,79 @@ export function FeaturesProductMockup({ className }: FeaturesProductMockupProps)
           </div>
         </div>
 
-        {/* AI Insights — attached flush to editor, slightly taller */}
+        {/* AI Insights — boxy outer frame; taller outside (top + bottom) */}
         <div
           className={cn(
-            "absolute top-0 right-0 bottom-0 z-20 flex w-[38%] flex-col sm:w-[39%]",
-            "overflow-hidden rounded-[1.35rem] bg-[#0b0d14] sm:rounded-[1.5rem]",
-            "shadow-[-12px_0_32px_-10px_rgba(0,0,0,0.65),0_28px_60px_-16px_rgba(76,29,149,0.5)]",
-            "ring-1 ring-[#8b5cf6]/28",
+            "absolute inset-y-0 right-0 z-20 flex w-[33%] max-w-[11.25rem] flex-col sm:w-[34%] sm:max-w-[12rem]",
+            "overflow-hidden rounded-[0.9rem] bg-[#12141d] sm:rounded-[1rem]",
+            "border border-[#3a3f4d]",
+            "shadow-[-12px_0_32px_-10px_rgba(0,0,0,0.65),0_28px_60px_-16px_rgba(76,29,149,0.45)]",
           )}
         >
-          <div className="flex items-center gap-1.5 px-3 pt-3.5 pb-2.5 sm:px-3.5 sm:pt-4">
+          <div className="flex items-center gap-1.5 px-2.5 pt-3 pb-2 sm:px-3 sm:pt-3.5">
             <Sparkles className="h-3.5 w-3.5 text-[#c084fc]" strokeWidth={2} />
-            <span className="text-[0.78rem] font-semibold text-white sm:text-[0.85rem]">
+            <span className="text-[0.75rem] font-semibold text-white sm:text-[0.8rem]">
               AI Insights
             </span>
           </div>
 
-          <div className="flex flex-1 flex-col gap-1.5 px-2.5 pb-2 sm:gap-2 sm:px-3">
+          <div className="flex min-h-0 flex-1 flex-col gap-1.5 px-2 pb-1.5 sm:gap-2 sm:px-2.5">
             <InsightRow
               icon={
                 <Zap className="h-3.5 w-3.5 text-amber-300" fill="currentColor" />
               }
               title="92/100"
-              subtitle="High engagement potential"
+              subtitle={
+                <>
+                  High engagement
+                  <br />
+                  potential
+                </>
+              }
             />
             <InsightRow
               icon={<Smile className="h-3.5 w-3.5 text-amber-300" />}
               title="Key Moment"
-              subtitle="Strong emotional hook"
+              subtitle={
+                <>
+                  Strong emotional
+                  <br />
+                  hook
+                </>
+              }
             />
             <InsightRow
               icon={<BarChart3 className="h-3.5 w-3.5 text-amber-300" />}
               title="Great Hook"
-              subtitle="Keeps viewers watching"
+              subtitle={
+                <>
+                  Keeps viewers
+                  <br />
+                  watching
+                </>
+              }
             />
             <InsightRow
               icon={<Users className="h-3.5 w-3.5 text-slate-300" />}
               title="Vertical Ready"
-              subtitle="Optimized for all platforms"
+              subtitle={
+                <>
+                  Optimized for all
+                  <br />
+                  platforms
+                </>
+              }
             />
           </div>
 
-          <div className="mt-auto px-2.5 pt-1 pb-3.5 sm:px-3 sm:pb-4">
+          <div className="shrink-0 px-2 pt-0.5 pb-3 sm:px-2.5 sm:pb-3.5">
             <button
               type="button"
               tabIndex={-1}
               className={cn(
-                "flex w-full items-center justify-between gap-1 rounded-xl px-2.5 py-2.5",
+                "flex w-full items-center justify-between gap-1 rounded-[0.65rem] px-2 py-2.5",
                 "bg-gradient-to-r from-[#8b5cf6] via-[#7c3aed] to-[#4f46e5]",
-                "text-[0.72rem] font-semibold text-white sm:text-[0.78rem]",
+                "text-[0.68rem] font-semibold text-white sm:text-[0.72rem]",
                 "shadow-[0_12px_30px_-8px_rgba(124,58,237,0.85)]",
               )}
             >
@@ -224,21 +248,23 @@ function InsightRow({
 }: {
   icon: ReactNode;
   title: string;
-  subtitle: string;
+  subtitle: ReactNode;
 }) {
   return (
     <div
       className={cn(
-        "flex items-start gap-2 rounded-xl px-2.5 py-2 sm:px-2.5 sm:py-2.5",
-        "bg-[#12141f] ring-1 ring-white/[0.08]",
+        "flex min-h-0 flex-1 items-center gap-2 rounded-[0.55rem] px-2 py-1.5 sm:rounded-[0.65rem] sm:px-2.5 sm:py-2",
+        "bg-[#161a24]",
+        "border border-[#a78bfa]/45",
+        "shadow-[inset_0_0_0_1px_rgba(167,139,250,0.12)]",
       )}
     >
-      <span className="mt-0.5 shrink-0">{icon}</span>
-      <div className="min-w-0">
-        <p className="truncate text-[0.74rem] leading-tight font-semibold text-white sm:text-[0.8rem]">
+      <span className="shrink-0 self-center">{icon}</span>
+      <div className="min-w-0 flex-1">
+        <p className="text-[0.84rem] leading-tight font-semibold text-white sm:text-[0.9rem]">
           {title}
         </p>
-        <p className="mt-0.5 text-[0.58rem] leading-snug text-slate-400 sm:text-[0.62rem]">
+        <p className="mt-0.5 text-[0.64rem] leading-[1.25] text-[#94a3b8] sm:text-[0.68rem]">
           {subtitle}
         </p>
       </div>
