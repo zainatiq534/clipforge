@@ -1,13 +1,12 @@
 import { cn } from "@/lib/cn";
+import { SOFT_PAGE_BASE } from "@/lib/softPageBg";
 
 type SoftAiEngineBackgroundProps = {
   className?: string;
 };
 
 /**
- * ClipForge AI Engine section background only —
- * clean white / pale lavender base, soft purple–pink fluid waves
- * in the corners, soft center purple glow (from reference). Background only.
+ * AI Engine section — waves on shared continuous page base.
  */
 export function SoftAiEngineBackground({ className }: SoftAiEngineBackgroundProps) {
   return (
@@ -15,14 +14,7 @@ export function SoftAiEngineBackground({ className }: SoftAiEngineBackgroundProp
       className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}
       aria-hidden
     >
-      {/* Base — bright white / pale lavender */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(160deg, #F8F7FF 0%, #FAFAFE 30%, #FFFFFF 58%, #FBF9FF 100%)",
-        }}
-      />
+      <div className="absolute inset-0" style={{ background: SOFT_PAGE_BASE }} />
 
       {/* Soft lavender wave — top left */}
       <div

@@ -7,7 +7,6 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { AiEngineShowcase } from "@/components/AiEngineShowcase";
-import { SoftAiEngineBackground } from "@/components/SoftAiEngineBackground";
 import { AppImage } from "@/components/ui/Image";
 import { GradientButton } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
@@ -51,10 +50,8 @@ export function AiEngineFeature({ className }: AiEngineFeatureProps) {
   return (
     <section
       id="ai-engine"
-      className={cn("relative isolate w-full overflow-hidden", className)}
+      className={cn("relative w-full", className)}
     >
-      <SoftAiEngineBackground />
-
       <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col px-5 py-14 sm:px-8 sm:py-16 lg:py-20">
         {/* Header — centered */}
         <div className="mx-auto max-w-3xl text-center">

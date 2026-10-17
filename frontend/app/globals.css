@@ -5,6 +5,7 @@
   --color-foreground: #f5f3ff;
   --font-sans: var(--font-plus-jakarta), ui-sans-serif, sans-serif;
   --font-display: var(--font-outfit), ui-sans-serif, sans-serif;
+  --font-hand: var(--font-caveat), ui-sans-serif, cursive;
 }
 
 body {
@@ -19,4 +20,8 @@ body {
 
 .font-sans {
   font-family: var(--font-sans);
+}
+
+.font-hand {
+  font-family: var(--font-hand);
 }

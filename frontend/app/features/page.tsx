@@ -6,8 +6,9 @@ import { Hero } from "@/components/Hero";
 import { AiEngineFeature } from "@/components/AiEngineFeature";
 import { PlatformFeature } from "@/components/PlatformFeature";
 import { ReframeFeature } from "@/components/ReframeFeature";
-import { SoftAuraBackground } from "@/components/SoftAuraBackground";
+import { SoftContinuousBackground } from "@/components/SoftContinuousBackground";
 import { BackgroundImage } from "@/components/ui/Image";
+import { SOFT_PAGE_BASE } from "@/lib/softPageBg";
 
 export const metadata: Metadata = {
   title: "Features — ClipForge",
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
 export default function FeaturesPage() {
   return (
     <>
-      {/* Home hero — previous hero-bg theme */}
+      {/* Home hero — dark theme */}
       <div className="relative flex min-h-screen flex-1 flex-col overflow-hidden">
         <BackgroundImage src="/hero-bg.jpg" />
 
@@ -28,26 +29,18 @@ export default function FeaturesPage() {
         </div>
       </div>
 
-      {/* Features — smart clipping */}
-      <div className="relative flex flex-col overflow-hidden">
-        <SoftAuraBackground />
+      {/* One continuous light canvas — no per-section opaque washes / seams */}
+      <div className="relative" style={{ background: SOFT_PAGE_BASE }}>
+        <SoftContinuousBackground />
 
         <div className="relative z-10 flex flex-col">
           <Features />
+          <CaptionsFeature />
+          <ReframeFeature />
+          <PlatformFeature />
+          <AiEngineFeature />
         </div>
       </div>
-
-      {/* Captions section */}
-      <CaptionsFeature />
-
-      {/* Smart Video Reframing */}
-      <ReframeFeature />
-
-      {/* Multi-Platform Video Optimization */}
-      <PlatformFeature />
-
-      {/* ClipForge AI Engine — background theme only */}
-      <AiEngineFeature />
     </>
   );
 }

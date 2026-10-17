@@ -1,12 +1,12 @@
 import { cn } from "@/lib/cn";
+import { SOFT_PAGE_BASE } from "@/lib/softPageBg";
 
 type SoftReframeBackgroundProps = {
   className?: string;
 };
 
 /**
- * Smart Video Reframing section background only —
- * off-white / pale lavender silk waves + soft purple glows (from reference).
+ * Smart Video Reframing section — silk waves on shared continuous page base.
  */
 export function SoftReframeBackground({ className }: SoftReframeBackgroundProps) {
   return (
@@ -14,14 +14,7 @@ export function SoftReframeBackground({ className }: SoftReframeBackgroundProps)
       className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}
       aria-hidden
     >
-      {/* Base — pale lavender off-white */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(165deg, #F9F9FF 0%, #F4F1FB 32%, #FAFAFE 62%, #FFFFFF 100%)",
-        }}
-      />
+      <div className="absolute inset-0" style={{ background: SOFT_PAGE_BASE }} />
 
       {/* Silk wave — top left */}
       <div

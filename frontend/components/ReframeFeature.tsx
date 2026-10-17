@@ -1,6 +1,5 @@
 import { ArrowRight, Bolt, Crop, MonitorSmartphone, ScanFace } from "lucide-react";
 import { ReframeShowcase } from "@/components/ReframeShowcase";
-import { SoftReframeBackground } from "@/components/SoftReframeBackground";
 import { Icon } from "@/components/ui/Icon";
 import { cn } from "@/lib/cn";
 
@@ -32,8 +31,6 @@ export function ReframeFeature({ className }: ReframeFeatureProps) {
       id="reframing"
       className={cn("relative isolate w-full overflow-hidden", className)}
     >
-      <SoftReframeBackground />
-
       <div className="relative z-10 mx-auto grid w-full max-w-7xl items-start gap-12 px-5 py-14 sm:px-8 sm:py-16 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-10 lg:py-20 xl:gap-14">
         {/* Left column — pixel-matched to design */}
         <div className="max-w-[28rem] pt-1 lg:max-w-[30rem] lg:pt-2">

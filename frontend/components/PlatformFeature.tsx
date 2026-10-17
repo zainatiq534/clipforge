@@ -1,6 +1,5 @@
 import { ArrowRight, Bolt, Crop, Layers, Palette, Star } from "lucide-react";
 import { PlatformShowcase } from "@/components/PlatformShowcase";
-import { SoftPlatformBackground } from "@/components/SoftPlatformBackground";
 import { AppImage } from "@/components/ui/Image";
 import { GradientButton } from "@/components/ui/Button";
 import { Icon, PlayCircleIcon } from "@/components/ui/Icon";
@@ -46,10 +45,7 @@ export function PlatformFeature({ className }: PlatformFeatureProps) {
       id="platform-optimization"
       className={cn("relative isolate w-full overflow-hidden", className)}
     >
-      <SoftPlatformBackground />
-
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-start gap-12 px-5 py-14 sm:px-8 sm:py-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-10 lg:py-20 xl:gap-14">
-        {/* Left column — matched to reference */}
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-start gap-12 px-5 py-14 sm:px-8 sm:py-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-10 lg:py-20 xl:gap-14">
         <div className="max-w-[34rem] pt-1 lg:max-w-[36rem] lg:pt-2">
           {/* Badge */}
           <div className="inline-flex items-center gap-1.5 rounded-full border border-[#d8b4fe] bg-[#f5f3ff] px-3 py-[6px]">
@@ -166,7 +162,6 @@ export function PlatformFeature({ className }: PlatformFeatureProps) {
           </div>
         </div>
 
-        {/* Right column — platform export visual */}
         <PlatformShowcase />
       </div>
     </section>

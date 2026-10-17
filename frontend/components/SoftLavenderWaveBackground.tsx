@@ -1,12 +1,12 @@
 import { cn } from "@/lib/cn";
+import { SOFT_PAGE_BASE } from "@/lib/softPageBg";
 
 type SoftLavenderWaveBackgroundProps = {
   className?: string;
 };
 
 /**
- * Captions section background — pale lavender / off-white soft waves
- * (from the Automatic Captions reference picture). Background only.
+ * Captions section background — soft waves on shared continuous page base.
  */
 export function SoftLavenderWaveBackground({
   className,
@@ -16,14 +16,7 @@ export function SoftLavenderWaveBackground({
       className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}
       aria-hidden
     >
-      {/* Soft off-white / lavender base */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(155deg, #F8F6FC 0%, #F3F0FA 28%, #FAF9FC 55%, #FFFFFF 100%)",
-        }}
-      />
+      <div className="absolute inset-0" style={{ background: SOFT_PAGE_BASE }} />
 
       {/* Upper soft purple wave */}
       <div

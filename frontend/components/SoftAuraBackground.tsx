@@ -1,4 +1,5 @@
 import { cn } from "@/lib/cn";
+import { SOFT_PAGE_BASE } from "@/lib/softPageBg";
 
 type SoftAuraBackgroundProps = {
   className?: string;
@@ -6,8 +7,7 @@ type SoftAuraBackgroundProps = {
 
 /**
  * Soft aurora background from the Features reference —
- * lavender / soft purple / sky blue on an off-white base.
- * Background only (no UI theme).
+ * lavender / soft purple / sky blue on a shared continuous page base.
  */
 export function SoftAuraBackground({ className }: SoftAuraBackgroundProps) {
   return (
@@ -15,14 +15,8 @@ export function SoftAuraBackground({ className }: SoftAuraBackgroundProps) {
       className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}
       aria-hidden
     >
-      {/* Base wash */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(160deg, #F5F0FF 0%, #EEF3FC 35%, #F7F5F8 65%, #FBF9FC 100%)",
-        }}
-      />
+      {/* Shared base — same across all light sections (no seam) */}
+      <div className="absolute inset-0" style={{ background: SOFT_PAGE_BASE }} />
 
       {/* Top lavender glow */}
       <div

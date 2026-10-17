@@ -1,13 +1,12 @@
 import { cn } from "@/lib/cn";
+import { SOFT_PAGE_BASE } from "@/lib/softPageBg";
 
 type SoftPlatformBackgroundProps = {
   className?: string;
 };
 
 /**
- * Multi-Platform Video Optimization section background only —
- * pale sky blue (top-left), lavender / soft magenta (right),
- * bright off-white center (from reference). Background only.
+ * Multi-Platform section — auras on shared continuous page base.
  */
 export function SoftPlatformBackground({ className }: SoftPlatformBackgroundProps) {
   return (
@@ -15,14 +14,7 @@ export function SoftPlatformBackground({ className }: SoftPlatformBackgroundProp
       className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}
       aria-hidden
     >
-      {/* Base — cool off-white / mist */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(155deg, #F5F8FF 0%, #F8F6FC 28%, #FAF9FF 55%, #FFFFFF 100%)",
-        }}
-      />
+      <div className="absolute inset-0" style={{ background: SOFT_PAGE_BASE }} />
 
       {/* Pale sky blue — top left */}
       <div

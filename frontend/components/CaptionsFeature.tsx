@@ -8,7 +8,6 @@ import {
   Type,
 } from "lucide-react";
 import { CaptionsShowcase } from "@/components/CaptionsShowcase";
-import { SoftLavenderWaveBackground } from "@/components/SoftLavenderWaveBackground";
 import { AppImage } from "@/components/ui/Image";
 import { GradientButton } from "@/components/ui/Button";
 import { Icon, PlayCircleIcon } from "@/components/ui/Icon";
@@ -52,11 +51,8 @@ export function CaptionsFeature({ className }: CaptionsFeatureProps) {
   return (
     <section
       id="captions"
-      className={cn("relative isolate w-full overflow-hidden", className)}
+      className={cn("relative w-full", className)}
     >
-      {/* Background theme from picture — first */}
-      <SoftLavenderWaveBackground />
-
       <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-10 px-5 py-14 sm:px-8 sm:py-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-12 lg:py-20">
         <CaptionsShowcase />
 
