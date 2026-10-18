@@ -377,14 +377,14 @@ export function CaptionsShowcase({ className }: CaptionsShowcaseProps) {
                 <div className="flex h-11 gap-px sm:h-12">
                   {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
                     <div key={i} className="relative h-full min-w-0 flex-1">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
                         src="/features/captions-speaker.jpg"
                         alt=""
                         className="h-full w-full object-cover"
                         style={{ objectPosition: `${14 + i * 10}% 20%` }}
-                        draggable={false}
-                      />
+        draggable={false}
+      />
                     </div>
                   ))}
                 </div>
