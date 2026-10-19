@@ -4,6 +4,7 @@ import { Features } from "@/components/Features";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { AiEngineFeature } from "@/components/AiEngineFeature";
+import { EditingExportFeature } from "@/components/EditingExportFeature";
 import { PlatformFeature } from "@/components/PlatformFeature";
 import { ReframeFeature } from "@/components/ReframeFeature";
 import { SoftContinuousBackground } from "@/components/SoftContinuousBackground";
@@ -39,6 +40,7 @@ export default function FeaturesPage() {
           <ReframeFeature />
           <PlatformFeature />
           <AiEngineFeature />
+          <EditingExportFeature />
         </div>
       </div>
     </>
