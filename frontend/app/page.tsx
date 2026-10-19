@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import {
   ArrowRight,
   Check,
-  Heart,
   Mail,
 } from "lucide-react";
 import { BeforeAfterDemo } from "@/components/BeforeAfterDemo";
@@ -20,6 +19,7 @@ import { Badge } from "@/components/ui/Badge";
 import { GradientButton } from "@/components/ui/Button";
 import { BackgroundImage } from "@/components/ui/Image";
 import { Icon } from "@/components/ui/Icon";
+import { Reveal } from "@/components/ui/Reveal";
 import { cn } from "@/lib/cn";
 
 const productLinks = [
@@ -97,83 +97,103 @@ export default function Home() {
 
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-5 pb-6 text-center sm:px-8 sm:pb-8 lg:px-16">
               <div className="mx-auto flex w-full max-w-[34rem] flex-col items-center lg:max-w-[38rem]">
-                <Badge
-                  icon={<FilledZapIcon />}
-                  className="border-[#9b7bff]/40 bg-[#1a1230]/75 shadow-[0_0_24px_rgba(139,92,246,0.22)]"
-                >
-                  <span className="font-sans text-[0.8rem] font-medium tracking-normal text-white normal-case sm:text-[0.85rem]">
-                    Turn Ideas Into Impact
-                  </span>
-                </Badge>
+                <Reveal>
+                  <Badge
+                    icon={<FilledZapIcon />}
+                    className="border-[#9b7bff]/40 bg-[#1a1230]/75 shadow-[0_0_24px_rgba(139,92,246,0.22)]"
+                  >
+                    <span className="font-sans text-[0.8rem] font-medium tracking-normal text-white normal-case sm:text-[0.85rem]">
+                      Turn Ideas Into Impact
+                    </span>
+                  </Badge>
+                </Reveal>
 
-                <h2
-                  className={cn(
-                    "mt-4 max-w-3xl font-display font-bold tracking-[-0.03em] text-white sm:mt-5",
-                    "text-[1.85rem] leading-[1.12] sm:text-[2.5rem] md:text-[3rem] lg:text-[3.4rem]",
-                  )}
-                >
-                  Your Next Great Clip
-                </h2>
-                <p
-                  className={cn(
-                    "mt-1 font-display font-bold tracking-[-0.03em]",
-                    "bg-gradient-to-r from-[#c084fc] via-[#a78bfa] to-[#60a5fa] bg-clip-text text-transparent",
-                    "text-[2rem] leading-[1.08] sm:text-[2.75rem] md:text-[3.25rem] lg:text-[3.6rem]",
-                    "drop-shadow-[0_0_40px_rgba(167,139,250,0.45)]",
-                  )}
-                >
-                  Starts Here
-                </p>
+                <Reveal delay={0.06}>
+                  <h2
+                    className={cn(
+                      "mt-4 max-w-3xl font-display font-bold tracking-[-0.03em] text-white sm:mt-5",
+                      "text-[1.85rem] leading-[1.12] sm:text-[2.5rem] md:text-[3rem] lg:text-[3.4rem]",
+                    )}
+                  >
+                    Your Next Great Clip
+                  </h2>
+                  <p
+                    className={cn(
+                      "mt-1 font-display font-bold tracking-[-0.03em]",
+                      "bg-gradient-to-r from-[#c084fc] via-[#a78bfa] to-[#60a5fa] bg-clip-text text-transparent",
+                      "text-[2rem] leading-[1.08] sm:text-[2.75rem] md:text-[3.25rem] lg:text-[3.6rem]",
+                      "drop-shadow-[0_0_40px_rgba(167,139,250,0.45)]",
+                    )}
+                  >
+                    Starts Here
+                  </p>
+                </Reveal>
 
-                <p className="mt-3 max-w-lg font-sans text-sm leading-relaxed text-white/90 sm:mt-4 sm:text-base md:text-lg">
-                  Join thousands of creators, marketers, and businesses turning
-                  long videos into viral-ready clips with ClipForge.
-                </p>
+                <Reveal delay={0.12}>
+                  <p className="mt-3 max-w-lg font-sans text-sm leading-relaxed text-white/90 sm:mt-4 sm:text-base md:text-lg">
+                    Join thousands of creators, marketers, and businesses turning
+                    long videos into viral-ready clips with ClipForge.
+                  </p>
+                </Reveal>
 
-                <GradientButton
-                  size="lg"
-                  href="#start"
-                  leftIcon={<FilledSparklesIcon />}
-                  rightIcon={<Icon icon={ArrowRight} size="md" />}
-                  className="mt-5 w-full shadow-[0_12px_40px_rgba(99,102,241,0.45)] sm:mt-6 sm:w-auto"
-                >
-                  Start for Free
-                </GradientButton>
+                <Reveal delay={0.18}>
+                  <GradientButton
+                    size="lg"
+                    href="#start"
+                    leftIcon={<FilledSparklesIcon />}
+                    rightIcon={<Icon icon={ArrowRight} size="md" />}
+                    className="mt-5 w-full shadow-[0_12px_40px_rgba(99,102,241,0.45)] sm:mt-6 sm:w-auto"
+                  >
+                    Start for Free
+                  </GradientButton>
 
-                <ul className="mt-4 flex flex-col items-center gap-2.5 sm:mt-5 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-5 sm:gap-y-2">
-                  {trustItems.map((item) => (
-                    <li
-                      key={item}
-                      className="inline-flex items-center gap-2 font-sans text-sm text-white/90 sm:text-[0.95rem]"
-                    >
-                      <span className="inline-flex h-4 w-4 items-center justify-center rounded-[4px] bg-[#7c3aed]">
-                        <Check
-                          className="h-2.5 w-2.5 text-white"
-                          strokeWidth={3}
-                        />
-                      </span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+                  <ul className="mt-4 flex flex-col items-center gap-2.5 sm:mt-5 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-5 sm:gap-y-2">
+                    {trustItems.map((item) => (
+                      <li
+                        key={item}
+                        className="inline-flex items-center gap-2 font-sans text-sm text-white/90 sm:text-[0.95rem]"
+                      >
+                        <span className="inline-flex h-4 w-4 items-center justify-center rounded-[4px] bg-[#7c3aed]">
+                          <Check
+                            className="h-2.5 w-2.5 text-white"
+                            strokeWidth={3}
+                          />
+                        </span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </Reveal>
               </div>
             </div>
           </div>
         </section>
 
-        <footer className="relative overflow-hidden border-t border-white/[0.08] bg-[#07102a] px-5 pt-14 pb-8 sm:px-8 sm:pt-16 lg:pt-20">
-          {/* Soft indigo corner glow — same as footer reference */}
+        <footer className="relative overflow-hidden border-t border-transparent bg-[#07102a] px-5 pt-14 pb-8 sm:px-8 sm:pt-16 lg:pt-20">
+          {/* Attractive purple → blue atmosphere matching CTA */}
           <div
             className="pointer-events-none absolute inset-0"
             aria-hidden
             style={{
               background: [
-                "radial-gradient(ellipse 55% 40% at 8% 0%, rgba(88, 80, 180, 0.22) 0%, transparent 55%)",
-                "radial-gradient(ellipse 50% 35% at 92% 0%, rgba(99, 102, 241, 0.18) 0%, transparent 55%)",
+                "linear-gradient(180deg, rgba(99,102,241,0.16) 0%, transparent 28%)",
+                "radial-gradient(ellipse 70% 55% at 0% 15%, rgba(139,92,246,0.28) 0%, transparent 55%)",
+                "radial-gradient(ellipse 65% 50% at 100% 10%, rgba(59,130,246,0.26) 0%, transparent 55%)",
+                "radial-gradient(ellipse 50% 40% at 50% 0%, rgba(167,139,250,0.14) 0%, transparent 50%)",
+                "radial-gradient(ellipse 80% 45% at 50% 100%, rgba(37,99,235,0.12) 0%, transparent 55%)",
               ].join(", "),
             }}
           />
-          <div className="relative z-10 mx-auto grid w-full max-w-6xl grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-[1.35fr_repeat(3,0.75fr)_1.25fr] lg:gap-8">
+          {/* Top gradient hairline */}
+          <div
+            className="pointer-events-none absolute inset-x-0 top-0 h-px"
+            aria-hidden
+            style={{
+              background:
+                "linear-gradient(90deg, transparent 0%, rgba(167,139,250,0.55) 25%, rgba(96,165,250,0.55) 50%, rgba(167,139,250,0.55) 75%, transparent 100%)",
+            }}
+          />
+          <Reveal className="relative z-10 mx-auto grid w-full max-w-6xl grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-[1.35fr_repeat(3,0.75fr)_1.25fr] lg:gap-8">
             <div className="max-w-xs">
               <Logo />
               <p className="mt-4 font-sans text-sm leading-relaxed text-[#9ca3af]">
@@ -236,21 +256,13 @@ export default function Home() {
                 No spam. Unsubscribe anytime.
               </p>
             </div>
-          </div>
+          </Reveal>
 
-          <div className="relative z-10 mx-auto mt-12 flex w-full max-w-6xl flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 sm:mt-14 sm:flex-row">
+          <Reveal delay={0.08} className="relative z-10 mx-auto mt-12 flex w-full max-w-6xl items-center justify-center border-t border-white/10 pt-6 sm:mt-14">
             <p className="font-sans text-xs text-[#6b7280] sm:text-sm">
               © 2026 ClipForge. All rights reserved.
             </p>
-            <p className="inline-flex items-center gap-1.5 font-sans text-xs text-[#6b7280] sm:text-sm">
-              Made with{" "}
-              <Heart
-                className="h-3.5 w-3.5 fill-[#a78bfa] text-[#a78bfa]"
-                aria-hidden
-              />{" "}
-              for creators everywhere.
-            </p>
-          </div>
+          </Reveal>
         </footer>
       </div>
     </div>

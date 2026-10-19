@@ -2,7 +2,8 @@
 
 import { useState, type ReactNode } from "react";
 import { ArrowRight, Headphones, Minus, Plus } from "lucide-react";
-import { Badge } from "@/components/ui/Badge";
+import { Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
+import { SectionLabel } from "@/components/ui/SectionLabel";
 import { cn } from "@/lib/cn";
 
 const faqs = [
@@ -61,49 +62,50 @@ export function FAQ({ className }: FAQProps) {
     <section
       id="faq"
       className={cn(
-        "relative px-5 py-16 sm:px-8 sm:py-20 lg:py-24",
+        "relative px-5 py-10 sm:px-8 sm:py-12 lg:py-14",
         className,
       )}
     >
       <div className="relative z-10 mx-auto w-full max-w-6xl">
         <div className="flex flex-col items-center text-center">
-          <Badge
-            icon={<FAQBadgeIcon />}
-            className="border-[#ddd6fe] bg-[#f3e8ff]/95 px-3.5 py-1.5 shadow-none backdrop-blur-sm"
-          >
-            <span className="font-sans text-[0.8rem] font-semibold tracking-normal text-[#6d4aff] normal-case sm:text-[0.85rem]">
-              FAQ
-            </span>
-          </Badge>
+          <Reveal>
+            <SectionLabel>FAQ</SectionLabel>
+          </Reveal>
 
-          <h2
-            className={cn(
-              "mt-6 max-w-4xl text-center font-display font-bold tracking-[-0.03em]",
-              "text-[2.15rem] leading-[1.15] sm:text-[2.85rem] md:text-[3.35rem] lg:text-[3.75rem]",
-            )}
-          >
-            <span style={{ color: "#111827" }}>Got Questions? </span>
-            <span className="text-[#7c3aed]">We&apos;ve Got Answers.</span>
-          </h2>
+          <Reveal delay={0.06}>
+            <h2
+              className={cn(
+                "mt-6 max-w-4xl text-center font-display font-bold tracking-[-0.03em]",
+                "text-[2.15rem] leading-[1.15] sm:text-[2.85rem] md:text-[3.35rem] lg:text-[3.75rem]",
+              )}
+            >
+              <span style={{ color: "#111827" }}>Got Questions? </span>
+              <span className="text-[#7c3aed]">We&apos;ve Got Answers.</span>
+            </h2>
+          </Reveal>
 
-          <p
-            className="mt-5 max-w-2xl text-center font-sans text-base leading-relaxed sm:mt-6 sm:text-lg"
-            style={{ color: "#6b7280" }}
-          >
-            Everything you need to know about ClipForge. Can&apos;t find what
-            you&apos;re looking for? Our team is always here to help.
-          </p>
+          <Reveal delay={0.12}>
+            <p
+              className="mt-5 max-w-2xl text-center font-sans text-base leading-relaxed sm:mt-6 sm:text-lg"
+              style={{ color: "#6b7280" }}
+            >
+              Everything you need to know about ClipForge. Can&apos;t find what
+              you&apos;re looking for? Our team is always here to help.
+            </p>
+          </Reveal>
         </div>
 
         <div className="mt-12 grid grid-cols-1 items-start gap-6 lg:mt-14 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,0.85fr)] lg:gap-7 xl:gap-8">
-          <div className="flex flex-col gap-3 sm:gap-3.5">
+          <Stagger className="flex flex-col gap-3 sm:gap-3.5" stagger={0.06}>
             {faqs.map((item) => {
               const isOpen = openId === item.id;
               return (
+                <StaggerItem key={item.id}>
                 <div
-                  key={item.id}
                   className={cn(
-                    "rounded-2xl border border-[#eceaf3] bg-white shadow-[0_4px_18px_rgba(17,24,39,0.04)] transition-shadow",
+                    "rounded-2xl border border-[#eceaf3] bg-white shadow-[0_4px_18px_rgba(17,24,39,0.04)] transition-[box-shadow,transform] duration-300",
+                    "hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(124,58,237,0.1)]",
+                    "motion-reduce:hover:translate-y-0",
                     isOpen && "shadow-[0_8px_24px_rgba(124,58,237,0.08)]",
                   )}
                 >
@@ -149,10 +151,12 @@ export function FAQ({ className }: FAQProps) {
                     </span>
                   </button>
                 </div>
+                </StaggerItem>
               );
             })}
-          </div>
+          </Stagger>
 
+          <Reveal from="right" delay={0.1}>
           <aside className="overflow-hidden rounded-[1.75rem] border border-[#eceaf3] bg-white shadow-[0_10px_36px_rgba(17,24,39,0.07)] sm:rounded-[2rem]">
             <div className="relative aspect-[5/4] w-full overflow-hidden bg-[#efe8ff]">
               <img
@@ -195,19 +199,10 @@ export function FAQ({ className }: FAQProps) {
               </a>
             </div>
           </aside>
+          </Reveal>
         </div>
       </div>
     </section>
-  );
-}
-
-function FAQBadgeIcon() {
-  return (
-    <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#7c3aed] sm:h-[1.35rem] sm:w-[1.35rem]">
-      <span className="font-sans text-[0.7rem] font-bold leading-none text-white">
-        ?
-      </span>
-    </span>
   );
 }
 

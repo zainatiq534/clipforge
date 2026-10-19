@@ -3,6 +3,7 @@ import { PlatformPills } from "@/components/PlatformPills";
 import { Badge } from "@/components/ui/Badge";
 import { GradientButton, OutlineButton } from "@/components/ui/Button";
 import { Icon, PlayCircleIcon } from "@/components/ui/Icon";
+import { Reveal } from "@/components/ui/Reveal";
 import { Typography } from "@/components/ui/Typography";
 import { cn } from "@/lib/cn";
 
@@ -19,62 +20,72 @@ export function Hero({ className }: HeroProps) {
       )}
     >
       <div className="flex flex-col items-center">
-        <Badge icon={<Icon icon={Sparkles} size="sm" strokeWidth={2} />}>
-          AI-Powered Video Repurposing
-        </Badge>
+        <Reveal immediate delay={0.05}>
+          <Badge icon={<Icon icon={Sparkles} size="sm" strokeWidth={2} />}>
+            AI-Powered Video Repurposing
+          </Badge>
+        </Reveal>
 
-        <Typography
-          as="h1"
-          variant="display"
-          tone="white"
-          className="mt-6 max-w-3xl text-balance"
-        >
-          Turn Long Videos Into{" "}
-          <span className="relative inline-block">
-            <Typography as="span" variant="display" tone="gradient">
-              Viral-Ready Clips
-            </Typography>
-            <span
-              className="pointer-events-none absolute -bottom-1 left-0 right-0 h-[0.35rem] rounded-full bg-gradient-to-r from-[#b56cff] via-[#9b6bff] to-transparent opacity-90"
-              aria-hidden
-            />
-          </span>
-        </Typography>
-
-        <Typography
-          as="p"
-          variant="body"
-          tone="muted"
-          className="mt-5 max-w-2xl text-pretty"
-        >
-          Upload your long videos and let ClipForge turn them into{" "}
-          <Typography as="span" variant="body" tone="white" weight="semibold">
-            5–10 engaging, captioned, vertical clips
-          </Typography>{" "}
-          — ready to post on TikTok, Instagram Reels, and YouTube Shorts.
-        </Typography>
-
-        <PlatformPills className="mt-7" />
-
-        <div className="mt-8 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4">
-          <GradientButton
-            size="lg"
-            href="#start"
-            leftIcon={<Icon icon={Sparkles} size="md" />}
-            rightIcon={<Icon icon={ArrowRight} size="md" />}
-            className="w-full sm:w-auto"
+        <Reveal immediate delay={0.12}>
+          <Typography
+            as="h1"
+            variant="display"
+            tone="white"
+            className="mt-6 max-w-3xl text-balance"
           >
-            Start Creating Clips
-          </GradientButton>
-          <OutlineButton
-            size="lg"
-            href="#demo"
-            leftIcon={<PlayCircleIcon />}
-            className="w-full sm:w-auto"
+            Turn Long Videos Into{" "}
+            <span className="relative inline-block">
+              <Typography as="span" variant="display" tone="gradient">
+                Viral-Ready Clips
+              </Typography>
+              <span
+                className="pointer-events-none absolute right-0 -bottom-1 left-0 h-[0.35rem] rounded-full bg-gradient-to-r from-[#b56cff] via-[#9b6bff] to-transparent opacity-90"
+                aria-hidden
+              />
+            </span>
+          </Typography>
+        </Reveal>
+
+        <Reveal immediate delay={0.2}>
+          <Typography
+            as="p"
+            variant="body"
+            tone="muted"
+            className="mt-5 max-w-2xl text-pretty"
           >
-            Watch Demo
-          </OutlineButton>
-        </div>
+            Upload your long videos and let ClipForge turn them into{" "}
+            <Typography as="span" variant="body" tone="white" weight="semibold">
+              5–10 engaging, captioned, vertical clips
+            </Typography>{" "}
+            — ready to post on TikTok, Instagram Reels, and YouTube Shorts.
+          </Typography>
+        </Reveal>
+
+        <Reveal immediate delay={0.28}>
+          <PlatformPills className="mt-7" />
+        </Reveal>
+
+        <Reveal immediate delay={0.36}>
+          <div className="mt-8 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4">
+            <GradientButton
+              size="lg"
+              href="#start"
+              leftIcon={<Icon icon={Sparkles} size="md" />}
+              rightIcon={<Icon icon={ArrowRight} size="md" />}
+              className="w-full sm:w-auto"
+            >
+              Start Creating Clips
+            </GradientButton>
+            <OutlineButton
+              size="lg"
+              href="#demo"
+              leftIcon={<PlayCircleIcon />}
+              className="w-full sm:w-auto"
+            >
+              Watch Demo
+            </OutlineButton>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

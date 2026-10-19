@@ -1,6 +1,7 @@
 import { Check, Star } from "lucide-react";
-import { Badge } from "@/components/ui/Badge";
 import { AppImage } from "@/components/ui/Image";
+import { Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
+import { SectionLabel } from "@/components/ui/SectionLabel";
 import { cn } from "@/lib/cn";
 
 const testimonials = [
@@ -42,53 +43,54 @@ export function Testimonials({ className }: TestimonialsProps) {
     <section
       id="testimonials"
       className={cn(
-        "relative px-5 py-16 sm:px-8 sm:py-20 lg:py-24",
+        "relative px-5 py-10 sm:px-8 sm:py-12 lg:py-14",
         className,
       )}
     >
       <div className="relative z-10 mx-auto w-full max-w-6xl">
         <div className="flex flex-col items-center text-center">
-          <Badge
-            icon={<TestimonialsBadgeIcon />}
-            className="border-[#ddd6fe] bg-[#f3e8ff]/95 px-3.5 py-1.5 shadow-none backdrop-blur-sm"
-          >
-            <span className="font-sans text-[0.8rem] font-semibold tracking-normal text-[#6d4aff] normal-case sm:text-[0.85rem]">
-              Testimonials
-            </span>
-          </Badge>
+          <Reveal>
+            <SectionLabel>Testimonials</SectionLabel>
+          </Reveal>
 
-          <h2
-            className={cn(
-              "mt-6 max-w-4xl text-center font-display font-bold tracking-[-0.03em]",
-              "text-[2.15rem] leading-[1.15] sm:text-[2.85rem] md:text-[3.35rem] lg:text-[3.75rem]",
-            )}
-          >
-            <span className="relative inline-flex items-center justify-center gap-5 sm:gap-7 md:gap-8">
-              <AccentLines side="left" />
-              <span style={{ color: "#111827" }}>
-                What Creators Are{" "}
-                <span className="bg-gradient-to-r from-[#8b5cf6] via-[#a855f7] to-[#6366f1] bg-clip-text text-transparent">
-                  Saying
+          <Reveal delay={0.06}>
+            <h2
+              className={cn(
+                "mt-6 max-w-4xl text-center font-display font-bold tracking-[-0.03em]",
+                "text-[2.15rem] leading-[1.15] sm:text-[2.85rem] md:text-[3.35rem] lg:text-[3.75rem]",
+              )}
+            >
+              <span className="relative inline-flex items-center justify-center gap-5 sm:gap-7 md:gap-8">
+                <AccentLines side="left" />
+                <span style={{ color: "#111827" }}>
+                  What Creators Are{" "}
+                  <span className="bg-gradient-to-r from-[#8b5cf6] via-[#a855f7] to-[#6366f1] bg-clip-text text-transparent">
+                    Saying
+                  </span>
                 </span>
+                <AccentLines side="right" />
               </span>
-              <AccentLines side="right" />
-            </span>
-          </h2>
+            </h2>
+          </Reveal>
 
-          <p
-            className="mt-5 max-w-2xl text-center font-sans text-base leading-relaxed sm:mt-6 sm:text-lg"
-            style={{ color: "#6b7280" }}
-          >
-            Join thousands of creators who are saving time, creating viral
-            clips, and growing faster with ClipForge.
-          </p>
+          <Reveal delay={0.12}>
+            <p
+              className="mt-5 max-w-2xl text-center font-sans text-base leading-relaxed sm:mt-6 sm:text-lg"
+              style={{ color: "#6b7280" }}
+            >
+              Join thousands of creators who are saving time, creating viral
+              clips, and growing faster with ClipForge.
+            </p>
+          </Reveal>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:mt-14 lg:grid-cols-3 lg:gap-6">
+        <Stagger className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:mt-14 lg:grid-cols-3 lg:gap-6">
           {testimonials.map((item) => (
-            <TestimonialCard key={item.name} {...item} />
+            <StaggerItem key={item.name}>
+              <TestimonialCard {...item} />
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </div>
     </section>
   );
@@ -108,6 +110,9 @@ function TestimonialCard({
         "relative flex h-full flex-col overflow-hidden rounded-[1.35rem] bg-white p-5 sm:rounded-[1.5rem] sm:p-6",
         "border border-[#e9e4f5]",
         "shadow-[0_16px_40px_-20px_rgba(124,58,237,0.22)]",
+        "transition-[transform,box-shadow] duration-300 ease-out",
+        "hover:-translate-y-1 hover:shadow-[0_24px_48px_-18px_rgba(124,58,237,0.32)]",
+        "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
       )}
     >
       <div className="relative z-10 flex items-start gap-3">
@@ -173,20 +178,6 @@ function TestimonialCard({
         &rdquo;
       </span>
     </article>
-  );
-}
-
-/** Exact chat-bubble bot mark from the design reference */
-function TestimonialsBadgeIcon() {
-  return (
-    <AppImage
-      src="/testimonials-badge-icon.png"
-      alt=""
-      width={18}
-      height={18}
-      className="h-4 w-4 object-contain sm:h-[1.15rem] sm:w-[1.15rem]"
-      aria-hidden
-    />
   );
 }
 

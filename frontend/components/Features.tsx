@@ -1,8 +1,7 @@
-import { Sparkles } from "lucide-react";
 import { FeaturesProductMockup } from "@/components/FeaturesProductMockup";
-import { Badge } from "@/components/ui/Badge";
 import { AppImage } from "@/components/ui/Image";
-import { Icon } from "@/components/ui/Icon";
+import { Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
+import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Typography } from "@/components/ui/Typography";
 import { cn } from "@/lib/cn";
 
@@ -54,59 +53,60 @@ export function Features({ className }: FeaturesProps) {
     <section
       id="features"
       className={cn(
-        "relative overflow-visible px-5 py-16 sm:px-8 sm:py-20 lg:py-24",
+        "relative overflow-visible px-5 py-10 sm:px-8 sm:py-12 lg:py-14",
         className,
       )}
     >
       <div className="relative z-10 mx-auto w-full max-w-6xl">
         <div className="flex flex-col items-center text-center">
-          <Badge
-            icon={<Icon icon={Sparkles} size="sm" className="text-[#7c3aed]" />}
-            className="border-[#ddd6fe] bg-[#f3e8ff]/90 shadow-none backdrop-blur-sm"
-          >
-            <Typography as="span" variant="label" tone="brand">
-              Features
-            </Typography>
-          </Badge>
+          <Reveal>
+            <SectionLabel>Features</SectionLabel>
+          </Reveal>
 
-          <h2
-            className={cn(
-              "mt-6 max-w-4xl text-center font-display font-bold tracking-[-0.03em]",
-              "text-[2.15rem] leading-[1.15] sm:text-[2.85rem] md:text-[3.35rem] lg:text-[3.75rem]",
-            )}
-          >
-            <span className="block" style={{ color: "#111827" }}>
-              Everything You Need to
-            </span>
-            <span className="mt-0.5 block sm:mt-1">
-              <span style={{ color: "#111827" }}>Create </span>
-              <span className="bg-gradient-to-r from-[#8b5cf6] via-[#a855f7] to-[#6366f1] bg-clip-text text-transparent">
-                High-Performing Clips
+          <Reveal delay={0.06}>
+            <h2
+              className={cn(
+                "mt-6 max-w-4xl text-center font-display font-bold tracking-[-0.03em]",
+                "text-[2.15rem] leading-[1.15] sm:text-[2.85rem] md:text-[3.35rem] lg:text-[3.75rem]",
+              )}
+            >
+              <span className="block" style={{ color: "#111827" }}>
+                Everything You Need to
               </span>
-            </span>
-          </h2>
+              <span className="mt-0.5 block sm:mt-1">
+                <span style={{ color: "#111827" }}>Create </span>
+                <span className="bg-gradient-to-r from-[#8b5cf6] via-[#a855f7] to-[#6366f1] bg-clip-text text-transparent">
+                  High-Performing Clips
+                </span>
+              </span>
+            </h2>
+          </Reveal>
 
-          <Typography
-            as="p"
-            variant="body"
-            tone="mutedInk"
-            className="mt-4 max-w-2xl text-pretty"
-          >
-            Powerful AI tools to turn your long videos into viral-ready content,
-            faster than ever.
-          </Typography>
+          <Reveal delay={0.12}>
+            <Typography
+              as="p"
+              variant="body"
+              tone="mutedInk"
+              className="mt-4 max-w-2xl text-pretty"
+            >
+              Powerful AI tools to turn your long videos into viral-ready content,
+              faster than ever.
+            </Typography>
+          </Reveal>
         </div>
 
         <div className="mt-12 grid grid-cols-1 items-center gap-8 lg:mt-14 lg:grid-cols-[1.05fr_1.2fr] lg:gap-5 xl:gap-7">
-          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 md:grid-cols-3 md:gap-3.5">
+          <Stagger className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 md:grid-cols-3 md:gap-3.5">
             {features.map((feature) => (
-              <FeatureCard key={feature.title} {...feature} />
+              <StaggerItem key={feature.title}>
+                <FeatureCard {...feature} />
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
 
-          <div className="overflow-visible py-2 lg:py-4">
+          <Reveal from="right" delay={0.1} className="overflow-visible py-2 lg:py-4">
             <FeaturesProductMockup />
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>

@@ -3,7 +3,6 @@ import {
   Play,
   Scissors,
   Settings,
-  Sparkles,
   Video,
   Volume2,
 } from "lucide-react";
@@ -12,9 +11,10 @@ import {
   TikTokBadgeIcon,
   YouTubeShortsIcon,
 } from "@/components/icons";
-import { Badge } from "@/components/ui/Badge";
 import { AppImage } from "@/components/ui/Image";
 import { Icon } from "@/components/ui/Icon";
+import { Reveal } from "@/components/ui/Reveal";
+import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Typography } from "@/components/ui/Typography";
 import { cn } from "@/lib/cn";
 
@@ -88,68 +88,67 @@ export function BeforeAfterDemo({ className }: BeforeAfterDemoProps) {
     <section
       id="before-after"
       className={cn(
-        "relative px-5 py-16 sm:px-8 sm:py-20 lg:py-24",
+        "relative px-5 py-10 sm:px-8 sm:py-12 lg:py-14",
         className,
       )}
     >
       <div className="relative z-10 mx-auto w-full max-w-6xl">
         <div className="flex flex-col items-center text-center">
-          <Badge
-            icon={<Icon icon={Sparkles} size="sm" className="text-[#7c3aed]" />}
-            className="border-[#ddd6fe] bg-[#f3e8ff]/90 shadow-none backdrop-blur-sm"
-          >
-            <Typography as="span" variant="label" tone="brand">
-              Before &amp; After Demo
-            </Typography>
-          </Badge>
+          <Reveal>
+            <SectionLabel>Before & After Demo</SectionLabel>
+          </Reveal>
 
-          <h2
-            className={cn(
-              "mt-6 max-w-4xl text-center font-display font-bold tracking-[-0.03em]",
-              "text-[2.15rem] leading-[1.15] sm:text-[2.85rem] md:text-[3.35rem] lg:text-[3.75rem]",
-            )}
-          >
-            <span className="relative inline-flex items-center justify-center gap-5 sm:gap-7 md:gap-8">
-              <AccentLines side="left" size="lg" />
-              <span style={{ color: "#111827" }}>
-                Turn This{" "}
-                <span className="bg-gradient-to-r from-[#8b5cf6] via-[#a855f7] to-[#6366f1] bg-clip-text text-transparent">
-                  Long Video
+          <Reveal delay={0.06}>
+            <h2
+              className={cn(
+                "mt-6 max-w-4xl text-center font-display font-bold tracking-[-0.03em]",
+                "text-[2.15rem] leading-[1.15] sm:text-[2.85rem] md:text-[3.35rem] lg:text-[3.75rem]",
+              )}
+            >
+              <span className="relative inline-flex items-center justify-center gap-5 sm:gap-7 md:gap-8">
+                <AccentLines side="left" size="lg" />
+                <span style={{ color: "#111827" }}>
+                  Turn This{" "}
+                  <span className="bg-gradient-to-r from-[#8b5cf6] via-[#a855f7] to-[#6366f1] bg-clip-text text-transparent">
+                    Long Video
+                  </span>
                 </span>
+                <AccentLines side="right" size="lg" />
               </span>
-              <AccentLines side="right" size="lg" />
-            </span>
-            <span className="mt-0.5 block sm:mt-1" style={{ color: "#111827" }}>
-              Into Viral Clips
-            </span>
-          </h2>
+              <span className="mt-0.5 block sm:mt-1" style={{ color: "#111827" }}>
+                Into Viral Clips
+              </span>
+            </h2>
+          </Reveal>
 
-          <p
-            className="mt-5 max-w-2xl text-center font-sans text-base leading-relaxed sm:mt-6 sm:text-lg"
-            style={{ color: "#6b7280" }}
-          >
-            Upload a single video, and let ClipForge automatically find the best
-            moments, add captions, reframe, and create multiple viral-ready clips
-            in seconds.
-          </p>
+          <Reveal delay={0.12}>
+            <p
+              className="mt-5 max-w-2xl text-center font-sans text-base leading-relaxed sm:mt-6 sm:text-lg"
+              style={{ color: "#6b7280" }}
+            >
+              Upload a single video, and let ClipForge automatically find the best
+              moments, add captions, reframe, and create multiple viral-ready clips
+              in seconds.
+            </p>
+          </Reveal>
         </div>
 
         <div className="relative mt-12 lg:mt-16">
           <div className="flex flex-col items-center gap-6 lg:flex-row lg:items-center lg:justify-center lg:gap-0">
             {/* Original long video */}
-            <div className="relative z-0 w-full max-w-xl shrink-0 lg:max-w-[27rem] xl:max-w-[29rem]">
+            <Reveal from="left" className="relative z-0 w-full max-w-xl shrink-0 lg:max-w-[27rem] xl:max-w-[29rem]">
               <OriginalVideoCard />
-            </div>
+            </Reveal>
 
             {/* Center transform hub — flush against left video edge */}
-            <div className="relative z-20 -my-2 flex shrink-0 items-center justify-center lg:-ml-9 lg:my-0 xl:-ml-11">
+            <Reveal delay={0.08} from="none" className="relative z-20 -my-2 flex shrink-0 items-center justify-center lg:-ml-9 lg:my-0 xl:-ml-11">
               <TransformHub />
-            </div>
+            </Reveal>
 
             {/* Viral clips */}
-            <div className="relative z-0 w-full min-w-0 flex-1 lg:-ml-2 lg:max-w-[27rem] xl:max-w-[29rem]">
+            <Reveal from="right" delay={0.12} className="relative z-0 w-full min-w-0 flex-1 lg:-ml-2 lg:max-w-[27rem] xl:max-w-[29rem]">
               <ViralClipsColumn />
-            </div>
+            </Reveal>
           </div>
         </div>
       </div>

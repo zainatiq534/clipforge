@@ -1,5 +1,7 @@
 import { YouTubeIcon } from "@/components/icons/YouTubeIcon";
 import { AppImage } from "@/components/ui/Image";
+import { Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
+import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Typography } from "@/components/ui/Typography";
 import { cn } from "@/lib/cn";
 
@@ -40,64 +42,63 @@ export function TrustedBy({ className }: TrustedByProps) {
     <section
       id="trusted-by"
       className={cn(
-        "relative px-5 py-16 sm:px-8 sm:py-20 lg:py-24",
+        "relative px-5 pt-16 pb-10 sm:px-8 sm:pt-20 sm:pb-12 lg:pt-24 lg:pb-14",
         className,
       )}
     >
       <div className="relative z-10 mx-auto w-full max-w-6xl">
         <div className="flex flex-col items-center text-center">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <span className="h-px w-10 bg-[#9788d1] sm:w-14" aria-hidden />
-            <span
-              className="font-sans text-[0.7rem] font-semibold tracking-[0.18em] uppercase sm:text-xs"
-              style={{ color: "#9788d1" }}
+          <Reveal>
+            <SectionLabel>Trusted By</SectionLabel>
+          </Reveal>
+
+          <Reveal delay={0.06}>
+            <div className="relative mt-7 w-full max-w-5xl sm:mt-8">
+              <SlashMark
+                className="absolute top-1/2 -left-1 hidden -translate-y-1/2 sm:block md:-left-3 lg:-left-5"
+              />
+              <SlashMark
+                className="absolute top-1/2 -right-1 hidden -translate-y-1/2 scale-x-[-1] sm:block md:-right-3 lg:-right-5"
+              />
+
+              <h2
+                className={cn(
+                  "font-display px-12 text-center font-bold tracking-[-0.03em] sm:px-16 lg:px-20",
+                  "text-[2.15rem] leading-[1.12] sm:text-[2.85rem] md:text-[3.35rem] lg:text-[3.75rem]",
+                )}
+              >
+                <span className="block" style={{ color: "#111827" }}>
+                  Loved by creators, podcasters,
+                </span>
+                <span className="mt-0.5 block sm:mt-1" style={{ color: "#6366f1" }}>
+                  educators and agencies
+                </span>
+              </h2>
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.12}>
+            <p
+              className="mt-6 max-w-2xl text-center font-sans text-base leading-relaxed sm:mt-7 sm:text-lg"
+              style={{ color: "#6b7280" }}
             >
-              Trusted By
-            </span>
-            <span className="h-px w-10 bg-[#9788d1] sm:w-14" aria-hidden />
-          </div>
-
-          <div className="relative mt-7 w-full max-w-5xl sm:mt-8">
-            <SlashMark
-              className="absolute top-1/2 -left-1 hidden -translate-y-1/2 sm:block md:-left-3 lg:-left-5"
-            />
-            <SlashMark
-              className="absolute top-1/2 -right-1 hidden -translate-y-1/2 scale-x-[-1] sm:block md:-right-3 lg:-right-5"
-            />
-
-            <h2
-              className={cn(
-                "font-display px-12 text-center font-bold tracking-[-0.03em] sm:px-16 lg:px-20",
-                "text-[2.15rem] leading-[1.12] sm:text-[2.85rem] md:text-[3.35rem] lg:text-[3.75rem]",
-              )}
-            >
-              <span className="block" style={{ color: "#111827" }}>
-                Loved by creators, podcasters,
+              <span className="block">
+                From solo creators to global teams, ClipForge helps turn long
               </span>
-              <span className="mt-0.5 block sm:mt-1" style={{ color: "#6366f1" }}>
-                educators and agencies
+              <span className="block">
+                videos into scroll-stopping clips for every use case.
               </span>
-            </h2>
-          </div>
-
-          <p
-            className="mt-6 max-w-2xl text-center font-sans text-base leading-relaxed sm:mt-7 sm:text-lg"
-            style={{ color: "#6b7280" }}
-          >
-            <span className="block">
-              From solo creators to global teams, ClipForge helps turn long
-            </span>
-            <span className="block">
-              videos into scroll-stopping clips for every use case.
-            </span>
-          </p>
+            </p>
+          </Reveal>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:mt-14 lg:grid-cols-4 lg:gap-6">
+        <Stagger className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:mt-14 lg:grid-cols-4 lg:gap-6">
           {audiences.map((item) => (
-            <AudienceCard key={item.title} {...item} />
+            <StaggerItem key={item.title}>
+              <AudienceCard {...item} />
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </div>
     </section>
   );
