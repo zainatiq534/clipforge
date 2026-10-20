@@ -1,4 +1,4 @@
-﻿import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { FloatingClipCards } from "@/components/FloatingClipCards";
 import { ShowcaseVideoPlayer } from "@/components/ShowcaseVideoPlayer";
 import { AppImage } from "@/components/ui/Image";
