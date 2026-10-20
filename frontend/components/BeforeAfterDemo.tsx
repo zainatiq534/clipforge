@@ -1,81 +1,61 @@
+"use client";
+
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import {
   Maximize2,
+  Pause,
   Play,
   Scissors,
   Settings,
   Video,
   Volume2,
+  VolumeX,
 } from "lucide-react";
 import {
   InstagramBadgeIcon,
   TikTokBadgeIcon,
   YouTubeShortsIcon,
 } from "@/components/icons";
-import { AppImage } from "@/components/ui/Image";
 import { Icon } from "@/components/ui/Icon";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Typography } from "@/components/ui/Typography";
 import { cn } from "@/lib/cn";
 
+/** Original Cloudinary encodes — no extra compression for max quality. */
 const clips = [
   {
     platform: "tiktok" as const,
-    imageSrc: "/ba-clip-tiktok.jpg",
-    caption: (
-      <>
-        You don&apos;t need a{" "}
-        <span className="rounded-[2px] bg-[#facc15] px-[2px] font-bold text-black">
-          big audience
-        </span>
-        ...
-      </>
-    ),
+    videoSrc:
+      "https://res.cloudinary.com/vbwjkfmd/video/upload/v1792498617/Bearded_man_speaking_to_camera_20261020171424.mp4",
     viewsOverlay: "1.2M",
     duration: "0:38",
     title: "The Mindset Shift",
     clipLabel: "Clip 1",
     stats: "1.2M views • 0:38",
     icon: "chart" as const,
-    objectPosition: "object-[50%_22%]",
   },
   {
     platform: "youtube" as const,
-    imageSrc: "/ba-clip-youtube.jpg",
-    caption: (
-      <>
-        <span className="rounded-[2px] bg-[#facc15] px-[2px] font-bold text-black">
-          3 tools
-        </span>{" "}
-        every creator needs in 2024
-      </>
-    ),
+    videoSrc:
+      "https://res.cloudinary.com/vbwjkfmd/video/upload/v1792498610/Man_speaking_to_camera_20261020171432.mp4",
     viewsOverlay: "892K",
     duration: "0:52",
     title: "Top 3 Tools",
     clipLabel: "Clip 2",
     stats: "892K views • 0:52",
     icon: "zap" as const,
-    objectPosition: "object-[48%_24%]",
   },
   {
     platform: "instagram" as const,
-    imageSrc: "/ba-clip-instagram.jpg",
-    caption: (
-      <>
-        <span className="rounded-[2px] bg-[#facc15] px-[2px] font-bold text-black">
-          This changed
-        </span>{" "}
-        everything for me
-      </>
-    ),
+    videoSrc:
+      "https://res.cloudinary.com/vbwjkfmd/video/upload/v1792498594/Bearded_man_talking_in_video_20261020171439.mp4",
     viewsOverlay: "643K",
     duration: "0:41",
     title: "Game Changing Tip",
     clipLabel: "Clip 3",
     stats: "643K views • 0:41",
     icon: "star" as const,
-    objectPosition: "object-[52%_20%]",
   },
 ] as const;
 
@@ -140,13 +120,21 @@ export function BeforeAfterDemo({ className }: BeforeAfterDemoProps) {
               <OriginalVideoCard />
             </Reveal>
 
-            {/* Center transform hub — flush against left video edge */}
-            <Reveal delay={0.08} from="none" className="relative z-20 -my-2 flex shrink-0 items-center justify-center lg:-ml-9 lg:my-0 xl:-ml-11">
+            {/* Icon + arrows centered in the gutter — no overlap on either video */}
+            <Reveal
+              delay={0.08}
+              from="none"
+              className="relative z-20 -my-2 flex shrink-0 items-center justify-center lg:my-0"
+            >
               <TransformHub />
             </Reveal>
 
             {/* Viral clips */}
-            <Reveal from="right" delay={0.12} className="relative z-0 w-full min-w-0 flex-1 lg:-ml-2 lg:max-w-[27rem] xl:max-w-[29rem]">
+            <Reveal
+              from="right"
+              delay={0.12}
+              className="relative z-0 w-full min-w-0 flex-1 lg:max-w-[27rem] xl:max-w-[29rem]"
+            >
               <ViralClipsColumn />
             </Reveal>
           </div>
@@ -156,10 +144,128 @@ export function BeforeAfterDemo({ className }: BeforeAfterDemoProps) {
   );
 }
 
+const ORIGINAL_LONG_VIDEO =
+  "https://res.cloudinary.com/vbwjkfmd/video/upload/v1792500586/Man_speaking_into_microphone_20261020174816.mp4";
+
+function formatVideoTime(seconds: number) {
+  if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
+}
+
 function OriginalVideoCard() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const shellRef = useRef<HTMLDivElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Unmuted by default as requested
+    video.muted = false;
+    video.volume = 1;
+
+    let inView = false;
+
+    const tryPlayUnmuted = () => {
+      if (!inView) return;
+      video.muted = false;
+      video.volume = 1;
+      void video.play().catch(() => {
+        // Some browsers block unmuted autoplay until a gesture; play button still works.
+      });
+    };
+
+    const onPlay = () => setIsPlaying(true);
+    const onPause = () => setIsPlaying(false);
+    const onTime = () => setCurrentTime(video.currentTime);
+    const onMeta = () => setDuration(video.duration || 0);
+    const onVolume = () => setIsMuted(video.muted || video.volume === 0);
+
+    video.addEventListener("play", onPlay);
+    video.addEventListener("pause", onPause);
+    video.addEventListener("timeupdate", onTime);
+    video.addEventListener("loadedmetadata", onMeta);
+    video.addEventListener("durationchange", onMeta);
+    video.addEventListener("volumechange", onVolume);
+    video.addEventListener("canplay", tryPlayUnmuted);
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        inView = Boolean(entry?.isIntersecting);
+        if (inView) {
+          tryPlayUnmuted();
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.4 },
+    );
+
+    observer.observe(video);
+
+    return () => {
+      observer.disconnect();
+      video.removeEventListener("play", onPlay);
+      video.removeEventListener("pause", onPause);
+      video.removeEventListener("timeupdate", onTime);
+      video.removeEventListener("loadedmetadata", onMeta);
+      video.removeEventListener("durationchange", onMeta);
+      video.removeEventListener("volumechange", onVolume);
+      video.removeEventListener("canplay", tryPlayUnmuted);
+    };
+  }, []);
+
+  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const durationLabel = formatVideoTime(duration);
+
+  const togglePlay = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) {
+      video.muted = false;
+      video.volume = 1;
+      void video.play().catch(() => {});
+    } else {
+      video.pause();
+    }
+  };
+
+  const toggleMute = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = !video.muted;
+    if (!video.muted) video.volume = 1;
+    setIsMuted(video.muted);
+  };
+
+  const seek = (event: MouseEvent<HTMLDivElement>) => {
+    const video = videoRef.current;
+    if (!video || !duration) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const ratio = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+    video.currentTime = ratio * duration;
+  };
+
+  const toggleFullscreen = () => {
+    const shell = shellRef.current;
+    if (!shell) return;
+    if (document.fullscreenElement) {
+      void document.exitFullscreen();
+    } else {
+      void shell.requestFullscreen().catch(() => {});
+    }
+  };
+
   return (
     <div className="w-full">
       <div
+        ref={shellRef}
         className={cn(
           "relative overflow-hidden rounded-[1.15rem] bg-[#0b0d14] sm:rounded-[1.35rem]",
           "shadow-[0_22px_50px_-18px_rgba(76,29,149,0.35)]",
@@ -167,17 +273,17 @@ function OriginalVideoCard() {
         )}
       >
         <div className="relative aspect-[16/10] overflow-hidden">
-          <AppImage
-            src="/ba-original-video.jpg"
-            alt="Original long podcast video"
-            fill
-            quality={100}
-            sizes="(max-width: 1024px) 90vw, 480px"
-            className="object-cover object-[50%_28%]"
-            priority
+          <video
+            ref={videoRef}
+            src={ORIGINAL_LONG_VIDEO}
+            className="absolute inset-0 h-full w-full object-cover object-[50%_28%]"
+            playsInline
+            preload="auto"
+            loop
+            controls={false}
           />
 
-          <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3">
+          <div className="absolute top-2.5 left-2.5 z-10 sm:top-3 sm:left-3">
             <span
               className={cn(
                 "inline-flex items-center gap-2 rounded-full py-1 pr-3 pl-1",
@@ -201,26 +307,60 @@ function OriginalVideoCard() {
             </span>
           </div>
 
-          <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3">
+          <div className="absolute top-2.5 right-2.5 z-10 sm:top-3 sm:right-3">
             <span className="rounded-md bg-black/70 px-2 py-0.5 text-[0.65rem] font-medium text-white sm:rounded-lg sm:text-[0.7rem]">
-              58:24
+              {durationLabel}
             </span>
           </div>
 
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent px-2.5 pt-10 pb-2.5 sm:px-3 sm:pb-3">
+          <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/85 via-black/50 to-transparent px-2.5 pt-10 pb-2.5 sm:px-3 sm:pb-3">
             <div className="mb-2 flex items-center gap-2">
-              <Play className="h-3.5 w-3.5 shrink-0 fill-white text-white" strokeWidth={0} />
+              <button
+                type="button"
+                onClick={togglePlay}
+                className="shrink-0 text-white"
+                aria-label={isPlaying ? "Pause" : "Play"}
+              >
+                {isPlaying ? (
+                  <Pause className="h-3.5 w-3.5" strokeWidth={2.25} />
+                ) : (
+                  <Play className="h-3.5 w-3.5 fill-white text-white" strokeWidth={0} />
+                )}
+              </button>
               <span className="shrink-0 text-[0.65rem] font-medium tracking-wide text-white sm:text-[0.7rem]">
-                12:36 / 58:24
+                {formatVideoTime(currentTime)} / {durationLabel}
               </span>
-              <div className="relative mx-1 h-[3px] min-w-0 flex-1 rounded-full bg-white/30">
-                <div className="absolute inset-y-0 left-0 w-[22%] rounded-full bg-[#a78bfa]" />
-                <span className="absolute top-1/2 left-[22%] h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_6px_rgba(255,255,255,0.9)]" />
+              <div
+                role="slider"
+                aria-label="Seek"
+                aria-valuemin={0}
+                aria-valuemax={Math.floor(duration)}
+                aria-valuenow={Math.floor(currentTime)}
+                tabIndex={0}
+                onClick={seek}
+                className="relative mx-1 h-[3px] min-w-0 flex-1 cursor-pointer rounded-full bg-white/30"
+              >
+                <div
+                  className="absolute inset-y-0 left-0 rounded-full bg-[#a78bfa]"
+                  style={{ width: `${progress}%` }}
+                />
+                <span
+                  className="absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_6px_rgba(255,255,255,0.9)]"
+                  style={{ left: `${progress}%` }}
+                />
               </div>
               <div className="flex shrink-0 items-center gap-2.5 text-white/90">
-                <Volume2 className="h-3.5 w-3.5" strokeWidth={2} />
-                <Settings className="h-3.5 w-3.5" strokeWidth={2} />
-                <Maximize2 className="h-3.5 w-3.5" strokeWidth={2} />
+                <button type="button" onClick={toggleMute} aria-label={isMuted ? "Unmute" : "Mute"}>
+                  {isMuted ? (
+                    <VolumeX className="h-3.5 w-3.5" strokeWidth={2} />
+                  ) : (
+                    <Volume2 className="h-3.5 w-3.5" strokeWidth={2} />
+                  )}
+                </button>
+                <Settings className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+                <button type="button" onClick={toggleFullscreen} aria-label="Fullscreen">
+                  <Maximize2 className="h-3.5 w-3.5" strokeWidth={2} />
+                </button>
               </div>
             </div>
           </div>
@@ -234,7 +374,7 @@ function OriginalVideoCard() {
         Podcast Episode: Building a Creator Business in 2024
       </h3>
       <p className="mt-1 text-sm" style={{ color: "#6b7280" }}>
-        58 minutes 24 seconds • 4.2 GB
+        {duration > 0 ? `${durationLabel.replace(":", " min ")} sec` : "Loading…"} • High quality
       </p>
     </div>
   );
@@ -248,16 +388,16 @@ function TransformHub() {
     >
       <svg
         viewBox="0 0 160 220"
-        className="h-full w-full -translate-x-2 overflow-visible sm:-translate-x-2.5 lg:-translate-x-3"
+        className="h-full w-full overflow-visible"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
           <linearGradient
             id="baTopArrow"
-            x1="16"
+            x1="8"
             y1="86"
-            x2="146"
+            x2="152"
             y2="44"
             gradientUnits="userSpaceOnUse"
           >
@@ -267,9 +407,9 @@ function TransformHub() {
           </linearGradient>
           <linearGradient
             id="baBotArrow"
-            x1="16"
+            x1="8"
             y1="134"
-            x2="146"
+            x2="152"
             y2="176"
             gradientUnits="userSpaceOnUse"
           >
@@ -303,7 +443,6 @@ function TransformHub() {
               floodOpacity="0.32"
             />
           </filter>
-          {/* Open-V caps locked to path tangent / tip */}
           <marker
             id="baCapTop"
             viewBox="0 0 10 10"
@@ -344,18 +483,15 @@ function TransformHub() {
           </marker>
         </defs>
 
-        {/* Top solid — cap auto-orients on the line end */}
         <path
-          d="M10 88C40 42 104 28 146 58"
+          d="M8 88C38 42 110 28 152 58"
           stroke="url(#baTopArrow)"
           strokeWidth="2.4"
           strokeLinecap="round"
           markerEnd="url(#baCapTop)"
         />
-
-        {/* Bottom dashed — cap auto-orients on the line end */}
         <path
-          d="M10 132C40 178 104 192 146 162"
+          d="M8 132C38 178 110 192 152 162"
           stroke="url(#baBotArrow)"
           strokeWidth="2.4"
           strokeLinecap="round"
@@ -363,9 +499,8 @@ function TransformHub() {
           markerEnd="url(#baCapBot)"
         />
 
-        {/* White card — pulled left to touch video edge */}
         <rect
-          x="28"
+          x="50"
           y="82"
           width="60"
           height="60"
@@ -376,19 +511,15 @@ function TransformHub() {
           filter="url(#baCardShadow)"
         />
 
-        {/* Sparkle cluster — left-aligned in the card */}
-        <g transform="translate(34 90)">
-          {/* Large sparkle — left */}
+        <g transform="translate(56 90)">
           <path
             fill="url(#baSparkFill)"
             d="M18 2C18.7 10.2 22.2 16.2 30.5 19.2 22.2 22.2 18.7 28.2 18 36.4 17.3 28.2 13.8 22.2 5.5 19.2 13.8 16.2 17.3 10.2 18 2Z"
           />
-          {/* Small sparkle — upper right */}
           <path
             fill="#7c3aed"
             d="M38 4C38.35 8.2 40.1 11.2 44.4 12.7 40.1 14.2 38.35 17.2 38 21.4 37.65 17.2 35.9 14.2 31.6 12.7 35.9 11.2 37.65 8.2 38 4Z"
           />
-          {/* Small sparkle — lower right */}
           <path
             fill="#8b5cf6"
             d="M36 22C36.28 25.4 37.7 27.85 41.15 29.05 37.7 30.25 36.28 32.7 36 36.1 35.72 32.7 34.3 30.25 30.85 29.05 34.3 27.85 35.72 25.4 36 22Z"
@@ -428,15 +559,13 @@ function ViralClipsColumn() {
 
 function ViralClipCard({
   platform,
-  imageSrc,
-  caption,
+  videoSrc,
   viewsOverlay,
   duration,
   title,
   clipLabel,
   stats,
   icon,
-  objectPosition,
 }: (typeof clips)[number]) {
   return (
     <article className="flex min-w-0 flex-col">
@@ -448,29 +577,10 @@ function ViralClipCard({
         )}
       >
         <div className="relative aspect-[9/14] overflow-hidden bg-[#1a1c24]">
-          <AppImage
-            src={imageSrc}
-            alt=""
-            fill
-            quality={100}
-            sizes="(max-width: 1024px) 30vw, 160px"
-            className={cn("object-cover", objectPosition)}
-          />
+          <InViewAutoPlayVideo videoSrc={videoSrc} />
 
           <div className="absolute top-1.5 right-1.5 h-5 w-5 overflow-hidden rounded-[0.35rem] shadow-sm ring-1 ring-black/10 sm:h-6 sm:w-6 sm:rounded-[0.4rem]">
             <PlatformMark platform={platform} />
-          </div>
-
-          <div className="absolute inset-x-1 bottom-[1.85rem] flex justify-center sm:inset-x-1.5 sm:bottom-8">
-            <p
-              className={cn(
-                "max-w-[96%] text-center font-bold text-white",
-                "text-[0.52rem] leading-[1.2] sm:text-[0.6rem]",
-                "[text-shadow:0_1px_3px_rgba(0,0,0,0.85)]",
-              )}
-            >
-              {caption}
-            </p>
           </div>
 
           <div className="absolute inset-x-1.5 bottom-1.5 flex items-center justify-between gap-1 sm:inset-x-2 sm:bottom-2">
@@ -487,7 +597,7 @@ function ViralClipCard({
 
       <div
         className={cn(
-          "mt-2 rounded-[0.75rem] border border-[#e9e4f5] bg-white px-2 py-2.5 sm:mt-2.5 sm:rounded-[0.85rem] sm:px-2.5 sm:py-3",
+          "mt-1 rounded-[0.75rem] border border-[#e9e4f5] bg-white px-2 py-2.5 sm:mt-1 sm:rounded-[0.85rem] sm:px-2.5 sm:py-3",
           "shadow-[0_8px_20px_-14px_rgba(124,58,237,0.28)]",
         )}
       >
@@ -513,6 +623,74 @@ function ViralClipCard({
         </div>
       </div>
     </article>
+  );
+}
+
+function forceMute(video: HTMLVideoElement) {
+  video.muted = true;
+  video.defaultMuted = true;
+  video.volume = 0;
+}
+
+function InViewAutoPlayVideo({ videoSrc }: { videoSrc: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    forceMute(video);
+
+    let inView = false;
+
+    const tryPlay = () => {
+      if (!inView) return;
+      forceMute(video);
+      void video.play().catch(() => {});
+    };
+
+    const keepMuted = () => forceMute(video);
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        inView = Boolean(entry?.isIntersecting);
+        if (inView) {
+          tryPlay();
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.35 },
+    );
+
+    observer.observe(video);
+    video.addEventListener("loadeddata", tryPlay);
+    video.addEventListener("canplay", tryPlay);
+    video.addEventListener("volumechange", keepMuted);
+    video.addEventListener("play", keepMuted);
+
+    return () => {
+      observer.disconnect();
+      video.removeEventListener("loadeddata", tryPlay);
+      video.removeEventListener("canplay", tryPlay);
+      video.removeEventListener("volumechange", keepMuted);
+      video.removeEventListener("play", keepMuted);
+    };
+  }, [videoSrc]);
+
+  return (
+    <video
+      ref={videoRef}
+      src={videoSrc}
+      className="absolute inset-0 h-full w-full object-cover object-[center_22%]"
+      loop
+      muted
+      playsInline
+      preload="auto"
+      disablePictureInPicture
+      controls={false}
+      tabIndex={-1}
+    />
   );
 }
 

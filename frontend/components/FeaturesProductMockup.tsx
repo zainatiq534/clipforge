@@ -1,4 +1,14 @@
-import type { ReactNode } from "react";
+"use client";
+
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type MouseEvent,
+  type ReactNode,
+} from "react";
 import {
   BarChart3,
   ChevronDown,
@@ -12,18 +22,144 @@ import {
 import { AppImage } from "@/components/ui/Image";
 import { cn } from "@/lib/cn";
 
+const FEATURES_DEMO_VIDEO =
+  "https://res.cloudinary.com/vbwjkfmd/video/upload/v1792503825/Woman_pointing_finger_upward_spe__20261020184321.mp4";
+
 type FeaturesProductMockupProps = {
   className?: string;
 };
 
+function formatClock(seconds: number) {
+  if (!Number.isFinite(seconds) || seconds < 0) return "00:00";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+}
+
 export function FeaturesProductMockup({ className }: FeaturesProductMockupProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  const progress = duration > 0 ? Math.min(1, Math.max(0, currentTime / duration)) : 0;
+  // Selection window tracks the playhead (~34% wide, clamped to edges)
+  const windowWidth = 0.34;
+  const windowLeft = Math.min(
+    1 - windowWidth,
+    Math.max(0, progress - windowWidth / 2),
+  );
+  const windowRight = 1 - (windowLeft + windowWidth);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = true;
+    video.defaultMuted = true;
+    video.volume = 0;
+
+    let inView = false;
+    let frameId = 0;
+
+    const tryPlay = () => {
+      if (!inView) return;
+      video.muted = true;
+      video.volume = 0;
+      void video.play().catch(() => {});
+    };
+
+    // Smooth playhead: sample every frame instead of sparse timeupdate events
+    const tick = () => {
+      setCurrentTime(video.currentTime);
+      frameId = requestAnimationFrame(tick);
+    };
+
+    const startTick = () => {
+      cancelAnimationFrame(frameId);
+      frameId = requestAnimationFrame(tick);
+    };
+
+    const stopTick = () => {
+      cancelAnimationFrame(frameId);
+    };
+
+    const onMeta = () => setDuration(video.duration || 0);
+    const onPlay = () => startTick();
+    const onPause = () => {
+      stopTick();
+      setCurrentTime(video.currentTime);
+    };
+
+    video.addEventListener("loadedmetadata", onMeta);
+    video.addEventListener("durationchange", onMeta);
+    video.addEventListener("canplay", tryPlay);
+    video.addEventListener("play", onPlay);
+    video.addEventListener("pause", onPause);
+    video.addEventListener("seeking", () => setCurrentTime(video.currentTime));
+    video.addEventListener("seeked", () => setCurrentTime(video.currentTime));
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        inView = Boolean(entry?.isIntersecting);
+        if (inView) {
+          tryPlay();
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.35 },
+    );
+
+    observer.observe(video);
+    if (!video.paused) startTick();
+
+    return () => {
+      stopTick();
+      observer.disconnect();
+      video.removeEventListener("loadedmetadata", onMeta);
+      video.removeEventListener("durationchange", onMeta);
+      video.removeEventListener("canplay", tryPlay);
+      video.removeEventListener("play", onPlay);
+      video.removeEventListener("pause", onPause);
+    };
+  }, []);
+
+  const seekFromClientX = useCallback(
+    (clientX: number) => {
+      const video = videoRef.current;
+      const bar = timelineRef.current;
+      if (!video || !bar || !duration) return;
+      const rect = bar.getBoundingClientRect();
+      const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+      video.currentTime = ratio * duration;
+      setCurrentTime(video.currentTime);
+    },
+    [duration],
+  );
+
+  const onTimelineClick = (event: MouseEvent<HTMLDivElement>) => {
+    seekFromClientX(event.clientX);
+  };
+
+  const onTimelineKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const video = videoRef.current;
+    if (!video || !duration) return;
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      video.currentTime = Math.min(duration, video.currentTime + 1);
+    } else if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      video.currentTime = Math.max(0, video.currentTime - 1);
+    }
+  };
+
   return (
     <div
       className={cn(
         "relative mx-auto w-full max-w-[38rem] select-none lg:max-w-none",
         className,
       )}
-      aria-hidden
     >
       <div
         className="pointer-events-none absolute -inset-6 -z-10 rounded-[2.5rem] opacity-90 blur-3xl sm:-inset-8"
@@ -33,9 +169,7 @@ export function FeaturesProductMockup({ className }: FeaturesProductMockupProps)
         }}
       />
 
-      {/* Outer py = how far Insights sticks out above/below the editor */}
       <div className="relative py-10 pl-9 sm:py-12 sm:pl-11 lg:py-14 lg:pl-12">
-        {/* Editor — sits inside; Insights panel is taller on the outside */}
         <div
           className={cn(
             "relative z-0 mr-[32%] flex flex-col sm:mr-[33%]",
@@ -45,21 +179,25 @@ export function FeaturesProductMockup({ className }: FeaturesProductMockupProps)
           )}
         >
           <div className="relative aspect-[16/10.5] overflow-hidden rounded-t-[1.35rem] bg-[#10121c] sm:rounded-t-[1.5rem]">
-            <AppImage
-              src="/features-mockup-face.jpg"
-              alt=""
-              fill
-              quality={100}
-              sizes="(max-width: 1024px) 70vw, 440px"
-              className="object-cover object-[50%_22%]"
+            <video
+              ref={videoRef}
+              src={FEATURES_DEMO_VIDEO}
+              className="absolute inset-0 h-full w-full object-cover object-[50%_22%]"
+              muted
+              loop
+              playsInline
+              preload="auto"
+              controls={false}
             />
 
             <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 rounded-full bg-black/75 px-2 py-[0.28rem] text-[0.6rem] font-medium tracking-wide text-white sm:top-3 sm:left-3 sm:px-2.5 sm:text-[0.66rem]">
               <Play className="h-2.5 w-2.5 fill-white" strokeWidth={0} />
-              <span>00:28 / 01:12</span>
+              <span>
+                {formatClock(currentTime)} / {formatClock(duration)}
+              </span>
             </div>
 
-            <div className="absolute inset-x-0 bottom-3 flex justify-center px-3 sm:bottom-3.5 sm:px-4">
+            <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center px-3 sm:bottom-3.5 sm:px-4">
               <div
                 className={cn(
                   "rounded-2xl bg-[#0a0c14]/88 px-3.5 py-2 backdrop-blur-md sm:px-4 sm:py-2.5",
@@ -77,18 +215,34 @@ export function FeaturesProductMockup({ className }: FeaturesProductMockupProps)
             </div>
           </div>
 
-          <div className="relative mt-auto rounded-b-[1.35rem] px-2.5 pt-2.5 pb-3 sm:rounded-b-[1.5rem] sm:px-3 sm:pt-3 sm:pb-3.5">
-            <NeonWaveform />
+          {/* Interactive timeline — animates with playback, click to seek */}
+          <div
+            ref={timelineRef}
+            role="slider"
+            aria-label="Video timeline"
+            aria-valuemin={0}
+            aria-valuemax={Math.floor(duration)}
+            aria-valuenow={Math.floor(currentTime)}
+            tabIndex={0}
+            onClick={onTimelineClick}
+            onKeyDown={onTimelineKeyDown}
+            className="relative mt-auto cursor-pointer rounded-b-[1.35rem] px-2.5 pt-2.5 pb-3 sm:rounded-b-[1.5rem] sm:px-3 sm:pt-3 sm:pb-3.5"
+          >
+            <NeonWaveform progress={progress} />
 
             <div className="relative mt-2">
               <div className="flex gap-[2px] overflow-hidden rounded-lg">
                 {[0, 1, 2, 3, 4, 5].map((i) => {
-                  const inSelection = i >= 2 && i <= 3;
+                  const segmentStart = i / 6;
+                  const segmentEnd = (i + 1) / 6;
+                  const inSelection =
+                    segmentEnd > windowLeft && segmentStart < windowLeft + windowWidth;
                   return (
                     <div
                       key={i}
                       className={cn(
                         "relative h-9 flex-1 overflow-hidden rounded-[0.35rem] sm:h-11",
+                        "transition-[opacity,filter] duration-150",
                         !inSelection && "opacity-[0.72] brightness-[0.82]",
                       )}
                     >
@@ -107,11 +261,16 @@ export function FeaturesProductMockup({ className }: FeaturesProductMockupProps)
 
               <div
                 className={cn(
-                  "pointer-events-none absolute inset-y-[-4px] left-[33%] right-[33%]",
+                  "pointer-events-none absolute inset-y-[-4px]",
                   "rounded-[0.65rem]",
                   "border-[2.5px] border-[#c4b5fd]",
                   "shadow-[0_0_0_1px_rgba(196,181,253,0.35),0_0_14px_rgba(168,85,247,0.95),0_0_28px_rgba(139,92,246,0.65)]",
+                  "will-change-[left,right]",
                 )}
+                style={{
+                  left: `${windowLeft * 100}%`,
+                  right: `${windowRight * 100}%`,
+                }}
               >
                 <span className="absolute top-1/2 left-0 h-3.5 w-[5px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_6px_rgba(255,255,255,0.8)]" />
                 <span className="absolute top-1/2 right-0 h-3.5 w-[5px] translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_6px_rgba(255,255,255,0.8)]" />
@@ -119,13 +278,13 @@ export function FeaturesProductMockup({ className }: FeaturesProductMockupProps)
             </div>
 
             <span
-              className="pointer-events-none absolute top-1 bottom-2 left-1/2 z-10 w-px -translate-x-1/2 bg-white shadow-[0_0_6px_rgba(255,255,255,0.9)]"
+              className="pointer-events-none absolute top-1 bottom-2 z-10 w-px -translate-x-1/2 bg-white shadow-[0_0_6px_rgba(255,255,255,0.9)] will-change-[left]"
+              style={{ left: `${progress * 100}%` }}
               aria-hidden
             />
           </div>
         </div>
 
-        {/* Clip Score — outside overflow, fully visible */}
         <div
           className={cn(
             "absolute top-1/2 left-0 z-30 -translate-y-1/2",
@@ -152,7 +311,6 @@ export function FeaturesProductMockup({ className }: FeaturesProductMockupProps)
           </div>
         </div>
 
-        {/* AI Insights — boxy outer frame; taller outside (top + bottom) */}
         <div
           className={cn(
             "absolute inset-y-0 right-0 z-20 flex w-[33%] max-w-[11.25rem] flex-col sm:w-[34%] sm:max-w-[12rem]",
@@ -272,7 +430,7 @@ function InsightRow({
   );
 }
 
-function NeonWaveform() {
+function NeonWaveform({ progress }: { progress: number }) {
   const bars = [
     34, 48, 40, 62, 52, 70, 44, 78, 64, 50, 74, 58, 42, 72, 56, 80, 48, 68, 38,
     74, 54, 62, 46, 66, 36, 58, 52, 70, 44, 60, 34, 56, 64, 48, 68, 42, 58, 52,
@@ -292,13 +450,16 @@ function NeonWaveform() {
         const top = lerpColor("#38bdf8", "#818cf8", t);
         const mid = lerpColor("#60a5fa", "#a78bfa", t);
         const bot = lerpColor("#7c3aed", "#c026d3", t);
+        const nearPlayhead = Math.abs(t - progress) < 0.06;
+        const pulse = nearPlayhead ? 1.12 : 1;
 
         return (
           <span
             key={i}
             className="min-w-0 flex-1 rounded-[1.5px]"
             style={{
-              height: `${h}%`,
+              height: `${Math.min(100, h * pulse)}%`,
+              opacity: t <= progress ? 1 : 0.45,
               background: `linear-gradient(180deg, ${top} 0%, ${mid} 48%, ${bot} 100%)`,
               boxShadow: `0 0 4px ${mid}88`,
             }}

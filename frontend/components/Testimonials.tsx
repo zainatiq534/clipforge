@@ -1,4 +1,4 @@
-import { Check, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import { AppImage } from "@/components/ui/Image";
 import { Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
 import { SectionLabel } from "@/components/ui/SectionLabel";
@@ -170,9 +170,9 @@ function TestimonialCard({
         &ldquo;{quote}&rdquo;
       </p>
 
-      {/* Decorative closing quote */}
+      {/* Decorative closing quote — pinned to card bottom-right */}
       <span
-        className="pointer-events-none absolute right-4 bottom-2 select-none font-serif text-[5.5rem] leading-none text-[#c4b5fd]/35 sm:right-5 sm:text-[6.5rem]"
+        className="pointer-events-none absolute right-3 -bottom-2 z-0 block select-none font-serif text-[5.5rem] leading-[0.45] text-[#c4b5fd]/35 sm:right-4 sm:-bottom-3 sm:text-[6.5rem]"
         aria-hidden
       >
         &rdquo;
@@ -183,12 +183,14 @@ function TestimonialCard({
 
 function VerifiedBadge() {
   return (
-    <span
-      className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#7c3aed] sm:h-[1.1rem] sm:w-[1.1rem]"
-      aria-label="Verified"
-    >
-      <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />
-    </span>
+    <img
+      src="/verified-badge.png"
+      alt="Verified"
+      width={18}
+      height={18}
+      draggable={false}
+      className="h-4 w-4 shrink-0 object-contain sm:h-[1.15rem] sm:w-[1.15rem]"
+    />
   );
 }
 
