@@ -1,7 +1,6 @@
 import {
   ArrowRight,
   AudioLines,
-  Bolt,
   Pencil,
   Sparkles,
   TrendingUp,
@@ -57,14 +56,7 @@ export function CaptionsFeature({ className }: CaptionsFeatureProps) {
         <CaptionsShowcase />
 
         <div className="max-w-xl lg:max-w-none">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#c4b5fd]/70 bg-[#f3e8ff] px-3.5 py-1.5 shadow-sm">
-            <Icon icon={Bolt} size="sm" className="text-[#7c3aed]" />
-            <span className="font-sans text-[0.7rem] font-bold tracking-[0.14em] text-[#5b21b6] uppercase">
-              Powerful Feature
-            </span>
-          </div>
-
-          <h2 className="font-display mt-5 text-[2.1rem] leading-[1.12] font-bold tracking-tight text-[#1e1b4b] sm:text-4xl lg:text-[2.75rem]">
+          <h2 className="font-display text-[2.1rem] leading-[1.12] font-bold tracking-tight text-[#1e1b4b] sm:text-4xl lg:text-[2.75rem]">
             Automatic{" "}
             <span className="text-[#7c3aed]">Captions & Subtitles</span>
           </h2>

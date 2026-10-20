@@ -1,4 +1,4 @@
-import { ArrowRight, Bolt, Crop, Layers, Palette, Star } from "lucide-react";
+import { ArrowRight, Crop, Layers, Palette, Star } from "lucide-react";
 import { PlatformShowcase } from "@/components/PlatformShowcase";
 import { AppImage } from "@/components/ui/Image";
 import { GradientButton } from "@/components/ui/Button";
@@ -47,16 +47,8 @@ export function PlatformFeature({ className }: PlatformFeatureProps) {
     >
       <div className="relative z-10 mx-auto grid w-full max-w-7xl items-start gap-10 px-5 py-14 sm:px-8 sm:py-16 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.15fr)] lg:gap-10 lg:py-20 xl:gap-12">
         <div className="relative z-10 max-w-[34rem] lg:max-w-[36rem]">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-[#d8b4fe] bg-[#f5f3ff] px-3 py-[6px]">
-            <Icon icon={Bolt} size="sm" className="text-[#8b5cf6]" />
-            <span className="font-sans text-[11px] font-bold tracking-[0.12em] text-[#7c3aed] uppercase">
-              Powerful Feature
-            </span>
-          </div>
-
           {/* Headline */}
-          <h2 className="font-sans mt-5 text-[2.35rem] leading-[1.08] font-extrabold tracking-[-0.03em] text-[#0a0a1a] sm:text-[2.65rem] lg:text-[3rem]">
+          <h2 className="font-sans text-[2.35rem] leading-[1.08] font-extrabold tracking-[-0.03em] text-[#0a0a1a] sm:text-[2.65rem] lg:text-[3rem]">
             Multi-Platform
             <br />
             <span className="bg-gradient-to-r from-[#a855f7] via-[#8b5cf6] to-[#6366f1] bg-clip-text text-transparent">

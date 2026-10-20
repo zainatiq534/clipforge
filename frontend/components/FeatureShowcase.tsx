@@ -1,5 +1,6 @@
-import { MoreHorizontal, Play } from "lucide-react";
+﻿import { MoreHorizontal } from "lucide-react";
 import { FloatingClipCards } from "@/components/FloatingClipCards";
+import { ShowcaseVideoPlayer } from "@/components/ShowcaseVideoPlayer";
 import { AppImage } from "@/components/ui/Image";
 import { Icon } from "@/components/ui/Icon";
 import { Typography } from "@/components/ui/Typography";
@@ -66,30 +67,7 @@ export function FeatureShowcase({ className }: FeatureShowcaseProps) {
 
         <div className="grid gap-3 p-3 sm:grid-cols-[1.35fr_1fr] sm:p-4">
           <div className="min-w-0">
-            <div className="relative aspect-[16/10] overflow-hidden rounded-2xl border-2 border-[#c4b5fd]/70 bg-[#050814] shadow-[0_0_28px_rgba(139,92,246,0.35)]">
-              <AppImage
-                src="/features/speaker.jpg"
-                alt=""
-                fill
-                className="object-cover object-[50%_20%]"
-                sizes="(max-width: 768px) 90vw, 360px"
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/25">
-                <span className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white shadow-[0_0_28px_rgba(139,92,246,0.35)] backdrop-blur-sm">
-                  <Icon icon={Play} size="lg" className="ml-0.5" fill="currentColor" />
-                </span>
-              </div>
-              <div className="absolute inset-x-3 bottom-3">
-                <div className="h-1 overflow-hidden rounded-full bg-white/25">
-                  <div className="h-full w-[42%] rounded-full bg-gradient-to-r from-[#a78bfa] to-[#3b82f6]" />
-                </div>
-                <div className="mt-1.5 flex items-center justify-between text-[10px] font-medium text-white/85">
-                  <span>02:14</span>
-                  <span>1x</span>
-                  <span>12:48</span>
-                </div>
-              </div>
-            </div>
+            <ShowcaseVideoPlayer />
 
             <div className="mt-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-3 backdrop-blur-sm">
               <div className="flex h-10 items-end gap-[2px]">

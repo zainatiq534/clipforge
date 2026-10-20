@@ -1,5 +1,8 @@
+"use client";
+
 import { ArrowRight, BarChart3, Bolt, Scissors, Star } from "lucide-react";
 import { FeatureShowcase } from "@/components/FeatureShowcase";
+import { FeaturesMotionItem } from "@/components/FeaturesMotion";
 import { AppImage } from "@/components/ui/Image";
 import { GradientButton } from "@/components/ui/Button";
 import { Icon, PlayCircleIcon } from "@/components/ui/Icon";
@@ -44,15 +47,8 @@ export function Features({ className }: FeaturesProps) {
       )}
     >
       <div className="grid w-full items-center gap-12 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-10 xl:gap-14">
-        <div className="max-w-xl text-left lg:max-w-none">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#c4b5fd]/70 bg-[#ede9fe]/90 px-3.5 py-1.5 shadow-sm backdrop-blur-sm">
-            <Icon icon={Bolt} size="sm" className="text-[#7c3aed]" />
-            <span className="font-sans text-[0.7rem] font-bold tracking-[0.14em] text-slate-600 uppercase">
-              Powerful Feature
-            </span>
-          </div>
-
-          <h1 className="font-display mt-5 max-w-xl text-balance text-[2.15rem] leading-[1.12] font-bold tracking-tight text-[#0f172a] sm:text-5xl lg:text-[3.15rem]">
+        <FeaturesMotionItem className="max-w-xl text-left lg:max-w-none">
+          <h1 className="font-display max-w-xl text-balance text-[2.15rem] leading-[1.12] font-bold tracking-tight text-[#0f172a] sm:text-5xl lg:text-[3.15rem]">
             AI-Powered{" "}
             <span className="bg-gradient-to-r from-[#8b5cf6] via-[#7c3aed] to-[#3b82f6] bg-clip-text text-transparent">
               Smart Clipping
@@ -71,19 +67,21 @@ export function Features({ className }: FeaturesProps) {
 
           <ul className="mt-8 space-y-4">
             {featureItems.map((item) => (
-              <li key={item.title} className="flex items-start gap-3.5">
-                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#ede9fe] text-[#7c3aed] shadow-sm">
-                  <Icon icon={item.icon} size="md" />
-                </span>
-                <div>
-                  <p className="font-sans text-base font-bold text-slate-900 sm:text-lg">
-                    {item.title}
-                  </p>
-                  <p className="mt-0.5 font-sans text-sm leading-relaxed text-slate-500 sm:text-[0.95rem]">
-                    {item.description}
-                  </p>
-                </div>
-              </li>
+              <FeaturesMotionItem key={item.title}>
+                <li className="flex items-start gap-3.5">
+                  <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#ede9fe] text-[#7c3aed] shadow-sm">
+                    <Icon icon={item.icon} size="md" />
+                  </span>
+                  <div>
+                    <p className="font-sans text-base font-bold text-slate-900 sm:text-lg">
+                      {item.title}
+                    </p>
+                    <p className="mt-0.5 font-sans text-sm leading-relaxed text-slate-500 sm:text-[0.95rem]">
+                      {item.description}
+                    </p>
+                  </div>
+                </li>
+              </FeaturesMotionItem>
             ))}
           </ul>
 
@@ -140,9 +138,11 @@ export function Features({ className }: FeaturesProps) {
               </div>
             </div>
           </div>
-        </div>
+        </FeaturesMotionItem>
 
-        <FeatureShowcase />
+        <FeaturesMotionItem>
+          <FeatureShowcase />
+        </FeaturesMotionItem>
       </div>
     </section>
   );

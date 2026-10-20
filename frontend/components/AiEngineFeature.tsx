@@ -92,14 +92,7 @@ export function AiEngineFeature({ className }: AiEngineFeatureProps) {
       <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col px-5 py-14 sm:px-8 sm:py-16 lg:py-20">
         {/* Header — centered */}
         <div className="mx-auto max-w-3xl text-center">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-[#d8b4fe] bg-[#f5f3ff] px-3 py-[6px]">
-            <Icon icon={Bolt} size="sm" className="text-[#8b5cf6]" />
-            <span className="font-sans text-[11px] font-bold tracking-[0.12em] text-[#7c3aed] uppercase">
-              Powerful Feature
-            </span>
-          </div>
-
-          <h2 className="font-sans mt-5 text-[2.35rem] leading-[1.1] font-extrabold tracking-[-0.03em] text-[#0a0a1a] sm:text-[2.75rem] lg:text-[3.25rem]">
+          <h2 className="font-sans text-[2.35rem] leading-[1.1] font-extrabold tracking-[-0.03em] text-[#0a0a1a] sm:text-[2.75rem] lg:text-[3.25rem]">
             One Video,{" "}
             <span className="bg-gradient-to-r from-[#a855f7] via-[#8b5cf6] to-[#6366f1] bg-clip-text text-transparent">
               Multiple Clips

@@ -2,41 +2,56 @@
 
 import {
   ArrowRight,
-  Bolt,
   MoreHorizontal,
-  Play,
-  Scissors,
-  Type,
   Upload,
 } from "lucide-react";
 import { useState } from "react";
-import { InstagramIcon, TikTokIcon, YouTubeIcon } from "@/components/icons";
+import {
+  InstagramIcon,
+  PlayBadgeIcon,
+  ScissorsBadgeIcon,
+  TikTokIcon,
+  TypeBadgeIcon,
+  UploadBadgeIcon,
+  YouTubeIcon,
+} from "@/components/icons";
 import { GradientButton } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { cn } from "@/lib/cn";
 
-const featureItems = [
+const featureItems: {
+  badge: "scissors" | "type" | "play" | "upload";
+  title: string;
+  description: string;
+}[] = [
   {
-    icon: Scissors,
+    badge: "scissors",
     title: "Trim with precision",
     description: "Cut and refine clips down to the exact second.",
   },
   {
-    icon: Type,
+    badge: "type",
     title: "Edit captions",
     description: "Adjust wording, timing, and style in one place.",
   },
   {
-    icon: Play,
+    badge: "play",
     title: "Preview instantly",
     description: "See changes live before you export.",
   },
   {
-    icon: Upload,
+    badge: "upload",
     title: "Export in one click",
     description: "Download platform-ready files without rework.",
   },
-] as const;
+];
+
+const badgeIcons = {
+  scissors: ScissorsBadgeIcon,
+  type: TypeBadgeIcon,
+  play: PlayBadgeIcon,
+  upload: UploadBadgeIcon,
+} as const;
 
 type EditingExportFeatureProps = {
   className?: string;
@@ -56,10 +71,10 @@ function EditorMockup() {
       {/* Exact reference paste */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/features/editor-mockup.png?v=exact1"
+        src="/features/editor-mockup.png?v=sharp3"
         alt="ClipForge editor — edit captions, preview, and timeline"
-        width={2505}
-        height={3329}
+        width={3456}
+        height={4608}
         className="h-auto w-full max-w-full object-contain drop-shadow-[0_16px_40px_rgba(76,29,149,0.14)]"
         decoding="async"
         draggable={false}
@@ -232,42 +247,164 @@ function ExportPanel() {
   );
 }
 
-function PublishStrip() {
+function PublishHandArrow({ className }: { className?: string }) {
   return (
-    <div className="mt-10 rounded-[20px] border border-[#ebe6f8] bg-white px-5 py-5 shadow-[0_10px_32px_rgba(76,29,149,0.08)] sm:mt-12 sm:px-7 sm:py-6">
-      <div className="flex flex-col items-center gap-5 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
-        <div className="max-w-xl text-center lg:text-left">
-          <h3 className="font-sans text-[1.35rem] font-extrabold tracking-[-0.02em] text-[#0a0a1a] sm:text-[1.55rem]">
-            Ready to{" "}
-            <span className="bg-gradient-to-r from-[#a855f7] to-[#7c3aed] bg-clip-text text-transparent">
-              publish in minutes.
-            </span>
-          </h3>
-          <p className="mt-1.5 font-sans text-[0.875rem] leading-relaxed text-[#4b5563] sm:text-[0.9375rem]">
-            Edit, perfect, and export your clips for every platform — all in one place with
-            ClipForge.
-          </p>
+    <svg
+      viewBox="0 0 72 36"
+      className={cn("h-8 w-14 text-[#7c3aed] sm:h-9 sm:w-16", className)}
+      fill="none"
+      aria-hidden
+    >
+      <path
+        d="M4 28c14-2 28-18 48-22"
+        stroke="currentColor"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+      />
+      <path
+        d="M44 4c6 1 10 4 12 8M44 4c2 5 6 8 12 8"
+        stroke="currentColor"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function PublishClipStack() {
+  const cards = [
+    {
+      src: "/features/reframe-speaker-vert.jpg?v=hq1",
+      badge: "youtube" as const,
+      z: "z-30",
+      pos: "left-0 top-0 rotate-[-4deg]",
+      showCaption: true,
+    },
+    {
+      src: "/features/reframe-speaker-vert.jpg?v=hq1",
+      badge: "tiktok" as const,
+      z: "z-20",
+      pos: "left-8 top-1 rotate-[2deg] sm:left-10",
+      showCaption: false,
+    },
+    {
+      src: "/features/reframe-speaker-vert.jpg?v=hq1",
+      badge: "instagram" as const,
+      z: "z-10",
+      pos: "left-16 top-2 rotate-[6deg] sm:left-[4.75rem]",
+      showCaption: false,
+    },
+  ] as const;
+
+  return (
+    <div className="relative h-[7.5rem] w-[9.5rem] shrink-0 sm:h-[8.5rem] sm:w-[11rem]">
+      {cards.map((c) => (
+        <div
+          key={c.badge}
+          className={cn(
+            "absolute h-[7.25rem] w-[4.35rem] overflow-hidden rounded-[12px] bg-slate-900 shadow-[0_10px_28px_rgba(15,23,42,0.22)] ring-1 ring-white/80 sm:h-[8.25rem] sm:w-[5rem]",
+            c.z,
+            c.pos,
+          )}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={c.src}
+            alt=""
+            width={720}
+            height={1280}
+            className="absolute inset-0 h-full w-full object-cover object-[50%_18%]"
+            decoding="async"
+            draggable={false}
+          />
+          <span
+            className={cn(
+              "absolute top-1.5 right-1.5 flex h-5 w-5 items-center justify-center rounded-[5px] shadow-sm",
+              c.badge === "youtube" && "bg-white",
+              c.badge === "tiktok" && "bg-[#111]",
+              c.badge === "instagram" && "bg-white",
+            )}
+          >
+            {c.badge === "youtube" && <YouTubeIcon className="h-3 w-3" />}
+            {c.badge === "tiktok" && <TikTokIcon className="h-2.5 w-2.5" />}
+            {c.badge === "instagram" && <InstagramIcon className="h-3 w-3" />}
+          </span>
+          {c.showCaption && (
+            <div className="absolute inset-x-1.5 bottom-1.5 text-center">
+              <p className="rounded-[4px] bg-white px-1 py-0.5 font-sans text-[7px] font-extrabold leading-tight text-[#0f172a] sm:text-[8px]">
+                Ready to publish
+              </p>
+              <p className="mt-0.5 rounded-[4px] bg-[#7c3aed] px-1 py-0.5 font-sans text-[7px] font-extrabold leading-tight text-white sm:text-[8px]">
+                in minutes.
+              </p>
+            </div>
+          )}
         </div>
-        <div className="flex flex-wrap items-center justify-center gap-3.5 sm:gap-4">
-          {[
-            { label: "YouTube Shorts", icon: YouTubeIcon, wrap: "bg-white" },
-            { label: "TikTok", icon: TikTokIcon, wrap: "bg-[#111]" },
-            { label: "Instagram Reels", icon: InstagramIcon, wrap: "bg-white" },
-            { label: "LinkedIn", icon: null, wrap: "bg-[#0a66c2]" },
-            { label: "More Platforms", icon: null, wrap: "bg-[#f5f3ff]" },
-          ].map((p) => (
-            <div key={p.label} className="flex w-[4.25rem] flex-col items-center gap-1.5">
+      ))}
+    </div>
+  );
+}
+
+function PublishStrip() {
+  const platforms = [
+    {
+      label: "YouTube Shorts",
+      wrap: "bg-white ring-1 ring-slate-200",
+      node: <YouTubeIcon className="h-5 w-5" />,
+    },
+    {
+      label: "TikTok",
+      wrap: "bg-[#111]",
+      node: <TikTokIcon className="h-4 w-4" />,
+    },
+    {
+      label: "Instagram Reels",
+      wrap: "bg-white ring-1 ring-slate-200",
+      node: <InstagramIcon className="h-5 w-5" />,
+    },
+    {
+      label: "LinkedIn",
+      wrap: "bg-[#0a66c2]",
+      node: <LinkedInGlyph className="h-4 w-4 text-white" />,
+    },
+    {
+      label: "More Platforms",
+      wrap: "bg-white ring-1 ring-slate-200",
+      node: <MoreHorizontal className="h-5 w-5 text-slate-400" />,
+    },
+  ] as const;
+
+  return (
+    <div className="mt-10 overflow-hidden rounded-[22px] border border-[#ebe6f8] bg-white px-4 py-5 shadow-[0_12px_36px_rgba(76,29,149,0.08)] sm:mt-12 sm:px-6 sm:py-6 lg:px-7">
+      <div className="flex flex-col items-center gap-6 lg:flex-row lg:items-center lg:justify-between lg:gap-5 xl:gap-7">
+        {/* Left: clip stack + arrow + copy */}
+        <div className="flex w-full min-w-0 flex-col items-center gap-4 sm:flex-row sm:items-center sm:gap-3 lg:flex-1 lg:gap-4">
+          <PublishClipStack />
+          <PublishHandArrow className="hidden shrink-0 sm:block" />
+          <div className="min-w-0 max-w-md text-center sm:text-left">
+            <h3 className="font-sans text-[1.25rem] font-extrabold tracking-[-0.02em] text-[#0a0a1a] sm:text-[1.4rem] lg:text-[1.5rem]">
+              Ready to{" "}
+              <span className="text-[#7c3aed]">publish</span> in minutes.
+            </h3>
+            <p className="mt-1.5 font-sans text-[0.8125rem] leading-relaxed text-[#64748b] sm:text-[0.875rem]">
+              Edit, perfect, and export your clips for every platform — all in one place with
+              ClipForge.
+            </p>
+          </div>
+        </div>
+
+        {/* Right: platform icons */}
+        <div className="flex shrink-0 flex-wrap items-start justify-center gap-3.5 sm:gap-4">
+          {platforms.map((p) => (
+            <div key={p.label} className="flex w-[4.1rem] flex-col items-center gap-1.5 sm:w-[4.35rem]">
               <span
                 className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-full shadow-sm ring-1 ring-slate-200 sm:h-11 sm:w-11",
+                  "flex h-10 w-10 items-center justify-center rounded-[11px] shadow-sm sm:h-11 sm:w-11 sm:rounded-[12px]",
                   p.wrap,
                 )}
               >
-                {p.label === "LinkedIn" && <LinkedInGlyph className="h-4 w-4 text-white" />}
-                {p.label === "More Platforms" && (
-                  <MoreHorizontal className="h-5 w-5 text-[#7c3aed]" />
-                )}
-                {p.icon && <p.icon className="h-4 w-4" />}
+                {p.node}
               </span>
               <span className="text-center font-sans text-[8px] font-semibold leading-tight text-[#475569] sm:text-[9px]">
                 {p.label}
@@ -290,14 +427,7 @@ export function EditingExportFeature({ className }: EditingExportFeatureProps) {
         <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.35fr)] lg:gap-8 xl:gap-10">
           {/* Left copy */}
           <div className="max-w-[28rem]">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-[#d8b4fe] bg-[#f5f3ff] px-3 py-[6px]">
-              <Icon icon={Bolt} size="sm" className="text-[#8b5cf6]" />
-              <span className="font-sans text-[11px] font-bold tracking-[0.12em] text-[#7c3aed] uppercase">
-                Powerful Feature
-              </span>
-            </div>
-
-            <h2 className="font-sans mt-5 text-[2.35rem] leading-[1.08] font-extrabold tracking-[-0.03em] text-[#0a0a1a] sm:text-[2.65rem] lg:text-[3rem]">
+            <h2 className="font-sans text-[2.35rem] leading-[1.08] font-extrabold tracking-[-0.03em] text-[#0a0a1a] sm:text-[2.65rem] lg:text-[3rem]">
               Easy Editing
               <br />
               <span className="bg-gradient-to-r from-[#a855f7] via-[#8b5cf6] to-[#6366f1] bg-clip-text text-transparent">
@@ -316,12 +446,10 @@ export function EditingExportFeature({ className }: EditingExportFeatureProps) {
 
             <ul className="mt-7 space-y-4">
               {featureItems.map((item) => {
-                const ItemIcon = item.icon;
+                const BadgeIcon = badgeIcons[item.badge];
                 return (
                   <li key={item.title} className="flex items-start gap-3.5">
-                    <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-[#f5f3ff] text-[#7c3aed] ring-1 ring-[#e9e0ff]">
-                      <ItemIcon className="h-5 w-5" strokeWidth={2.2} />
-                    </span>
+                    <BadgeIcon className="h-11 w-11" />
                     <div className="pt-0.5">
                       <p className="font-sans text-[0.95rem] font-bold text-[#0a0a1a] sm:text-base">
                         {item.title}

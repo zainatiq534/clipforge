@@ -267,7 +267,7 @@ export function AiEngineShowcase({ className }: AiEngineShowcaseProps) {
       <div className="relative flex min-h-[22rem] min-w-0 items-center justify-center overflow-visible bg-transparent px-1 lg:min-h-[26rem] xl:min-h-[28rem]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/features/clipforge-ai-node.png?v=paste1"
+          src="/features/clipforge-ai-node.png?v=nobg2"
           alt="ClipForge AI — analyzes video and creates viral-ready clips"
           width={950}
           height={966}

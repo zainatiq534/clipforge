@@ -1,4 +1,4 @@
-import { ArrowRight, Bolt } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { CropFrameIcon } from "@/components/icons/CropFrameIcon";
 import { DevicesFrameIcon } from "@/components/icons/DevicesFrameIcon";
 import { FaceTrackIcon } from "@/components/icons/FaceTrackIcon";
@@ -42,16 +42,8 @@ export function ReframeFeature({ className }: ReframeFeatureProps) {
       <div className="relative z-10 mx-auto grid w-full max-w-7xl items-start gap-10 px-5 py-14 sm:px-8 sm:py-16 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-12 lg:py-20 xl:gap-14">
         {/* Left — compact stack matching reference (no stretch gaps) */}
         <div className="max-w-[28rem] lg:max-w-[30rem]">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-[#d8b4fe] bg-[#f5f3ff] px-3 py-[6px]">
-            <Icon icon={Bolt} size="sm" className="text-[#8b5cf6]" />
-            <span className="font-sans text-[11px] font-bold tracking-[0.12em] text-[#7c3aed] uppercase">
-              Powerful Feature
-            </span>
-          </div>
-
           {/* Headline */}
-          <h2 className="font-display mt-4 text-left text-[2.5rem] leading-[1.05] font-extrabold tracking-[-0.03em] sm:text-[2.75rem] lg:text-[3rem]">
+          <h2 className="font-display text-left text-[2.5rem] leading-[1.05] font-extrabold tracking-[-0.03em] sm:text-[2.75rem] lg:text-[3rem]">
             <span className="block w-fit text-[#050714]">Smart Video</span>
             <span
               className="block w-fit"

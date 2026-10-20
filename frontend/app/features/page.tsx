@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 import { CaptionsFeature } from "@/components/CaptionsFeature";
 import { Features } from "@/components/Features";
+import { FeaturesLightCanvas } from "@/components/FeaturesLightCanvas";
+import { FeaturesMotion } from "@/components/FeaturesMotion";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
+import { HeroMotion } from "@/components/HeroMotion";
 import { AiEngineFeature } from "@/components/AiEngineFeature";
 import { EditingExportFeature } from "@/components/EditingExportFeature";
 import { PlatformFeature } from "@/components/PlatformFeature";
 import { ReframeFeature } from "@/components/ReframeFeature";
-import { SoftContinuousBackground } from "@/components/SoftContinuousBackground";
 import { BackgroundImage } from "@/components/ui/Image";
-import { SOFT_PAGE_BASE } from "@/lib/softPageBg";
 
 export const metadata: Metadata = {
   title: "Features — ClipForge",
@@ -26,23 +27,32 @@ export default function FeaturesPage() {
 
         <div className="relative z-10 flex min-h-screen flex-1 flex-col">
           <Header />
-          <Hero />
+          <HeroMotion>
+            <Hero />
+          </HeroMotion>
         </div>
       </div>
 
-      {/* One continuous light canvas — no per-section opaque washes / seams */}
-      <div className="relative" style={{ background: SOFT_PAGE_BASE }}>
-        <SoftContinuousBackground />
-
-        <div className="relative z-10 flex flex-col">
+      <FeaturesLightCanvas>
+        <FeaturesMotion direction="up">
           <Features />
+        </FeaturesMotion>
+        <FeaturesMotion direction="left">
           <CaptionsFeature />
+        </FeaturesMotion>
+        <FeaturesMotion direction="right">
           <ReframeFeature />
+        </FeaturesMotion>
+        <FeaturesMotion direction="scale">
           <PlatformFeature />
+        </FeaturesMotion>
+        <FeaturesMotion direction="left">
           <AiEngineFeature />
+        </FeaturesMotion>
+        <FeaturesMotion direction="up">
           <EditingExportFeature />
-        </div>
-      </div>
+        </FeaturesMotion>
+      </FeaturesLightCanvas>
     </>
   );
 }
