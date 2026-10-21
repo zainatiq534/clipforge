@@ -5,9 +5,11 @@ import { cn } from "@/lib/cn";
 type LogoProps = {
   className?: string;
   href?: string;
+  /** Dark = white wordmark (home hero). Light = ink wordmark (inner pages). */
+  tone?: "dark" | "light";
 };
 
-export function Logo({ className, href = "#" }: LogoProps) {
+export function Logo({ className, href = "/", tone = "dark" }: LogoProps) {
   return (
     <a
       href={href}
@@ -29,7 +31,7 @@ export function Logo({ className, href = "#" }: LogoProps) {
       <Typography
         as="span"
         variant="nav"
-        tone="white"
+        tone={tone === "light" ? "ink" : "white"}
         weight="bold"
         className="text-[1.125rem] leading-none tracking-tight"
       >

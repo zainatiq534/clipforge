@@ -1,22 +1,30 @@
 import { ArrowRight } from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { GhostButton, GradientButton } from "@/components/ui/Button";
+import {
+  GhostButton,
+  GhostInkButton,
+  GradientButton,
+} from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { Typography } from "@/components/ui/Typography";
 import { cn } from "@/lib/cn";
 
 const navLinks = [
-  { label: "Features", href: "#features" },
-  { label: "How It Works", href: "#how-it-works" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Testimonials", href: "#testimonials" },
-];
+  { label: "Features", href: "/#features" },
+  { label: "How It Works", href: "/how-it-works" },
+  { label: "Pricing", href: "/#pricing" },
+  { label: "Testimonials", href: "/#testimonials" },
+] as const;
 
 type HeaderProps = {
   className?: string;
+  /** Dark sits on the navy hero. Light sits on white/lavender pages. */
+  tone?: "dark" | "light";
 };
 
-export function Header({ className }: HeaderProps) {
+export function Header({ className, tone = "dark" }: HeaderProps) {
+  const isLight = tone === "light";
+
   return (
     <header
       className={cn(
@@ -24,7 +32,7 @@ export function Header({ className }: HeaderProps) {
         className,
       )}
     >
-      <Logo />
+      <Logo tone={tone} href="/" />
 
       <nav className="hidden items-center gap-7 md:flex" aria-label="Primary">
         {navLinks.map((link) => (
@@ -32,8 +40,11 @@ export function Header({ className }: HeaderProps) {
             <Typography
               as="span"
               variant="nav"
-              tone="muted"
-              className="transition-colors group-hover:text-white"
+              tone={isLight ? "mutedInk" : "muted"}
+              className={cn(
+                "transition-colors",
+                isLight ? "group-hover:text-[#111827]" : "group-hover:text-white",
+              )}
             >
               {link.label}
             </Typography>
@@ -42,15 +53,21 @@ export function Header({ className }: HeaderProps) {
       </nav>
 
       <div className="flex items-center gap-2 sm:gap-3">
-        <GhostButton size="sm" href="#login" className="hidden sm:inline-flex">
-          Log In
-        </GhostButton>
+        {isLight ? (
+          <GhostInkButton size="sm" href="/#login">
+            Log In
+          </GhostInkButton>
+        ) : (
+          <GhostButton size="sm" href="/#login" className="hidden sm:inline-flex">
+            Log In
+          </GhostButton>
+        )}
         <GradientButton
           size="sm"
-          href="#start"
+          href="/#start"
           rightIcon={<Icon icon={ArrowRight} size="md" />}
         >
-          <span className="hidden sm:inline">Start Creating Clips</span>
+          <span className="hidden sm:inline">Get Started Free</span>
           <span className="sm:hidden">Start</span>
         </GradientButton>
       </div>
