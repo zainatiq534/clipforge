@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "remove-bg": "node scripts/remove-bg.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",
@@ -19,6 +20,7 @@
     "three": "^0.186.1"
   },
   "devDependencies": {
+    "@imgly/background-removal-node": "^1.4.5",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
