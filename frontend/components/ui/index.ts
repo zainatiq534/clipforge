@@ -23,3 +23,5 @@ export { Icon, IconBadge, PlayCircleIcon } from "@/components/ui/Icon";
 export type { IconSize } from "@/components/ui/Icon";
 
 export { Badge } from "@/components/ui/Badge";
+export { SectionLabel } from "@/components/ui/SectionLabel";
+export { Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";

@@ -1,12 +1,11 @@
-import { Zap } from "lucide-react";
 import {
   InstagramIcon,
   TikTokIcon,
   YouTubeIcon,
 } from "@/components/icons";
-import { Badge } from "@/components/ui/Badge";
 import { AppImage } from "@/components/ui/Image";
-import { Icon } from "@/components/ui/Icon";
+import { Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
+import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Typography } from "@/components/ui/Typography";
 import { cn } from "@/lib/cn";
 
@@ -49,67 +48,63 @@ export function HowItWorks({ className }: HowItWorksProps) {
     <section
       id="how-it-works"
       className={cn(
-        "relative px-5 py-16 sm:px-8 sm:py-20 lg:py-24",
+        "relative px-5 py-10 sm:px-8 sm:py-12 lg:py-14",
         className,
       )}
     >
       <div className="relative z-10 mx-auto w-full max-w-6xl">
         <div className="flex flex-col items-center text-center">
-          <div className="relative">
-            <DotGrid className="absolute top-1/2 -left-16 hidden -translate-y-1/2 sm:block lg:-left-24" />
-            <DotGrid className="absolute top-1/2 -right-16 hidden -translate-y-1/2 sm:block lg:-right-24" />
+          <Reveal>
+            <div className="relative">
+              <DotGrid className="absolute top-1/2 -left-16 hidden -translate-y-1/2 sm:block lg:-left-24" />
+              <DotGrid className="absolute top-1/2 -right-16 hidden -translate-y-1/2 sm:block lg:-right-24" />
+              <SectionLabel>How It Works</SectionLabel>
+            </div>
+          </Reveal>
 
-            <Badge
-              icon={<Icon icon={Zap} size="sm" className="text-[#7c3aed]" />}
-              className="border-[#ddd6fe] bg-[#f3e8ff]/90 shadow-none backdrop-blur-sm"
+          <Reveal delay={0.06}>
+            <h2
+              className={cn(
+                "mt-6 max-w-4xl text-center font-display font-bold tracking-[-0.03em]",
+                "text-[2.15rem] leading-[1.15] sm:text-[2.85rem] md:text-[3.35rem] lg:text-[3.75rem]",
+              )}
             >
-              <Typography as="span" variant="label" tone="brand">
-                How It Works
-              </Typography>
-            </Badge>
-          </div>
-
-          <h2
-            className={cn(
-              "mt-6 max-w-4xl text-center font-display font-bold tracking-[-0.03em]",
-              "text-[2.15rem] leading-[1.15] sm:text-[2.85rem] md:text-[3.35rem] lg:text-[3.75rem]",
-            )}
-          >
-            <span className="block" style={{ color: "#111827" }}>
-              From Long Video to
-            </span>
-            <span className="mt-0.5 block sm:mt-1">
-              <span style={{ color: "#111827" }}>Viral Clips in </span>
-              <span
-                className="bg-gradient-to-r from-[#8b5cf6] via-[#a855f7] to-[#6366f1] bg-clip-text text-transparent"
-              >
-                4 Simple Steps
+              <span className="block" style={{ color: "#111827" }}>
+                From Long Video to
               </span>
-            </span>
-          </h2>
+              <span className="mt-0.5 block sm:mt-1">
+                <span style={{ color: "#111827" }}>Viral Clips in </span>
+                <span className="bg-gradient-to-r from-[#8b5cf6] via-[#a855f7] to-[#6366f1] bg-clip-text text-transparent">
+                  4 Simple Steps
+                </span>
+              </span>
+            </h2>
+          </Reveal>
 
-          <p
-            className="mt-5 max-w-2xl text-center font-sans text-base leading-relaxed sm:mt-6 sm:text-lg"
-            style={{ color: "#6b7280" }}
-          >
-            <span className="block">
-              Turn hours of content into scroll-stopping clips in minutes.
-            </span>
-            <span className="block">No editing skills needed.</span>
-          </p>
+          <Reveal delay={0.12}>
+            <p
+              className="mt-5 max-w-2xl text-center font-sans text-base leading-relaxed sm:mt-6 sm:text-lg"
+              style={{ color: "#6b7280" }}
+            >
+              <span className="block">
+                Turn hours of content into scroll-stopping clips in minutes.
+              </span>
+              <span className="block">No editing skills needed.</span>
+            </p>
+          </Reveal>
         </div>
 
         <div className="relative mt-12 lg:mt-16">
-          <div className="grid grid-cols-1 items-stretch gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+          <Stagger className="grid grid-cols-1 items-stretch gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
             {steps.map((step, index) => (
-              <div key={step.number} className="relative min-w-0 w-full">
+              <StaggerItem key={step.number} className="relative min-w-0 w-full">
                 <StepCard {...step} />
                 {index < steps.length - 1 ? (
                   <FlowArrow className="pointer-events-none absolute top-[36%] -right-3 z-20 hidden lg:block xl:-right-3.5" />
                 ) : null}
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </div>
     </section>

@@ -1,5 +1,7 @@
 import { ArrowRight, Check } from "lucide-react";
 import { AppImage } from "@/components/ui/Image";
+import { Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
+import { SectionLabel } from "@/components/ui/SectionLabel";
 import { cn } from "@/lib/cn";
 
 const plans = [
@@ -65,38 +67,38 @@ export function Pricing({ className }: PricingProps) {
     <section
       id="pricing"
       className={cn(
-        "relative px-5 py-16 sm:px-8 sm:py-20 lg:py-24",
+        "relative px-5 py-10 sm:px-8 sm:py-12 lg:py-14",
         className,
       )}
     >
       <div className="relative z-10 mx-auto w-full max-w-6xl">
         <div className="flex flex-col items-center text-center">
-          <div className="flex items-center gap-3">
-            <span className="h-px w-8 bg-[#a78bfa] sm:w-10" aria-hidden />
-            <span className="font-sans text-[0.7rem] font-bold tracking-[0.18em] text-[#7c3aed] uppercase sm:text-[0.75rem]">
-              Pricing
-            </span>
-            <span className="h-px w-8 bg-[#a78bfa] sm:w-10" aria-hidden />
-          </div>
+          <Reveal>
+            <SectionLabel>Pricing</SectionLabel>
+          </Reveal>
 
-          <h2
-            className={cn(
-              "mt-5 max-w-4xl text-center font-display font-bold tracking-[-0.03em]",
-              "text-[2.15rem] leading-[1.15] sm:text-[2.85rem] md:text-[3.35rem] lg:text-[3.75rem]",
-            )}
-            style={{ color: "#111827" }}
-          >
-            Choose the{" "}
-            <span className="text-[#7c3aed]">Perfect Plan</span> for Your Needs
-          </h2>
+          <Reveal delay={0.06}>
+            <h2
+              className={cn(
+                "mt-5 max-w-4xl text-center font-display font-bold tracking-[-0.03em]",
+                "text-[2.15rem] leading-[1.15] sm:text-[2.85rem] md:text-[3.35rem] lg:text-[3.75rem]",
+              )}
+              style={{ color: "#111827" }}
+            >
+              Choose the{" "}
+              <span className="text-[#7c3aed]">Perfect Plan</span> for Your Needs
+            </h2>
+          </Reveal>
 
-          <p
-            className="mt-5 max-w-2xl text-center font-sans text-base leading-relaxed sm:mt-6 sm:text-lg"
-            style={{ color: "#6b7280" }}
-          >
-            Start free and upgrade anytime. All plans include AI-powered editing,
-            viral templates, and exports optimized for every platform.
-          </p>
+          <Reveal delay={0.12}>
+            <p
+              className="mt-5 max-w-2xl text-center font-sans text-base leading-relaxed sm:mt-6 sm:text-lg"
+              style={{ color: "#6b7280" }}
+            >
+              Start free and upgrade anytime. All plans include AI-powered editing,
+              viral templates, and exports optimized for every platform.
+            </p>
+          </Reveal>
         </div>
 
         <div className="relative mt-12 lg:mt-14">
@@ -117,11 +119,13 @@ export function Pricing({ className }: PricingProps) {
             aria-hidden
           />
 
-          <div className="grid grid-cols-1 items-stretch gap-5 md:grid-cols-3 md:gap-5 lg:gap-6">
+          <Stagger className="grid grid-cols-1 items-stretch gap-5 md:grid-cols-3 md:gap-5 lg:gap-6">
             {plans.map((plan) => (
-              <PricingCard key={plan.id} plan={plan} />
+              <StaggerItem key={plan.id} className="h-full">
+                <PricingCard plan={plan} />
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </div>
     </section>
@@ -135,9 +139,11 @@ function PricingCard({ plan }: { plan: Plan }) {
     <article
       className={cn(
         "relative flex h-full flex-col rounded-[1.75rem] p-6 sm:rounded-[2rem] sm:p-7 lg:p-8",
+        "transition-[transform,box-shadow] duration-300 ease-out",
+        "hover:-translate-y-1.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0",
         plan.featured
-          ? "border-2 border-[#7c3aed] bg-[#faf5ff] shadow-[0_12px_40px_rgba(124,58,237,0.12)]"
-          : "border border-[#eceaf3] bg-white shadow-[0_8px_30px_rgba(17,24,39,0.06)]",
+          ? "border-2 border-[#7c3aed] bg-[#faf5ff] shadow-[0_12px_40px_rgba(124,58,237,0.12)] hover:shadow-[0_20px_48px_rgba(124,58,237,0.2)]"
+          : "border border-[#eceaf3] bg-white shadow-[0_8px_30px_rgba(17,24,39,0.06)] hover:shadow-[0_16px_40px_rgba(17,24,39,0.1)]",
       )}
     >
       {plan.featured ? (
