@@ -1,6 +1,71 @@
-import { Expand, Play, ScanFace, Sparkles } from "lucide-react";
+"use client";
+
+import { Play, Sparkles } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { InstagramIcon, TikTokIcon, YouTubeIcon } from "@/components/icons";
 import { cn } from "@/lib/cn";
+
+const REFRAME_VIDEO =
+  "https://res.cloudinary.com/vbwjkfmd/video/upload/v1792582328/Man_speaking_into_microphone_20261021163021.mp4";
+
+const FIRST_CLIP_VIDEO =
+  "https://res.cloudinary.com/vbwjkfmd/video/upload/v1792583481/Man_speaking_into_microphone_20261021164533.mp4";
+
+function useMutedAutoplay() {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.muted = true;
+    el.defaultMuted = true;
+    el.volume = 0;
+    const play = () => void el.play().catch(() => {});
+    play();
+    el.addEventListener("canplay", play);
+    return () => el.removeEventListener("canplay", play);
+  }, []);
+
+  return ref;
+}
+
+function ReframeBeforeVideo() {
+  const ref = useMutedAutoplay();
+
+  return (
+    <video
+      ref={ref}
+      className="absolute inset-0 z-0 h-full w-full object-cover object-center"
+      src={REFRAME_VIDEO}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+      controls={false}
+      aria-label="Smart video reframing preview"
+    />
+  );
+}
+
+function ClipVideo({ label }: { label: string }) {
+  const ref = useMutedAutoplay();
+
+  return (
+    <video
+      ref={ref}
+      className="absolute inset-0 z-0 h-full w-full object-cover object-[50%_16%]"
+      src={FIRST_CLIP_VIDEO}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+      controls={false}
+      aria-label={label}
+    />
+  );
+}
 
 type ReframeShowcaseProps = {
   className?: string;
@@ -58,88 +123,15 @@ export function ReframeShowcase({ className }: ReframeShowcaseProps) {
   return (
     <div
       className={cn(
-        "relative mx-auto w-full max-w-[480px] bg-transparent select-none lg:ml-auto lg:mr-0 lg:max-w-[520px] xl:max-w-[560px]",
+        "relative mx-auto w-full max-w-[400px] bg-transparent select-none lg:ml-auto lg:mr-0 lg:max-w-[440px] xl:max-w-[480px]",
         className,
       )}
-      aria-hidden
     >
-      {/* BEFORE — wide 16:9 */}
+      {/* BEFORE — wide 16:9 muted autoplay video */}
       <div className="relative overflow-hidden rounded-[18px] bg-white p-2 shadow-[0_0_0_1.5px_rgba(167,139,250,0.65),0_0_28px_rgba(139,92,246,0.35),0_12px_32px_rgba(15,23,42,0.08)] sm:rounded-[20px] sm:p-2.5">
         <div className="relative overflow-hidden rounded-[12px] bg-[#1e1b4b]">
-          <div className="relative aspect-video w-full">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/features/reframe-speaker-wide.jpg?v=hq6"
-              alt=""
-              width={3200}
-              height={1800}
-              className="absolute inset-0 h-full w-full object-cover object-[50%_22%]"
-              decoding="async"
-              fetchPriority="high"
-              draggable={false}
-            />
-
-            {/* Crop guides */}
-            <div className="pointer-events-none absolute inset-y-3 left-[28%] w-px border-l border-dashed border-white/80" />
-            <div className="pointer-events-none absolute inset-y-3 right-[28%] w-px border-r border-dashed border-white/80" />
-            <span className="pointer-events-none absolute top-1/2 left-[18%] -translate-y-1/2 text-[#a78bfa]">
-              ▶
-            </span>
-            <span className="pointer-events-none absolute top-1/2 right-[18%] -translate-y-1/2 rotate-180 text-[#a78bfa]">
-              ▶
-            </span>
-
-            {/* Face tracking box */}
-            <div className="pointer-events-none absolute top-[14%] left-1/2 h-[38%] w-[22%] -translate-x-1/2 rounded-md border-2 border-[#a78bfa] shadow-[0_0_16px_rgba(167,139,250,0.55)]">
-              <span className="absolute -top-0.5 -left-0.5 h-2.5 w-2.5 border-t-2 border-l-2 border-[#c4b5fd]" />
-              <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 border-t-2 border-r-2 border-[#c4b5fd]" />
-              <span className="absolute -bottom-0.5 -left-0.5 h-2.5 w-2.5 border-b-2 border-l-2 border-[#c4b5fd]" />
-              <span className="absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 border-r-2 border-b-2 border-[#c4b5fd]" />
-            </div>
-
-            {/* BEFORE badge — matched to reference pill */}
-            <div className="absolute top-2.5 left-2.5 rounded-[12px] border border-[#d8d4f0] bg-white px-3.5 py-2.5 shadow-[0_4px_14px_rgba(76,29,149,0.1)] sm:rounded-[14px] sm:px-4 sm:py-3">
-              <p className="font-sans text-[13px] leading-none font-extrabold tracking-[0.04em] text-[#1a1a30] uppercase sm:text-[14px]">
-                Before
-              </p>
-              <p className="mt-1.5 font-sans text-[11px] leading-none font-medium text-[#404060] sm:text-[12px]">
-                16:9 Wide Video
-              </p>
-            </div>
-
-            {/* AI centered badge — matched to reference pill */}
-            <div className="absolute top-2 right-2 flex items-center gap-2.5 rounded-[14px] border border-[#ddd6fe] bg-white px-3 py-2.5 shadow-[0_0_0_1px_rgba(167,139,250,0.35),0_6px_18px_rgba(124,58,237,0.28)] sm:gap-3 sm:rounded-[16px] sm:px-3.5 sm:py-3">
-              <ScanFace
-                className="h-6 w-6 shrink-0 text-[#1e1b4b] sm:h-7 sm:w-7"
-                strokeWidth={2}
-              />
-              <p className="font-sans text-[12px] leading-[1.15] font-bold text-[#1e1b4b] sm:text-[13px]">
-                AI Keeps the
-                <br />
-                Speaker Centered
-              </p>
-            </div>
-
-            {/* Controls */}
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-2.5 pt-6 pb-2">
-              <div className="mb-1.5 h-1 overflow-hidden rounded-full bg-white/25">
-                <div className="relative h-full w-[18%] rounded-full bg-[#a78bfa]">
-                  <span className="absolute top-1/2 right-0 h-2.5 w-2.5 -translate-y-1/2 translate-x-1/2 rounded-full bg-white" />
-                </div>
-              </div>
-              <div className="flex items-center justify-between text-white">
-                <div className="flex items-center gap-2">
-                  <Play className="h-3 w-3 fill-white" />
-                  <span className="font-sans text-[8px] font-semibold tabular-nums sm:text-[9px]">
-                    00:12:34 / 01:08:20
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-[8px] font-bold sm:text-[9px]">
-                  <span>1x</span>
-                  <Expand className="h-3 w-3" />
-                </div>
-              </div>
-            </div>
+          <div className="relative aspect-video w-full overflow-hidden">
+            <ReframeBeforeVideo />
           </div>
         </div>
       </div>
@@ -211,7 +203,7 @@ export function ReframeShowcase({ className }: ReframeShowcaseProps) {
         </svg>
       </div>
 
-      {/* AFTER — three vertical clips */}
+      {/* AFTER — three vertical clips (1st = muted autoplay video) */}
       <div className="relative z-10 -mt-1 grid grid-cols-3 gap-2 sm:gap-2.5">
         {clips.map((clip) => {
           const Brand = clip.icon;
@@ -224,17 +216,7 @@ export function ReframeShowcase({ className }: ReframeShowcaseProps) {
                 )}
               >
                 <div className="relative aspect-[9/13] overflow-hidden rounded-[10px] bg-[#1e1b4b]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/features/reframe-speaker-vert.jpg?v=hq6"
-                    alt=""
-                    width={1620}
-                    height={2880}
-                    className="absolute inset-0 h-full w-full object-cover object-[50%_16%]"
-                    decoding="async"
-                    draggable={false}
-                  />
-                  <div className="absolute inset-x-0 bottom-0 h-[50%] bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
+                  <ClipVideo label={`${clip.name} vertical clip preview`} />
 
                   {/* Platform badge — sized to match TikTok icon reference */}
                   <span
@@ -245,10 +227,6 @@ export function ReframeShowcase({ className }: ReframeShowcaseProps) {
                   >
                     <Brand className="h-[18px] w-[18px] sm:h-5 sm:w-5" />
                   </span>
-
-                  <div className="absolute inset-x-1 bottom-7 sm:bottom-8">
-                    {clip.caption}
-                  </div>
 
                   <div className="absolute inset-x-1.5 bottom-1.5 flex items-center justify-between text-white">
                     <span className="inline-flex items-center gap-1">

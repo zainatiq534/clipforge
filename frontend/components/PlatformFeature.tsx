@@ -1,6 +1,5 @@
-import { ArrowRight, Crop, Layers, Palette, Star } from "lucide-react";
+import { ArrowRight, Crop, Layers, Palette } from "lucide-react";
 import { PlatformShowcase } from "@/components/PlatformShowcase";
-import { AppImage } from "@/components/ui/Image";
 import { GradientButton } from "@/components/ui/Button";
 import { Icon, PlayCircleIcon } from "@/components/ui/Icon";
 import { cn } from "@/lib/cn";
@@ -28,13 +27,6 @@ const cards = [
   },
 ];
 
-const avatars = [
-  "/features/avatar-1.jpg",
-  "/features/avatar-2.jpg",
-  "/features/avatar-3.jpg",
-  "/features/avatar-4.jpg",
-];
-
 type PlatformFeatureProps = {
   className?: string;
 };
@@ -45,10 +37,10 @@ export function PlatformFeature({ className }: PlatformFeatureProps) {
       id="platform-optimization"
       className={cn("relative isolate w-full overflow-hidden", className)}
     >
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-start gap-10 px-5 py-14 sm:px-8 sm:py-16 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.15fr)] lg:gap-10 lg:py-20 xl:gap-12">
-        <div className="relative z-10 max-w-[34rem] lg:max-w-[36rem]">
+      <div className="relative z-10 mx-auto grid w-full max-w-6xl items-start gap-8 px-5 py-10 sm:px-8 sm:py-12 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.15fr)] lg:gap-8 lg:py-14 xl:gap-10">
+        <div className="relative z-10 max-w-[30rem] lg:max-w-[32rem]">
           {/* Headline */}
-          <h2 className="font-sans text-[2.35rem] leading-[1.08] font-extrabold tracking-[-0.03em] text-[#0a0a1a] sm:text-[2.65rem] lg:text-[3rem]">
+          <h2 className="font-sans text-[1.9rem] leading-[1.08] font-extrabold tracking-[-0.03em] text-[#0a0a1a] sm:text-[2.25rem] lg:text-[2.5rem]">
             Multi-Platform
             <br />
             <span className="bg-gradient-to-r from-[#a855f7] via-[#8b5cf6] to-[#6366f1] bg-clip-text text-transparent">
@@ -116,41 +108,6 @@ export function PlatformFeature({ className }: PlatformFeatureProps) {
               <PlayCircleIcon className="border-slate-300 [&_svg]:fill-[#0f172a]" />
               Watch Demo
             </a>
-          </div>
-
-          {/* Social proof */}
-          <div className="mt-9 flex flex-wrap items-center gap-5 sm:gap-6">
-            <div className="flex items-center">
-              {avatars.map((src, i) => (
-                <span
-                  key={src}
-                  className={cn(
-                    "relative h-10 w-10 overflow-hidden rounded-full border-2 border-white shadow-sm",
-                    i > 0 && "-ml-2.5",
-                  )}
-                >
-                  <AppImage src={src} alt="" fill className="object-cover" sizes="40px" />
-                </span>
-              ))}
-              <span className="-ml-2.5 inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-[#ede9fe] text-[0.65rem] font-bold text-[#7c3aed] shadow-sm">
-                +10K
-              </span>
-            </div>
-
-            <div className="hidden h-10 w-px bg-slate-200 sm:block" aria-hidden />
-
-            <div>
-              <div className="flex items-center gap-0.5 text-[#f59e0b]">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Icon key={i} icon={Star} size="sm" fill="currentColor" strokeWidth={0} />
-                ))}
-              </div>
-              <p className="mt-0.5 font-sans text-sm leading-snug text-[#0f172a]">
-                <span className="font-bold">Publish everywhere</span>
-                <br />
-                <span className="font-medium text-[#4b5563]">from one dashboard.</span>
-              </p>
-            </div>
           </div>
         </div>
 

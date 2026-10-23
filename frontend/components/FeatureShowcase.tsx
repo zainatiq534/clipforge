@@ -39,7 +39,7 @@ type FeatureShowcaseProps = {
 
 export function FeatureShowcase({ className }: FeatureShowcaseProps) {
   return (
-    <div className={cn("relative mx-auto w-full max-w-[560px] lg:max-w-none", className)}>
+    <div className={cn("relative mx-auto w-full max-w-[480px] lg:max-w-none", className)}>
       {/* Dark glass app window — hero theme */}
       <div className="relative z-10 overflow-hidden rounded-[22px] border border-white/15 bg-[#0d1020]/85 shadow-[0_24px_80px_rgba(99,102,241,0.28)] backdrop-blur-md">
         <div className="flex items-center justify-between border-b border-white/10 px-4 py-3 sm:px-5">

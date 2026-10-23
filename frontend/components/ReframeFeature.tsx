@@ -39,11 +39,11 @@ export function ReframeFeature({ className }: ReframeFeatureProps) {
       id="reframing"
       className={cn("relative isolate w-full overflow-hidden", className)}
     >
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-start gap-10 px-5 py-14 sm:px-8 sm:py-16 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-12 lg:py-20 xl:gap-14">
+      <div className="relative z-10 mx-auto grid w-full max-w-6xl items-start gap-8 px-5 py-10 sm:px-8 sm:py-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-10 lg:py-14 xl:gap-12">
         {/* Left — compact stack matching reference (no stretch gaps) */}
-        <div className="max-w-[28rem] lg:max-w-[30rem]">
+        <div className="max-w-[26rem] lg:max-w-[28rem]">
           {/* Headline */}
-          <h2 className="font-display text-left text-[2.5rem] leading-[1.05] font-extrabold tracking-[-0.03em] sm:text-[2.75rem] lg:text-[3rem]">
+          <h2 className="font-display text-left text-[1.9rem] leading-[1.05] font-extrabold tracking-[-0.03em] sm:text-[2.25rem] lg:text-[2.5rem]">
             <span className="block w-fit text-[#050714]">Smart Video</span>
             <span
               className="block w-fit"

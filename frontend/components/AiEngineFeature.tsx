@@ -34,15 +34,12 @@ const featureCards = [
   },
 ];
 
-/** faceY = head position in source (0–1). CSS translate aligns all to CLIP_FACE_TARGET. */
 const clipThumbs = [
-  { src: "/features/clip-thumb-1.jpg?v=css1", faceY: 0.57 },
-  { src: "/features/clip-thumb-2.jpg?v=css1", faceY: 0.55 },
-  { src: "/features/clip-thumb-3.jpg?v=css1", faceY: 0.63 },
-  { src: "/features/clip-thumb-4.jpg?v=css1", faceY: 0.62 },
+  "/features/clip-thumb-1.jpg?v=hq2",
+  "/features/clip-thumb-2.jpg?v=hq2",
+  "/features/clip-thumb-3.jpg?v=hq2",
+  "/features/clip-thumb-4.jpg?v=hq2",
 ] as const;
-
-const CLIP_FACE_TARGET = 0.56;
 
 /** Crisp isometric stacked-layers icon (same as reference). */
 function LayersStackIcon({ className }: { className?: string }) {
@@ -92,10 +89,10 @@ export function AiEngineFeature({ className }: AiEngineFeatureProps) {
       id="ai-engine"
       className={cn("relative w-full", className)}
     >
-      <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col px-5 py-14 sm:px-8 sm:py-16 lg:py-20">
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col px-5 py-10 sm:px-8 sm:py-12 lg:py-14">
         {/* Header — centered */}
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="font-sans text-[2.35rem] leading-[1.1] font-extrabold tracking-[-0.03em] text-[#0a0a1a] sm:text-[2.75rem] lg:text-[3.25rem]">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="font-sans text-[1.9rem] leading-[1.1] font-extrabold tracking-[-0.03em] text-[#0a0a1a] sm:text-[2.25rem] lg:text-[2.5rem]">
             One Video,{" "}
             <span className="bg-gradient-to-r from-[#a855f7] via-[#8b5cf6] to-[#6366f1] bg-clip-text text-transparent">
               Multiple Clips
@@ -114,7 +111,7 @@ export function AiEngineFeature({ className }: AiEngineFeatureProps) {
         </div>
 
         {/* 4 feature cards — solid purple icons + soft glow (matched to reference) */}
-        <div className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
           {featureCards.map((card) => (
             <div
               key={card.title}
@@ -150,7 +147,7 @@ export function AiEngineFeature({ className }: AiEngineFeatureProps) {
         </div>
 
         {/* Workflow visual */}
-        <div className="mt-10 lg:mt-12">
+        <div className="mt-8 lg:mt-10">
           <AiEngineShowcase />
         </div>
 
@@ -171,22 +168,19 @@ export function AiEngineFeature({ className }: AiEngineFeatureProps) {
                 </div>
               </div>
 
-              <div className="flex h-14 items-center gap-2 sm:gap-2.5">
-                {clipThumbs.map((thumb) => (
+              <div className="flex items-center gap-2 sm:gap-2.5">
+                {clipThumbs.map((src) => (
                   <span
-                    key={thumb.src}
+                    key={src}
                     className="relative h-[3.35rem] w-[3.35rem] shrink-0 overflow-hidden rounded-[11px] ring-[1.5px] ring-[#d8b4fe] sm:h-14 sm:w-14 sm:rounded-[12px]"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={thumb.src}
+                      src={src}
                       alt=""
                       width={1024}
                       height={1024}
-                      className="absolute left-1/2 top-1/2 h-[115%] w-[115%] max-w-none object-cover object-center"
-                      style={{
-                        transform: `translate(-50%, calc(-50% + ${(thumb.faceY - CLIP_FACE_TARGET) * 100}%))`,
-                      }}
+                      className="absolute inset-0 h-full w-full object-cover object-[50%_28%]"
                       decoding="async"
                       fetchPriority="high"
                       draggable={false}

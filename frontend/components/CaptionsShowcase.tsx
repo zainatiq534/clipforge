@@ -1,13 +1,49 @@
+"use client";
+
 import {
   ChevronRight,
-  Expand,
   LayoutGrid,
   Palette,
   Play,
   Sparkles,
   Type,
 } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { cn } from "@/lib/cn";
+
+const CAPTIONS_VIDEO =
+  "https://res.cloudinary.com/vbwjkfmd/video/upload/v1792587778/Man_speaking_into_podcast_microp__20261021174359.mp4";
+
+function CaptionsPreviewVideo() {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.muted = true;
+    el.defaultMuted = true;
+    el.volume = 0;
+    const play = () => void el.play().catch(() => {});
+    play();
+    el.addEventListener("canplay", play);
+    return () => el.removeEventListener("canplay", play);
+  }, []);
+
+  return (
+    <video
+      ref={ref}
+      className="absolute inset-0 z-0 h-full w-full object-cover object-[50%_18%]"
+      src={CAPTIONS_VIDEO}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+      controls={false}
+      aria-label="ClipForge captions preview"
+    />
+  );
+}
 
 type CaptionsShowcaseProps = {
   className?: string;
@@ -126,7 +162,7 @@ export function CaptionsShowcase({ className }: CaptionsShowcaseProps) {
   return (
     <div
       className={cn(
-        "relative mx-auto w-full max-w-[540px] bg-transparent select-none lg:mx-0 lg:max-w-none",
+        "relative mx-auto w-full max-w-[490px] bg-transparent select-none lg:mx-0 lg:max-w-[510px]",
         className,
       )}
       aria-hidden
@@ -225,50 +261,7 @@ export function CaptionsShowcase({ className }: CaptionsShowcaseProps) {
 
           <div className="relative overflow-hidden rounded-[14px] bg-[#1e1b4b]">
             <div className="relative aspect-[9/11.8] w-full">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/features/captions-speaker.jpg"
-                alt=""
-                className="absolute inset-0 h-full w-full object-cover object-[50%_18%]"
-                draggable={false}
-              />
-              <div className="absolute inset-x-0 bottom-0 h-[58%] bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-
-              <div className="absolute inset-x-2 bottom-[3.15rem] z-10 text-center sm:inset-x-3 sm:bottom-[3.35rem]">
-                <p className="font-sans text-[11px] leading-[1.25] font-extrabold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] sm:text-[13px]">
-                  This simple mindset changed
-                </p>
-                <p className="mt-1 inline-block rounded-[5px] bg-[#7c3aed] px-2 py-0.5 font-sans text-[11px] leading-none font-extrabold text-white sm:mt-1.5 sm:px-2.5 sm:py-1 sm:text-[13px]">
-                  everything
-                </p>
-                <p className="mt-1 font-sans text-[11px] leading-[1.25] font-extrabold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] sm:mt-1.5 sm:text-[13px]">
-                  for my channel.
-                </p>
-              </div>
-
-              <div className="absolute inset-x-2 bottom-2 rounded-lg bg-black/50 px-2 py-1.5 backdrop-blur-[5px] sm:inset-x-2.5 sm:px-2.5 sm:py-2">
-                <div className="mb-1.5 h-1 overflow-hidden rounded-full bg-white/25">
-                  <div className="relative h-full w-[22%] rounded-full bg-[#a78bfa]">
-                    <span className="absolute top-1/2 right-0 h-2.5 w-2.5 -translate-y-1/2 translate-x-1/2 rounded-full bg-white shadow" />
-                  </div>
-                </div>
-                <div className="flex items-center justify-between text-white">
-                  <div className="flex items-center gap-1.5 sm:gap-2">
-                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/15 sm:h-6 sm:w-6">
-                      <Play className="h-2.5 w-2.5 fill-white sm:h-3 sm:w-3" />
-                    </span>
-                    <span className="font-sans text-[8px] font-semibold tracking-wide tabular-nums sm:text-[10px]">
-                      00:12 / 00:58
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-[8px] font-bold sm:gap-2 sm:text-[10px]">
-                    <span className="rounded border border-white/55 px-1 py-px">
-                      CC
-                    </span>
-                    <Expand className="h-2.5 w-2.5 opacity-90 sm:h-3 sm:w-3" />
-                  </div>
-                </div>
-              </div>
+              <CaptionsPreviewVideo />
             </div>
           </div>
         </div>

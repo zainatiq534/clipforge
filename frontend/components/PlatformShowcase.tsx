@@ -1,10 +1,47 @@
+"use client";
+
 import { MoreHorizontal, Play, Settings2, Sparkles, Upload } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { InstagramIcon, TikTokIcon, YouTubeIcon } from "@/components/icons";
 import { cn } from "@/lib/cn";
 
 type PlatformShowcaseProps = {
   className?: string;
 };
+
+const PLATFORM_PHONE_VIDEO =
+  "https://res.cloudinary.com/vbwjkfmd/video/upload/v1792587778/Man_speaking_into_podcast_microp__20261021174359.mp4";
+
+function PlatformPhoneVideo({ label }: { label: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.muted = true;
+    el.defaultMuted = true;
+    el.volume = 0;
+    const play = () => void el.play().catch(() => {});
+    play();
+    el.addEventListener("canplay", play);
+    return () => el.removeEventListener("canplay", play);
+  }, []);
+
+  return (
+    <video
+      ref={ref}
+      className="absolute inset-0 z-0 h-full w-full object-cover object-[50%_12%]"
+      src={PLATFORM_PHONE_VIDEO}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+      controls={false}
+      aria-label={label}
+    />
+  );
+}
 
 const phones = [
   {
@@ -15,9 +52,6 @@ const phones = [
     btn: "linear-gradient(90deg,#5b21b6 0%,#7c3aed 50%,#8b5cf6 100%)",
     icon: TikTokIcon,
     iconWrap: "bg-[#111113]",
-    line1: "This mindset changed",
-    line2: "everything...",
-    line2Bg: "#7c3aed",
   },
   {
     key: "instagram",
@@ -27,9 +61,6 @@ const phones = [
     btn: "linear-gradient(90deg,#db2777 0%,#ec4899 55%,#f472b6 100%)",
     icon: InstagramIcon,
     iconWrap: "bg-white",
-    line1: "3 simple steps to grow on",
-    line2: "Instagram...",
-    line2Bg: "#ec4899",
   },
   {
     key: "youtube",
@@ -39,9 +70,6 @@ const phones = [
     btn: "linear-gradient(90deg,#dc2626 0%,#ef4444 55%,#f87171 100%)",
     icon: YouTubeIcon,
     iconWrap: "bg-white",
-    line1: "Don't make",
-    line2: "this mistake!",
-    line2Bg: "#ef4444",
   },
 ] as const;
 
@@ -77,7 +105,7 @@ export function PlatformShowcase({ className }: PlatformShowcaseProps) {
   return (
     <div
       className={cn(
-        "relative mx-auto flex w-full max-w-[720px] flex-col bg-transparent select-none lg:ml-auto lg:mr-0 lg:max-w-none",
+        "relative mx-auto flex w-full max-w-[600px] flex-col bg-transparent select-none lg:ml-auto lg:mr-0 lg:max-w-none",
         className,
       )}
       aria-hidden
@@ -158,42 +186,17 @@ export function PlatformShowcase({ className }: PlatformShowcaseProps) {
                   style={{ boxShadow: phone.glow }}
                 >
                   <div className="relative overflow-hidden rounded-[18px] sm:rounded-[20px]">
-                    <div className="relative aspect-[9/16] w-full">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src="/features/reframe-speaker-vert.jpg?v=hq7"
-                        alt=""
-                        width={2160}
-                        height={3840}
-                        className="absolute inset-0 h-full w-full object-cover object-[50%_12%]"
-                        style={{ imageRendering: "auto" }}
-                        decoding="async"
-                        fetchPriority="high"
-                        draggable={false}
-                      />
+                    <div className="relative aspect-[9/16] w-full overflow-hidden">
+                      <PlatformPhoneVideo label={`${phone.exportLabel} preview`} />
 
-                      <span className="absolute top-2.5 left-2 rounded-md bg-[#d4d4d8]/92 px-1.5 py-[3px] font-sans text-[8px] font-bold text-[#18181b] sm:text-[9px]">
+                      <span className="absolute top-2.5 left-2 z-[1] rounded-md bg-[#d4d4d8]/92 px-1.5 py-[3px] font-sans text-[8px] font-bold text-[#18181b] sm:text-[9px]">
                         9:16
                       </span>
-                      <span className="absolute top-2.5 right-2 rounded-md bg-[#d4d4d8]/92 px-1.5 py-[3px] font-sans text-[8px] font-bold text-[#18181b] sm:text-[9px]">
+                      <span className="absolute top-2.5 right-2 z-[1] rounded-md bg-[#d4d4d8]/92 px-1.5 py-[3px] font-sans text-[8px] font-bold text-[#18181b] sm:text-[9px]">
                         1080×1920
                       </span>
 
-                      <div className="absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-black/80 via-black/35 to-transparent" />
-
-                      <div className="absolute inset-x-2 top-[42%] z-10 flex flex-col items-center gap-1 sm:inset-x-2.5">
-                        <span className="rounded-md bg-black/55 px-1.5 py-1 text-center font-sans text-[8.5px] leading-snug font-extrabold text-white sm:text-[10px]">
-                          {phone.line1}
-                        </span>
-                        <span
-                          className="rounded-md px-1.5 py-1 text-center font-sans text-[8.5px] leading-snug font-extrabold text-white sm:text-[10px]"
-                          style={{ background: phone.line2Bg }}
-                        >
-                          {phone.line2}
-                        </span>
-                      </div>
-
-                      <div className="absolute inset-x-2.5 bottom-[3.35rem] z-10 flex items-center justify-between text-white sm:bottom-[3.55rem]">
+                      <div className="pointer-events-none absolute inset-x-2.5 bottom-[3.35rem] z-10 flex items-center justify-between text-white sm:bottom-[3.55rem]">
                         <span className="inline-flex items-center gap-1">
                           <Play className="h-3 w-3 fill-white sm:h-3.5 sm:w-3.5" />
                           <span className="font-sans text-[10px] font-bold tabular-nums sm:text-[11px]">

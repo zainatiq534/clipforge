@@ -1,6 +1,43 @@
+"use client";
+
 import { Clock, Expand, Eye, Layers, Mic, Play, Video } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { InstagramIcon, TikTokIcon, YouTubeIcon } from "@/components/icons";
 import { cn } from "@/lib/cn";
+
+const LONG_VIDEO_SRC =
+  "https://res.cloudinary.com/vbwjkfmd/video/upload/v1792583481/Man_speaking_into_microphone_20261021164533.mp4";
+
+function LongVideoPreview() {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.muted = true;
+    el.defaultMuted = true;
+    el.volume = 0;
+    const play = () => void el.play().catch(() => {});
+    play();
+    el.addEventListener("canplay", play);
+    return () => el.removeEventListener("canplay", play);
+  }, []);
+
+  return (
+    <video
+      ref={ref}
+      className="absolute inset-0 z-0 h-full w-full object-cover object-[50%_22%]"
+      src={LONG_VIDEO_SRC}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+      controls={false}
+      aria-label="Long video input preview"
+    />
+  );
+}
 
 type AiEngineShowcaseProps = {
   className?: string;
@@ -183,24 +220,9 @@ function LongVideoInputCard() {
         </span>
       </div>
 
-      {/* Video preview — grows to fill */}
+      {/* Video preview — muted autoplay */}
       <div className="relative min-h-0 flex-1 overflow-hidden rounded-[12px] sm:rounded-[14px]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/features/reframe-speaker-wide.jpg?v=hq7"
-          alt=""
-          width={3200}
-          height={1800}
-          className="absolute inset-0 h-full w-full object-cover object-[50%_22%]"
-          decoding="async"
-          fetchPriority="high"
-          draggable={false}
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full border-[1.5px] border-white/90 bg-black/35 shadow-lg backdrop-blur-[2px] sm:h-12 sm:w-12">
-            <Play className="ml-0.5 h-4 w-4 fill-white text-white sm:h-5 sm:w-5" strokeWidth={0} />
-          </span>
-        </div>
+        <LongVideoPreview />
       </div>
 
       {/* Progress + controls */}
@@ -259,12 +281,12 @@ export function AiEngineShowcase({ className }: AiEngineShowcaseProps) {
         className,
       )}
     >
-      <div className="relative min-h-[22rem] min-w-0 overflow-visible bg-transparent lg:min-h-[26rem] xl:min-h-[28rem]">
+      <div className="relative min-h-[18rem] min-w-0 overflow-visible bg-transparent lg:min-h-[20rem] xl:min-h-[22rem]">
         <LongVideoInputCard />
       </div>
 
       {/* Exact reference paste — full ClipForge AI hub */}
-      <div className="relative flex min-h-[22rem] min-w-0 items-center justify-center overflow-visible bg-transparent px-1 lg:min-h-[26rem] xl:min-h-[28rem]">
+      <div className="relative flex min-h-[18rem] min-w-0 items-center justify-center overflow-visible bg-transparent px-1 lg:min-h-[20rem] xl:min-h-[22rem]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/features/clipforge-ai-node.png?v=nobg2"
@@ -277,7 +299,7 @@ export function AiEngineShowcase({ className }: AiEngineShowcaseProps) {
         />
       </div>
 
-      <div className="relative min-h-[22rem] min-w-0 overflow-visible bg-transparent lg:min-h-[26rem] xl:min-h-[28rem]">
+      <div className="relative min-h-[18rem] min-w-0 overflow-visible bg-transparent lg:min-h-[20rem] xl:min-h-[22rem]">
         <ViralClipsPanel />
       </div>
     </div>

@@ -14,6 +14,7 @@ const navLinks = [
   { label: "How It Works", href: "/#how-it-works" },
   { label: "Pricing", href: "/#pricing" },
   { label: "Testimonials", href: "/#testimonials" },
+  { label: "Blogs", href: "/blog" },
 ];
 
 type HeaderProps = {
@@ -34,7 +35,10 @@ export function Header({ className }: HeaderProps) {
 
       <nav className="hidden items-center gap-7 md:flex" aria-label="Primary">
         {navLinks.map((link) => {
-          const active = link.href === "/features" && pathname === "/features";
+          const active =
+            (link.href === "/features" && pathname === "/features") ||
+            (link.href === "/blog" &&
+              (pathname === "/blog" || pathname.startsWith("/blog/")));
 
           return (
             <Link key={link.href} href={link.href} className="group">
