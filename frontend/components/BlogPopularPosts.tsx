@@ -130,7 +130,9 @@ export function BlogPopularPosts({ className }: BlogPopularPostsProps) {
                 </span>
 
                 <h3 className="mt-2.5 font-sans text-[0.95rem] leading-snug font-bold tracking-tight text-[#1e1b4b] sm:text-[1rem]">
-                  {post.title}
+                  <Link href={`/blog/${post.slug}`} className="hover:text-[#7c3aed]">
+                    {post.title}
+                  </Link>
                 </h3>
 
                 <div className="mt-2.5 inline-flex items-center gap-1.5 font-sans text-[11px] text-[#94a3b8] sm:text-xs">

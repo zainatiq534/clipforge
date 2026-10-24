@@ -92,7 +92,10 @@ export function BlogLatestPosts({ className }: BlogLatestPostsProps) {
               key={post.slug}
               className="flex flex-col overflow-hidden rounded-[18px] border border-[#ebe6f8] bg-white shadow-[0_8px_30px_rgba(76,29,149,0.06),0_2px_8px_rgba(15,23,42,0.04)]"
             >
-              <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#efeafc]">
+              <Link
+                href={`/blog/${post.slug}`}
+                className="relative aspect-[16/10] w-full overflow-hidden bg-[#efeafc]"
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={post.image}
@@ -104,7 +107,7 @@ export function BlogLatestPosts({ className }: BlogLatestPostsProps) {
                   decoding="async"
                   fetchPriority="high"
                 />
-              </div>
+              </Link>
 
               <div className="flex flex-1 flex-col px-4 pb-4 pt-3.5 sm:px-4 sm:pb-5 sm:pt-4">
                 <span className="inline-flex w-fit rounded-full bg-[#7c3aed] px-2.5 py-0.5 font-sans text-[10px] font-semibold tracking-wide text-white sm:text-[11px]">
@@ -112,7 +115,9 @@ export function BlogLatestPosts({ className }: BlogLatestPostsProps) {
                 </span>
 
                 <h3 className="mt-2.5 font-sans text-[0.95rem] leading-snug font-bold tracking-tight text-[#1e1b4b] sm:text-[1rem]">
-                  {post.title}
+                  <Link href={`/blog/${post.slug}`} className="hover:text-[#7c3aed]">
+                    {post.title}
+                  </Link>
                 </h3>
 
                 <div className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1 font-sans text-[11px] text-[#94a3b8] sm:text-xs">

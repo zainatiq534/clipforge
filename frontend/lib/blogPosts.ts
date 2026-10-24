@@ -1,3 +1,8 @@
+export type BlogPostSection = {
+  heading: string;
+  paragraphs: string[];
+};
+
 export type BlogPost = {
   slug: string;
   category: string;
@@ -9,10 +14,8 @@ export type BlogPost = {
   imageAlt: string;
   popular?: boolean;
   rank?: number;
-  body: {
-    intro: string;
-    sections: { heading: string; paragraphs: string[] }[];
-  };
+  body: string[];
+  sections?: BlogPostSection[];
 };
 
 export const blogPosts: BlogPost[] = [
@@ -25,33 +28,21 @@ export const blogPosts: BlogPost[] = [
     excerpt:
       "Discover the most powerful AI tools that are revolutionizing content creation this year.",
     image: "/blog/popular-1.png?v=hq2",
-    imageAlt: "Laptop with AI branding on screen",
+    imageAlt: "AI graphic with purple lighting on a laptop",
     popular: true,
     rank: 1,
-    body: {
-      intro:
-        "Artificial intelligence is transforming how creators plan, write, edit and publish content. In 2025, the best AI tools help you move faster without sacrificing quality — from drafting scripts to polishing short-form clips.",
-      sections: [
-        {
-          heading: "1. ChatGPT",
-          paragraphs: [
-            "ChatGPT remains a go-to for brainstorming hooks, outlining long-form scripts, and rewriting captions for every platform. Pair it with ClipForge to turn those ideas into ready-to-post vertical clips.",
-          ],
-        },
-        {
-          heading: "2. ClipForge",
-          paragraphs: [
-            "ClipForge finds the highest-performing moments in long videos, reframes them for Shorts and Reels, and adds captions automatically — so one recording becomes a full week of content.",
-          ],
-        },
-        {
-          heading: "3. Midjourney & image AI",
-          paragraphs: [
-            "Use image generators for thumbnails, cover frames and b-roll concepts. Keep branding consistent, then drop the best frames into your CapCut or ClipForge timeline.",
-          ],
-        },
-      ],
-    },
+    body: [
+      "AI tools are transforming how creators, marketers, and businesses produce content. From writing assistants to video editors, these platforms help you ship faster without sacrificing quality.",
+      "In this guide, we break down the top AI tools for content creation in 2025 — what they do best, who they are for, and how to combine them into a smooth workflow.",
+    ],
+    sections: [
+      {
+        heading: "1. ChatGPT",
+        paragraphs: [
+          "ChatGPT remains a go-to for outlines, scripts, captions, and brainstorming. Pair it with clear prompts and brand examples to get publish-ready drafts in minutes.",
+        ],
+      },
+    ],
   },
   {
     slug: "video-editing-capcut-guide",
@@ -65,24 +56,9 @@ export const blogPosts: BlogPost[] = [
     imageAlt: "Laptop showing video editing software",
     popular: true,
     rank: 2,
-    body: {
-      intro:
-        "CapCut is one of the most popular free editors for short-form video. This guide walks through a clean beginner workflow — from import to export — so your clips look polished on every platform.",
-      sections: [
-        {
-          heading: "1. Import and organize",
-          paragraphs: [
-            "Start a new project, import your long video, and mark the strongest hooks. Keep audio levels consistent before you cut.",
-          ],
-        },
-        {
-          heading: "2. Cut, captions, export",
-          paragraphs: [
-            "Trim to 15–60 seconds, add auto captions, then export in 9:16 for TikTok, Reels and Shorts. Or skip manual steps and let ClipForge generate captioned clips for you.",
-          ],
-        },
-      ],
-    },
+    body: [
+      "CapCut makes short-form editing accessible for beginners and fast for pros. Learn timelines, captions, effects, and export presets that look great on TikTok, Reels, and Shorts.",
+    ],
   },
   {
     slug: "social-media-growth-strategies",
@@ -96,24 +72,9 @@ export const blogPosts: BlogPost[] = [
     imageAlt: "Social media app icons with purple neon glow",
     popular: true,
     rank: 3,
-    body: {
-      intro:
-        "Growth on short-form platforms comes from consistency, strong hooks, and platform-native formatting. Here’s what creators use most in 2025.",
-      sections: [
-        {
-          heading: "1. Post cadence",
-          paragraphs: [
-            "Aim for 4–7 shorts per week. Repurpose one long video into multiple clips so you stay consistent without burning out.",
-          ],
-        },
-        {
-          heading: "2. Hook in three seconds",
-          paragraphs: [
-            "Lead with a bold claim, a question, or a visual pattern interrupt. Captions help viewers stay when sound is off.",
-          ],
-        },
-      ],
-    },
+    body: [
+      "Growth is not luck — it is consistent hooks, posting cadence, and platform-native formats. Here are strategies creators use to compound reach without burning out.",
+    ],
   },
   {
     slug: "wordpress-website-beginner-guide",
@@ -127,24 +88,9 @@ export const blogPosts: BlogPost[] = [
     imageAlt: "Office desk with computer monitor",
     popular: true,
     rank: 4,
-    body: {
-      intro:
-        "WordPress still powers a huge share of the web. This beginner guide covers hosting, themes, and your first pages.",
-      sections: [
-        {
-          heading: "1. Hosting and install",
-          paragraphs: [
-            "Pick a host with one-click WordPress install. Secure your site with HTTPS and a strong admin password.",
-          ],
-        },
-        {
-          heading: "2. Theme and content",
-          paragraphs: [
-            "Choose a lightweight theme, add Home and Blog pages, then publish your first post. Link ClipForge content when you share video guides.",
-          ],
-        },
-      ],
-    },
+    body: [
+      "WordPress still powers a huge share of the web. This beginner guide walks through hosting, themes, pages, and your first publish — step by step.",
+    ],
   },
   {
     slug: "youtube-thumbnails-ai-2025",
@@ -156,18 +102,9 @@ export const blogPosts: BlogPost[] = [
       "Learn how to design eye-catching YouTube thumbnails using AI tools that boost your click-through rates.",
     image: "/blog/post-1.jpg?v=v4",
     imageAlt: "Laptop on a desk showing a content design layout",
-    body: {
-      intro:
-        "Thumbnails decide whether someone clicks. AI tools can help you generate faces, backgrounds and text layouts faster — then you refine for clarity and contrast.",
-      sections: [
-        {
-          heading: "1. Start with a clear subject",
-          paragraphs: [
-            "One face or one object, big text, and high contrast. Avoid clutter that disappears on mobile.",
-          ],
-        },
-      ],
-    },
+    body: [
+      "Thumbnails decide whether viewers click. With AI, you can generate bold faces, text layouts, and color contrast that stand out in crowded feeds — then refine the best options for your brand.",
+    ],
   },
   {
     slug: "best-ai-tools-social-media",
@@ -179,18 +116,9 @@ export const blogPosts: BlogPost[] = [
       "Discover the top AI-powered tools that help creators produce engaging social media content faster.",
     image: "/blog/post-2.jpg?v=v4",
     imageAlt: "Smartphone with Instagram on screen",
-    body: {
-      intro:
-        "From caption writing to clip generation, AI can compress hours of work into minutes. Here’s a practical stack for social creators.",
-      sections: [
-        {
-          heading: "1. Clip and caption tools",
-          paragraphs: [
-            "Use ClipForge for auto clips and captions, then polish hooks with a writing assistant before you schedule posts.",
-          ],
-        },
-      ],
-    },
+    body: [
+      "Social platforms move fast. The right AI stack helps you ideate, caption, clip, and schedule without losing your voice.",
+    ],
   },
   {
     slug: "video-editing-tips-beginners",
@@ -202,18 +130,9 @@ export const blogPosts: BlogPost[] = [
       "A beginner-friendly guide to video editing workflows and AI tools that simplify the process.",
     image: "/blog/post-3.jpg?v=v4",
     imageAlt: "Video editing software on a laptop",
-    body: {
-      intro:
-        "You don’t need a complex NLE to start. Learn a simple cut-caption-export loop, then layer AI where it saves the most time.",
-      sections: [
-        {
-          heading: "1. Keep cuts intentional",
-          paragraphs: [
-            "Every cut should move the story forward. Remove silence, keep energy high, and add captions for mute viewing.",
-          ],
-        },
-      ],
-    },
+    body: [
+      "Start with clean cuts, readable captions, and strong hooks. AI can auto-detect highlights and suggest reframes so you spend less time scrubbing timelines.",
+    ],
   },
   {
     slug: "future-of-ai-content-creation",
@@ -225,31 +144,31 @@ export const blogPosts: BlogPost[] = [
       "Explore how AI is transforming content creation and what it means for creators and marketers.",
     image: "/blog/post-4.jpg?v=v4",
     imageAlt: "Laptop with AI branding on screen",
-    body: {
-      intro:
-        "AI won’t replace creators — but creators who use AI will outpace those who don’t. The future is human taste plus machine speed.",
-      sections: [
-        {
-          heading: "1. Human taste still wins",
-          paragraphs: [
-            "Use AI for drafts and cuts, then apply your judgment on hooks, pacing and brand voice before you publish.",
-          ],
-        },
-      ],
-    },
+    body: [
+      "AI will not replace great creators — it will amplify them. The winners will combine taste, distribution, and tools that remove busywork from the workflow.",
+    ],
   },
 ];
 
-export function getPostBySlug(slug: string): BlogPost | undefined {
-  return blogPosts.find((p) => p.slug === slug);
+export function getBlogPost(slug: string): BlogPost | undefined {
+  return blogPosts.find((post) => post.slug === slug);
+}
+
+export function getAllBlogSlugs(): string[] {
+  return blogPosts.map((post) => post.slug);
+}
+
+export function getPopularSidebarPosts(): BlogPost[] {
+  return blogPosts
+    .filter((post) => post.popular)
+    .sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99))
+    .slice(0, 4);
 }
 
 export function getPopularPosts(): BlogPost[] {
-  return blogPosts
-    .filter((p) => p.popular)
-    .sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99));
+  return getPopularSidebarPosts();
 }
 
-export function getAllPostSlugs(): string[] {
-  return blogPosts.map((p) => p.slug);
+export function getLatestPosts(): BlogPost[] {
+  return blogPosts.filter((post) => !post.popular).slice(0, 4);
 }
