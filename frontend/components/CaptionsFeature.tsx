@@ -3,11 +3,9 @@ import {
   AudioLines,
   Pencil,
   Sparkles,
-  TrendingUp,
   Type,
 } from "lucide-react";
 import { CaptionsShowcase } from "@/components/CaptionsShowcase";
-import { AppImage } from "@/components/ui/Image";
 import { GradientButton } from "@/components/ui/Button";
 import { Icon, PlayCircleIcon } from "@/components/ui/Icon";
 import { cn } from "@/lib/cn";
@@ -33,13 +31,6 @@ const items = [
     title: "Quick text editing",
     description: "Fix typos and tweak lines in seconds without leaving the timeline.",
   },
-];
-
-const avatars = [
-  "/features/avatar-1.jpg",
-  "/features/avatar-2.jpg",
-  "/features/avatar-3.jpg",
-  "/features/avatar-4.jpg",
 ];
 
 type CaptionsFeatureProps = {
@@ -104,40 +95,6 @@ export function CaptionsFeature({ className }: CaptionsFeatureProps) {
               <PlayCircleIcon className="border-slate-300 [&_svg]:fill-[#1e1b4b]" />
               See It In Action
             </a>
-          </div>
-
-          <div className="mt-10 flex flex-wrap items-center gap-6">
-            <div className="flex items-start gap-2">
-              <Icon icon={TrendingUp} size="md" className="mt-1 text-[#7c3aed]" />
-              <div>
-                <p className="font-display text-2xl font-bold text-[#1e1b4b]">2.3x</p>
-                <p className="max-w-[12rem] font-sans text-sm leading-snug text-slate-500">
-                  Average watch time increase with captions.
-                </p>
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center">
-                {avatars.map((src, i) => (
-                  <span
-                    key={src}
-                    className={cn(
-                      "relative h-9 w-9 overflow-hidden rounded-full border-2 border-white",
-                      i > 0 && "-ml-2",
-                    )}
-                  >
-                    <AppImage src={src} alt="" fill className="object-cover" sizes="36px" />
-                  </span>
-                ))}
-                <span className="-ml-2 inline-flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-[#7c3aed] text-[0.6rem] font-bold text-white">
-                  +10K
-                </span>
-              </div>
-              <p className="mt-2 max-w-[14rem] font-sans text-sm leading-snug text-slate-500">
-                Used by 10,000+ creators, podcasters and agencies.
-              </p>
-            </div>
           </div>
         </div>
       </div>

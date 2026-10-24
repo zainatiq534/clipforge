@@ -1,11 +1,18 @@
 "use client";
 
-import { ArrowRight, BarChart3, Bolt, Scissors } from "lucide-react";
+import { BarChart3, Bolt, Scissors, TrendingUp } from "lucide-react";
 import { FeatureShowcase } from "@/components/FeatureShowcase";
 import { FeaturesMotionItem } from "@/components/FeaturesMotion";
-import { GradientButton } from "@/components/ui/Button";
-import { Icon, PlayCircleIcon } from "@/components/ui/Icon";
+import { AppImage } from "@/components/ui/Image";
+import { Icon } from "@/components/ui/Icon";
 import { cn } from "@/lib/cn";
+
+const avatars = [
+  "/features/avatar-1.jpg",
+  "/features/avatar-2.jpg",
+  "/features/avatar-3.jpg",
+  "/features/avatar-4.jpg",
+];
 
 const featureItems = [
   {
@@ -77,22 +84,38 @@ export function Features({ className }: FeaturesProps) {
             ))}
           </ul>
 
-          <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-4">
-            <GradientButton
-              size="lg"
-              href="#start"
-              rightIcon={<Icon icon={ArrowRight} size="md" />}
-              className="w-full sm:w-auto"
-            >
-              Start Creating Clips
-            </GradientButton>
-            <a
-              href="/#how-it-works"
-              className="inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-[18px] border border-[#c7d2fe] bg-white/90 px-6 text-base font-semibold text-[#6d28d9] shadow-sm backdrop-blur-sm transition-colors hover:bg-white sm:h-[3.25rem] sm:w-auto sm:rounded-[20px] sm:px-7"
-            >
-              <PlayCircleIcon className="border-[#a78bfa] [&_svg]:fill-[#7c3aed]" />
-              See How It Works
-            </a>
+          <div className="mt-10 flex flex-wrap items-center gap-6">
+            <div className="flex items-start gap-2">
+              <Icon icon={TrendingUp} size="md" className="mt-1 text-[#7c3aed]" />
+              <div>
+                <p className="font-display text-2xl font-bold text-[#1e1b4b]">2.3x</p>
+                <p className="max-w-[12rem] font-sans text-sm leading-snug text-slate-500">
+                  Average watch time increase with captions.
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center">
+                {avatars.map((src, i) => (
+                  <span
+                    key={src}
+                    className={cn(
+                      "relative h-9 w-9 overflow-hidden rounded-full border-2 border-white",
+                      i > 0 && "-ml-2",
+                    )}
+                  >
+                    <AppImage src={src} alt="" fill className="object-cover" sizes="36px" />
+                  </span>
+                ))}
+                <span className="-ml-2 inline-flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-[#7c3aed] text-[0.6rem] font-bold text-white">
+                  +10K
+                </span>
+              </div>
+              <p className="mt-2 max-w-[14rem] font-sans text-sm leading-snug text-slate-500">
+                Used by 10,000+ creators, podcasters and agencies.
+              </p>
+            </div>
           </div>
         </FeaturesMotionItem>
 

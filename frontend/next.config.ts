@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     qualities: [75, 100],
   },
   experimental: {
-    agentFeedback: true,
+    agentFeedback: false,
   },
   cacheComponents: true,
   partialPrefetching: true,

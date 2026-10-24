@@ -19,10 +19,13 @@ const navLinks = [
 
 type HeaderProps = {
   className?: string;
+  /** `light` for light backgrounds (login, blog article). */
+  tone?: "dark" | "light";
 };
 
-export function Header({ className }: HeaderProps) {
+export function Header({ className, tone = "dark" }: HeaderProps) {
   const pathname = usePathname();
+  const isLight = tone === "light";
 
   return (
     <header
@@ -31,32 +34,57 @@ export function Header({ className }: HeaderProps) {
         className,
       )}
     >
-      <Logo href="/" />
+      <Logo href="/" tone={isLight ? "light" : "dark"} />
 
       <nav className="hidden items-center gap-7 md:flex" aria-label="Primary">
         {navLinks.map((link) => {
           const active =
             (link.href === "/features" && pathname === "/features") ||
             (link.href === "/blog" &&
-              (pathname === "/blog" || pathname.startsWith("/blog/")));
+              (pathname === "/blog" || pathname.startsWith("/blog/"))) ||
+            (link.href === "/login" && pathname === "/login");
 
           return (
             <Link key={link.href} href={link.href} className="group">
-              <Typography
-                as="span"
-                variant="nav"
-                tone={active ? "white" : "muted"}
-                className="transition-colors group-hover:text-white"
-              >
-                {link.label}
-              </Typography>
+              {isLight ? (
+                <span
+                  className={cn(
+                    "relative font-sans text-sm font-semibold transition-colors",
+                    active
+                      ? "text-[#7c3aed]"
+                      : "text-[#475569] group-hover:text-[#1e1b4b]",
+                  )}
+                >
+                  {link.label}
+                  {active ? (
+                    <span className="absolute -bottom-1 left-0 h-0.5 w-full rounded-full bg-[#7c3aed]" />
+                  ) : null}
+                </span>
+              ) : (
+                <Typography
+                  as="span"
+                  variant="nav"
+                  tone={active ? "white" : "muted"}
+                  className="transition-colors group-hover:text-white"
+                >
+                  {link.label}
+                </Typography>
+              )}
             </Link>
           );
         })}
       </nav>
 
       <div className="flex items-center gap-2 sm:gap-3">
-        <GhostButton size="sm" href="#login" className="hidden sm:inline-flex">
+        <GhostButton
+          size="sm"
+          href="/login"
+          className={cn(
+            "hidden sm:inline-flex",
+            isLight &&
+              "border border-[#7c3aed]/40 text-[#7c3aed] hover:bg-[#f3e8ff]",
+          )}
+        >
           Log In
         </GhostButton>
         <GradientButton

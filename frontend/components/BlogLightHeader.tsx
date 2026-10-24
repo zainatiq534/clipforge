@@ -31,7 +31,7 @@ export function BlogLightHeader({ className }: BlogLightHeaderProps) {
         className,
       )}
     >
-      <Logo href="/" className="[&_span.text-lg]:text-[#1e1b4b]" />
+      <Logo href="/" tone="light" />
 
       <nav className="hidden items-center gap-6 lg:flex" aria-label="Primary">
         {navLinks.map((link) => {
@@ -68,7 +68,7 @@ export function BlogLightHeader({ className }: BlogLightHeaderProps) {
           <Search className="h-4 w-4" strokeWidth={2.2} />
         </button>
         <Link
-          href="#login"
+          href="/login"
           className="hidden h-9 items-center justify-center rounded-full border border-[#7c3aed]/40 px-4 font-sans text-sm font-semibold text-[#7c3aed] transition-colors hover:bg-[#f3e8ff] sm:inline-flex"
         >
           Login

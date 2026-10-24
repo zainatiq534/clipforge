@@ -1,7 +1,6 @@
-import { ArrowRight, Crop, Layers, Palette } from "lucide-react";
+import { Crop, Layers, Palette } from "lucide-react";
 import { PlatformShowcase } from "@/components/PlatformShowcase";
-import { GradientButton } from "@/components/ui/Button";
-import { Icon, PlayCircleIcon } from "@/components/ui/Icon";
+import { Icon } from "@/components/ui/Icon";
 import { cn } from "@/lib/cn";
 
 const cards = [
@@ -89,25 +88,6 @@ export function PlatformFeature({ className }: PlatformFeatureProps) {
                 </div>
               </div>
             ))}
-          </div>
-
-          {/* CTAs */}
-          <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-3.5">
-            <GradientButton
-              size="lg"
-              href="#start"
-              rightIcon={<Icon icon={ArrowRight} size="md" />}
-              className="w-full sm:w-auto"
-            >
-              Start Creating Clips
-            </GradientButton>
-            <a
-              href="#demo"
-              className="inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-[18px] border border-slate-200 bg-white px-6 font-sans text-base font-semibold text-[#0f172a] shadow-sm transition-colors hover:bg-slate-50 sm:h-[3.25rem] sm:w-auto sm:rounded-[20px] sm:px-7"
-            >
-              <PlayCircleIcon className="border-slate-300 [&_svg]:fill-[#0f172a]" />
-              Watch Demo
-            </a>
           </div>
         </div>
 
