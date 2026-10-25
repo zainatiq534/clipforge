@@ -51,8 +51,8 @@ export function Header({ className, tone = "dark" }: HeaderProps) {
                   className={cn(
                     "relative font-sans text-sm font-semibold transition-colors",
                     active
-                      ? "text-[#7c3aed]"
-                      : "text-[#475569] group-hover:text-[#1e1b4b]",
+                      ? "!text-[#7c3aed]"
+                      : "!text-[#475569] group-hover:!text-[#1e1b4b]",
                   )}
                 >
                   {link.label}
@@ -76,24 +76,24 @@ export function Header({ className, tone = "dark" }: HeaderProps) {
       </nav>
 
       <div className="flex items-center gap-2 sm:gap-3">
-        <GhostButton
-          size="sm"
-          href="/login"
-          className={cn(
-            "hidden sm:inline-flex",
-            isLight &&
-              "border border-[#7c3aed]/40 text-[#7c3aed] hover:bg-[#f3e8ff]",
-          )}
-        >
-          Log In
-        </GhostButton>
+        {isLight ? (
+          <Link
+            href="/login"
+            className="inline-flex h-9 items-center justify-center rounded-[14px] border border-[#7c3aed]/40 px-4 font-sans text-sm font-semibold text-[#7c3aed] transition-colors hover:bg-[#f3e8ff]"
+          >
+            Log In
+          </Link>
+        ) : (
+          <GhostButton size="sm" href="/login" className="inline-flex">
+            Log In
+          </GhostButton>
+        )}
         <GradientButton
           size="sm"
           href="#start"
           rightIcon={<Icon icon={ArrowRight} size="md" />}
         >
-          <span className="hidden sm:inline">Start Creating Clips</span>
-          <span className="sm:hidden">Start</span>
+          Get Started
         </GradientButton>
       </div>
     </header>
