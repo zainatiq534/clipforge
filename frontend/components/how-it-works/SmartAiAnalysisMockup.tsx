@@ -1,14 +1,12 @@
-import {
-  Captions,
-  Fullscreen,
-  Pause,
-  Play,
-  Scissors,
-  Sparkles,
-  Volume2,
-} from "lucide-react";
+"use client";
+
+import { useEffect, useRef } from "react";
+import { Play, Scissors, Sparkles } from "lucide-react";
 import { AppImage } from "@/components/ui/Image";
 import { cn } from "@/lib/cn";
+
+const AI_ANALYSIS_VIDEO =
+  "https://res.cloudinary.com/vbwjkfmd/video/upload/v1792995288/Man_speaking_into_studio_microphone_20261026111432.mp4";
 
 const analysisSteps = [
   "Analyzing video...",
@@ -78,6 +76,58 @@ type SmartAiAnalysisMockupProps = {
 };
 
 export function SmartAiAnalysisMockup({ className }: SmartAiAnalysisMockupProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = true;
+    video.defaultMuted = true;
+    video.volume = 0;
+
+    let inView = false;
+
+    const tryPlay = () => {
+      if (!inView) return;
+      video.muted = true;
+      video.volume = 0;
+      void video.play().catch(() => {});
+    };
+
+    const keepMuted = () => {
+      video.muted = true;
+      video.volume = 0;
+    };
+
+    video.addEventListener("canplay", tryPlay);
+    video.addEventListener("loadeddata", tryPlay);
+    video.addEventListener("volumechange", keepMuted);
+    video.addEventListener("play", keepMuted);
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        inView = Boolean(entry?.isIntersecting);
+        if (inView) {
+          tryPlay();
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.35 },
+    );
+
+    observer.observe(video);
+
+    return () => {
+      observer.disconnect();
+      video.removeEventListener("canplay", tryPlay);
+      video.removeEventListener("loadeddata", tryPlay);
+      video.removeEventListener("volumechange", keepMuted);
+      video.removeEventListener("play", keepMuted);
+    };
+  }, []);
+
   return (
     <div className={cn("relative w-full", className)}>
       {/* Best moments chip */}
@@ -161,33 +211,20 @@ export function SmartAiAnalysisMockup({ className }: SmartAiAnalysisMockupProps)
             </div>
           </aside>
 
-          {/* Center — video nudged slightly down / vertically centered in column */}
+          {/* Center — muted autoplay only (no Pause / timeline / settings chrome) */}
           <div className="flex min-w-0 max-w-full items-center overflow-hidden border-b border-[#eeeaf5] p-1.5 sm:p-2 lg:border-b-0">
-            <div className="relative mt-2 w-full max-w-full aspect-[16/11] overflow-hidden rounded-sm bg-[#0f1219] ring-1 ring-[#1f2430] sm:mt-2.5">
-              <AppImage
-                src="/ai-analysis-man-hq.jpg"
-                alt="AI analyzing a long-form video"
-                fill
-                quality={100}
-                priority
-                sizes="(max-width: 1024px) 80vw, 420px"
-                className="object-cover object-[50%_20%]"
+            <div className="relative mt-2 aspect-[16/9] w-full max-w-full overflow-hidden rounded-sm bg-[#0f1219] ring-1 ring-[#1f2430] sm:mt-2.5">
+              <video
+                ref={videoRef}
+                src={AI_ANALYSIS_VIDEO}
+                className="absolute inset-0 h-full w-full object-cover object-center"
+                muted
+                loop
+                playsInline
+                preload="auto"
+                controls={false}
+                aria-label="AI analyzing a long-form video"
               />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent px-2 pt-7 pb-1.5 sm:px-2.5 sm:pb-2">
-                <div className="flex items-center gap-2">
-                  <Pause className="h-3 w-3 shrink-0 fill-white text-white" strokeWidth={0} />
-                  <span className="shrink-0 text-[0.62rem] font-semibold text-white">
-                    0:32 / 44:00
-                  </span>
-                  <div className="relative mx-0.5 h-[3px] min-w-0 flex-1 rounded-full bg-white/25">
-                    <div className="absolute inset-y-0 left-0 w-[22%] rounded-full bg-[#a78bfa]" />
-                    <span className="absolute top-1/2 left-[22%] h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white" />
-                  </div>
-                  <Volume2 className="h-3 w-3 text-white/90" strokeWidth={2} />
-                  <Captions className="h-3 w-3 text-white/90" strokeWidth={2} />
-                  <Fullscreen className="h-3 w-3 text-white/90" strokeWidth={2} />
-                </div>
-              </div>
             </div>
           </div>
 

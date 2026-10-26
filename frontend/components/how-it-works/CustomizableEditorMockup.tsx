@@ -1,4 +1,6 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { useEffect, useRef, type ReactNode } from "react";
 import {
   Captions,
   Fullscreen,
@@ -11,6 +13,9 @@ import {
 } from "lucide-react";
 import { AppImage } from "@/components/ui/Image";
 import { cn } from "@/lib/cn";
+
+const EDITOR_DEMO_VIDEO =
+  "https://res.cloudinary.com/vbwjkfmd/video/upload/v1792994864/Man_speaking_into_studio_microphone_20261026110656.mp4";
 
 /** Same man as the main player — varied crops so frames feel like a scrub strip */
 const timelineThumbs = [
@@ -46,6 +51,58 @@ type CustomizableEditorMockupProps = {
 };
 
 export function CustomizableEditorMockup({ className }: CustomizableEditorMockupProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = true;
+    video.defaultMuted = true;
+    video.volume = 0;
+
+    let inView = false;
+
+    const tryPlay = () => {
+      if (!inView) return;
+      video.muted = true;
+      video.volume = 0;
+      void video.play().catch(() => {});
+    };
+
+    const keepMuted = () => {
+      video.muted = true;
+      video.volume = 0;
+    };
+
+    video.addEventListener("canplay", tryPlay);
+    video.addEventListener("loadeddata", tryPlay);
+    video.addEventListener("volumechange", keepMuted);
+    video.addEventListener("play", keepMuted);
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        inView = Boolean(entry?.isIntersecting);
+        if (inView) {
+          tryPlay();
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.35 },
+    );
+
+    observer.observe(video);
+
+    return () => {
+      observer.disconnect();
+      video.removeEventListener("canplay", tryPlay);
+      video.removeEventListener("loadeddata", tryPlay);
+      video.removeEventListener("volumechange", keepMuted);
+      video.removeEventListener("play", keepMuted);
+    };
+  }, []);
+
   return (
     /* Perspective stage — left recedes, right comes toward the viewer */
     <div
@@ -81,27 +138,21 @@ export function CustomizableEditorMockup({ className }: CustomizableEditorMockup
 
           {/* Center: video + timeline */}
           <div className="min-w-0 flex-1 px-2.5 pt-2.5 pb-2.5 sm:px-3 sm:pt-3 sm:pb-3">
-            <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-[#0f1219] sm:rounded-[0.9rem]">
-              <AppImage
-                src="/customizable-editor-man.jpg"
-                alt="Creator editing a clip with captions"
-                fill
-                quality={100}
-                priority
-                sizes="(max-width: 1024px) 70vw, 420px"
-                className="object-cover object-[50%_22%]"
+            <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-[#0f1219] sm:rounded-[0.9rem]">
+              <video
+                ref={videoRef}
+                src={EDITOR_DEMO_VIDEO}
+                className="absolute inset-0 h-full w-full object-cover object-center"
+                muted
+                loop
+                playsInline
+                preload="auto"
+                controls={false}
+                aria-label="Creator editing a clip with captions"
               />
 
-              {/* Soft play ring */}
-              <div
-                className="pointer-events-none absolute top-1/2 left-1/2 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white/90 bg-black/25 sm:h-12 sm:w-12"
-                aria-hidden
-              >
-                <Play className="ml-0.5 h-4 w-4 fill-white text-white sm:h-5 sm:w-5" strokeWidth={0} />
-              </div>
-
               {/* Editable caption overlay */}
-              <div className="absolute inset-x-0 bottom-3 flex justify-center px-3 sm:bottom-3.5">
+              <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center px-3 sm:bottom-3.5">
                 <div className="relative rounded-md bg-[#111827]/78 px-2.5 py-1.5 ring-1 ring-white/70 sm:px-3 sm:py-2">
                   {/* Selection handles */}
                   <span className="absolute -top-1 -left-1 h-2 w-2 rounded-full bg-white shadow" />

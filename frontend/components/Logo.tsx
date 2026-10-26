@@ -20,12 +20,13 @@ export function Logo({ className, href = "/", tone = "dark" }: LogoProps) {
       aria-label="ClipForge home"
     >
       <AppImage
-        src="/clipforge-mark.png"
+        src="/clipforge-icon.png"
         alt=""
         width={64}
         height={64}
         priority
-        className="h-8 w-8 shrink-0"
+        unoptimized
+        className="h-8 w-8 shrink-0 object-contain"
         aria-hidden
       />
       <Typography

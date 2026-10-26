@@ -1,16 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type MouseEvent } from "react";
-import {
-  Maximize2,
-  Pause,
-  Play,
-  Scissors,
-  Settings,
-  Video,
-  Volume2,
-  VolumeX,
-} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Play, Scissors, Video } from "lucide-react";
 import {
   InstagramBadgeIcon,
   TikTokBadgeIcon,
@@ -156,50 +147,37 @@ function formatVideoTime(seconds: number) {
 
 function OriginalVideoCard() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const shellRef = useRef<HTMLDivElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const durationLabel = formatVideoTime(duration);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // Unmuted by default as requested
-    video.muted = false;
-    video.volume = 1;
+    forceMute(video);
 
     let inView = false;
 
-    const tryPlayUnmuted = () => {
+    const tryPlay = () => {
       if (!inView) return;
-      video.muted = false;
-      video.volume = 1;
-      void video.play().catch(() => {
-        // Some browsers block unmuted autoplay until a gesture; play button still works.
-      });
+      forceMute(video);
+      void video.play().catch(() => {});
     };
 
-    const onPlay = () => setIsPlaying(true);
-    const onPause = () => setIsPlaying(false);
-    const onTime = () => setCurrentTime(video.currentTime);
     const onMeta = () => setDuration(video.duration || 0);
-    const onVolume = () => setIsMuted(video.muted || video.volume === 0);
+    const keepMuted = () => forceMute(video);
 
-    video.addEventListener("play", onPlay);
-    video.addEventListener("pause", onPause);
-    video.addEventListener("timeupdate", onTime);
     video.addEventListener("loadedmetadata", onMeta);
     video.addEventListener("durationchange", onMeta);
-    video.addEventListener("volumechange", onVolume);
-    video.addEventListener("canplay", tryPlayUnmuted);
+    video.addEventListener("canplay", tryPlay);
+    video.addEventListener("volumechange", keepMuted);
+    video.addEventListener("play", keepMuted);
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         inView = Boolean(entry?.isIntersecting);
         if (inView) {
-          tryPlayUnmuted();
+          tryPlay();
         } else {
           video.pause();
         }
@@ -211,61 +189,17 @@ function OriginalVideoCard() {
 
     return () => {
       observer.disconnect();
-      video.removeEventListener("play", onPlay);
-      video.removeEventListener("pause", onPause);
-      video.removeEventListener("timeupdate", onTime);
       video.removeEventListener("loadedmetadata", onMeta);
       video.removeEventListener("durationchange", onMeta);
-      video.removeEventListener("volumechange", onVolume);
-      video.removeEventListener("canplay", tryPlayUnmuted);
+      video.removeEventListener("canplay", tryPlay);
+      video.removeEventListener("volumechange", keepMuted);
+      video.removeEventListener("play", keepMuted);
     };
   }, []);
-
-  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
-  const durationLabel = formatVideoTime(duration);
-
-  const togglePlay = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    if (video.paused) {
-      video.muted = false;
-      video.volume = 1;
-      void video.play().catch(() => {});
-    } else {
-      video.pause();
-    }
-  };
-
-  const toggleMute = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.muted = !video.muted;
-    if (!video.muted) video.volume = 1;
-    setIsMuted(video.muted);
-  };
-
-  const seek = (event: MouseEvent<HTMLDivElement>) => {
-    const video = videoRef.current;
-    if (!video || !duration) return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    const ratio = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
-    video.currentTime = ratio * duration;
-  };
-
-  const toggleFullscreen = () => {
-    const shell = shellRef.current;
-    if (!shell) return;
-    if (document.fullscreenElement) {
-      void document.exitFullscreen();
-    } else {
-      void shell.requestFullscreen().catch(() => {});
-    }
-  };
 
   return (
     <div className="w-full">
       <div
-        ref={shellRef}
         className={cn(
           "relative overflow-hidden rounded-[1.15rem] bg-[#0b0d14] sm:rounded-[1.35rem]",
           "shadow-[0_22px_50px_-18px_rgba(76,29,149,0.35)]",
@@ -277,6 +211,7 @@ function OriginalVideoCard() {
             ref={videoRef}
             src={ORIGINAL_LONG_VIDEO}
             className="absolute inset-0 h-full w-full object-cover object-[50%_28%]"
+            muted
             playsInline
             preload="auto"
             loop
@@ -311,58 +246,6 @@ function OriginalVideoCard() {
             <span className="rounded-md bg-black/70 px-2 py-0.5 text-[0.65rem] font-medium text-white sm:rounded-lg sm:text-[0.7rem]">
               {durationLabel}
             </span>
-          </div>
-
-          <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/85 via-black/50 to-transparent px-2.5 pt-10 pb-2.5 sm:px-3 sm:pb-3">
-            <div className="mb-2 flex items-center gap-2">
-              <button
-                type="button"
-                onClick={togglePlay}
-                className="shrink-0 text-white"
-                aria-label={isPlaying ? "Pause" : "Play"}
-              >
-                {isPlaying ? (
-                  <Pause className="h-3.5 w-3.5" strokeWidth={2.25} />
-                ) : (
-                  <Play className="h-3.5 w-3.5 fill-white text-white" strokeWidth={0} />
-                )}
-              </button>
-              <span className="shrink-0 text-[0.65rem] font-medium tracking-wide text-white sm:text-[0.7rem]">
-                {formatVideoTime(currentTime)} / {durationLabel}
-              </span>
-              <div
-                role="slider"
-                aria-label="Seek"
-                aria-valuemin={0}
-                aria-valuemax={Math.floor(duration)}
-                aria-valuenow={Math.floor(currentTime)}
-                tabIndex={0}
-                onClick={seek}
-                className="relative mx-1 h-[3px] min-w-0 flex-1 cursor-pointer rounded-full bg-white/30"
-              >
-                <div
-                  className="absolute inset-y-0 left-0 rounded-full bg-[#a78bfa]"
-                  style={{ width: `${progress}%` }}
-                />
-                <span
-                  className="absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_6px_rgba(255,255,255,0.9)]"
-                  style={{ left: `${progress}%` }}
-                />
-              </div>
-              <div className="flex shrink-0 items-center gap-2.5 text-white/90">
-                <button type="button" onClick={toggleMute} aria-label={isMuted ? "Unmute" : "Mute"}>
-                  {isMuted ? (
-                    <VolumeX className="h-3.5 w-3.5" strokeWidth={2} />
-                  ) : (
-                    <Volume2 className="h-3.5 w-3.5" strokeWidth={2} />
-                  )}
-                </button>
-                <Settings className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
-                <button type="button" onClick={toggleFullscreen} aria-label="Fullscreen">
-                  <Maximize2 className="h-3.5 w-3.5" strokeWidth={2} />
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       </div>

@@ -1,6 +1,12 @@
-import { Download, Maximize2, Play, Sparkles, Volume2 } from "lucide-react";
+"use client";
+
+import { useEffect, useRef } from "react";
+import { Download, Sparkles } from "lucide-react";
 import { AppImage } from "@/components/ui/Image";
 import { cn } from "@/lib/cn";
+
+const HERO_VIDEO =
+  "https://res.cloudinary.com/vbwjkfmd/video/upload/v1792500586/Man_speaking_into_microphone_20261020174816.mp4";
 
 const generatedClips = [
   { src: "/hiw-man-0.jpg", time: "0:32" },
@@ -24,6 +30,58 @@ type HowItWorksEditorMockupProps = {
 };
 
 export function HowItWorksEditorMockup({ className }: HowItWorksEditorMockupProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = true;
+    video.defaultMuted = true;
+    video.volume = 0;
+
+    let inView = false;
+
+    const tryPlay = () => {
+      if (!inView) return;
+      video.muted = true;
+      video.volume = 0;
+      void video.play().catch(() => {});
+    };
+
+    const keepMuted = () => {
+      video.muted = true;
+      video.volume = 0;
+    };
+
+    video.addEventListener("canplay", tryPlay);
+    video.addEventListener("volumechange", keepMuted);
+    video.addEventListener("play", keepMuted);
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        inView = Boolean(entry?.isIntersecting);
+        if (inView) {
+          tryPlay();
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.25 },
+    );
+
+    observer.observe(video);
+    inView = true;
+    tryPlay();
+
+    return () => {
+      observer.disconnect();
+      video.removeEventListener("canplay", tryPlay);
+      video.removeEventListener("volumechange", keepMuted);
+      video.removeEventListener("play", keepMuted);
+    };
+  }, []);
+
   return (
     <div className={cn("relative w-full", className)}>
       {/* Floating chips above the card */}
@@ -69,11 +127,12 @@ export function HowItWorksEditorMockup({ className }: HowItWorksEditorMockupProp
         {/* ClipForge brand header inside the card */}
         <div className="flex items-center gap-2 px-3.5 pt-3 pb-1.5 sm:px-4 sm:pt-3.5 sm:pb-2">
           <AppImage
-            src="/clipforge-mark.png"
+            src="/clipforge-icon.png"
             alt=""
             width={28}
             height={28}
-            className="h-6 w-6 shrink-0 sm:h-7 sm:w-7"
+            unoptimized
+            className="h-6 w-6 shrink-0 object-contain sm:h-7 sm:w-7"
             aria-hidden
           />
           <span className="font-sans text-[0.9rem] font-bold tracking-tight text-[#111827] sm:text-[0.95rem]">
@@ -87,38 +146,17 @@ export function HowItWorksEditorMockup({ className }: HowItWorksEditorMockupProp
           <div className="relative z-20 min-w-0">
             <div className="relative">
               <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-[#0b0d14] sm:rounded-[0.95rem]">
-                <AppImage
-                  src="/ba-original-video.jpg"
-                  alt="Long podcast video being clipped"
-                  fill
-                  quality={100}
-                  sizes="(max-width: 1024px) 90vw, 560px"
-                  className="object-cover object-[50%_28%]"
-                  priority
+                <video
+                  ref={videoRef}
+                  className="absolute inset-0 h-full w-full object-cover object-[50%_28%]"
+                  src={HERO_VIDEO}
+                  muted
+                  loop
+                  playsInline
+                  preload="auto"
+                  controls={false}
+                  aria-label="Long podcast video being clipped"
                 />
-
-                <button
-                  type="button"
-                  className="absolute top-1/2 left-1/2 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-[#111827] shadow-[0_10px_30px_rgba(0,0,0,0.35)] sm:h-12 sm:w-12"
-                  aria-label="Play preview"
-                >
-                    <Play className="h-5 w-5 fill-current" strokeWidth={0} />
-                </button>
-
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-2.5 pt-7 pb-2 sm:px-3 sm:pb-2.5">
-                  <div className="flex items-center gap-2">
-                    <Play className="h-3 w-3 shrink-0 fill-white text-white" strokeWidth={0} />
-                    <span className="shrink-0 text-[0.62rem] font-medium text-white sm:text-[0.68rem]">
-                      0:17 / 46:00
-                    </span>
-                    <div className="relative mx-0.5 h-[3px] min-w-0 flex-1 rounded-full bg-white/25">
-                      <div className="absolute inset-y-0 left-0 w-[12%] rounded-full bg-[#a78bfa]" />
-                      <span className="absolute top-1/2 left-[12%] h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white" />
-                    </div>
-                    <Volume2 className="h-3 w-3 text-white/90" strokeWidth={2} />
-                    <Maximize2 className="h-3 w-3 text-white/90" strokeWidth={2} />
-                  </div>
-                </div>
               </div>
 
               {/* Spark between video and Generated Clips */}
@@ -126,7 +164,6 @@ export function HowItWorksEditorMockup({ className }: HowItWorksEditorMockupProp
                 className={cn(
                   "absolute top-1/2 left-full z-30 hidden -translate-y-1/2 items-center justify-center sm:flex",
                   "h-8 w-8 sm:h-9 sm:w-9",
-                  /* half of sm:gap-5 (1.25rem) / lg:gap-6 (1.5rem) */
                   "translate-x-[calc(0.625rem-50%)] lg:translate-x-[calc(0.75rem-50%)]",
                   "rounded-[0.65rem] bg-gradient-to-br from-[#a78bfa] to-[#7c3aed] text-white",
                   "shadow-[0_8px_20px_-6px_rgba(124,58,237,0.75)]",
