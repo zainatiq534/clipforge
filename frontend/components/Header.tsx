@@ -90,7 +90,7 @@ export function Header({ className, tone = "dark" }: HeaderProps) {
         )}
         <GradientButton
           size="sm"
-          href="#start"
+          href="/signup"
           rightIcon={<Icon icon={ArrowRight} size="md" />}
         >
           Get Started

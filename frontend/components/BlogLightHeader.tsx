@@ -75,7 +75,7 @@ export function BlogLightHeader({ className }: BlogLightHeaderProps) {
         </Link>
         <GradientButton
           size="sm"
-          href="#start"
+          href="/signup"
           rightIcon={<Icon icon={ArrowRight} size="md" />}
         >
           <span className="hidden sm:inline">Get Started</span>

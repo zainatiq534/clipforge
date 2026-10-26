@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { CaptionsShowcase } from "@/components/CaptionsShowcase";
 import { GradientButton } from "@/components/ui/Button";
-import { Icon, PlayCircleIcon } from "@/components/ui/Icon";
+import { Icon } from "@/components/ui/Icon";
 import { cn } from "@/lib/cn";
 
 const items = [
@@ -88,13 +88,6 @@ export function CaptionsFeature({ className }: CaptionsFeatureProps) {
             >
               Start Creating Clips
             </GradientButton>
-            <a
-              href="#demo"
-              className="inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-full border border-slate-200 bg-white px-6 text-base font-semibold text-[#1e1b4b] shadow-sm transition-colors hover:bg-slate-50 sm:h-[3.25rem] sm:w-auto sm:px-7"
-            >
-              <PlayCircleIcon className="border-slate-300 [&_svg]:fill-[#1e1b4b]" />
-              See It In Action
-            </a>
           </div>
         </div>
       </div>

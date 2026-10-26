@@ -28,7 +28,12 @@ function GoogleGlyph({ className }: { className?: string }) {
   );
 }
 
-export function LoginForm() {
+type LoginFormProps = {
+  mode?: "login" | "signup";
+};
+
+export function LoginForm({ mode = "login" }: LoginFormProps) {
+  const isSignup = mode === "signup";
   const [message, setMessage] = useState<{
     type: "error" | "success";
     text: string;
@@ -56,7 +61,9 @@ export function LoginForm() {
 
     setMessage({
       type: "success",
-      text: "Form looks good. Connect this page to your authentication backend to sign in.",
+      text: isSignup
+        ? "Form looks good. Connect this page to your authentication backend to create an account."
+        : "Form looks good. Connect this page to your authentication backend to sign in.",
     });
   }
 
@@ -69,10 +76,12 @@ export function LoginForm() {
         id="form-title"
         className="font-display text-[1.65rem] font-extrabold tracking-tight text-[#171126]"
       >
-        Sign in
+        {isSignup ? "Create account" : "Sign in"}
       </h2>
       <p className="mt-1.5 font-sans text-[13px] text-[#777184]">
-        Enter your details to continue.
+        {isSignup
+          ? "Enter your details to get started."
+          : "Enter your details to continue."}
       </p>
 
       <button
@@ -122,19 +131,21 @@ export function LoginForm() {
             >
               Password
             </label>
-            <Link
-              href="#forgot-password"
-              className="font-sans text-[12px] font-semibold text-[#4f46e5] hover:underline"
-              onClick={(e) => {
-                e.preventDefault();
-                setMessage({
-                  type: "success",
-                  text: "Connect this link to your password recovery page.",
-                });
-              }}
-            >
-              Forgot password?
-            </Link>
+            {!isSignup ? (
+              <Link
+                href="#forgot-password"
+                className="font-sans text-[12px] font-semibold text-[#4f46e5] hover:underline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setMessage({
+                    type: "success",
+                    text: "Connect this link to your password recovery page.",
+                  });
+                }}
+              >
+                Forgot password?
+              </Link>
+            ) : null}
           </div>
           <input
             id="password"
@@ -166,16 +177,27 @@ export function LoginForm() {
           type="submit"
           className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#8b5cf6] via-[#7c3aed] to-[#4f46e5] font-sans text-[14px] font-bold text-white shadow-[0_12px_28px_rgba(124,58,237,0.28)] transition hover:-translate-y-px hover:shadow-[0_14px_32px_rgba(124,58,237,0.34)]"
         >
-          Log In
+          {isSignup ? "Get Started" : "Log In"}
           <ArrowRight className="h-4 w-4" strokeWidth={2.4} aria-hidden />
         </button>
       </form>
 
       <p className="mt-5 text-center font-sans text-[13px] text-[#777184]">
-        New to ClipForge?{" "}
-        <Link href="#register" className="font-semibold text-[#4f46e5] hover:underline">
-          Create an account
-        </Link>
+        {isSignup ? (
+          <>
+            Already have an account?{" "}
+            <Link href="/login" className="font-semibold text-[#4f46e5] hover:underline">
+              Log In
+            </Link>
+          </>
+        ) : (
+          <>
+            New to ClipForge?{" "}
+            <Link href="/signup" className="font-semibold text-[#4f46e5] hover:underline">
+              Create an account
+            </Link>
+          </>
+        )}
       </p>
     </section>
   );
