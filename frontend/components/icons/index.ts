@@ -1,7 +1,13 @@
 export { TikTokIcon } from "@/components/icons/TikTokIcon";
+export { TikTokBadgeIcon } from "@/components/icons/TikTokBadgeIcon";
 export { InstagramIcon } from "@/components/icons/InstagramIcon";
+export { InstagramBadgeIcon } from "@/components/icons/InstagramBadgeIcon";
 export { YouTubeIcon } from "@/components/icons/YouTubeIcon";
 export { ScissorsBadgeIcon } from "@/components/icons/ScissorsBadgeIcon";
 export { TypeBadgeIcon } from "@/components/icons/TypeBadgeIcon";
 export { PlayBadgeIcon } from "@/components/icons/PlayBadgeIcon";
 export { UploadBadgeIcon } from "@/components/icons/UploadBadgeIcon";
+export { YouTubeShortsIcon } from "@/components/icons/YouTubeShortsIcon";
+export { PodcastsIcon } from "@/components/icons/PodcastsIcon";
+export { GraduationIcon } from "@/components/icons/GraduationIcon";
+export { AgenciesIcon } from "@/components/icons/AgenciesIcon";

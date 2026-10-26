@@ -8,10 +8,15 @@
   --font-hand: var(--font-caveat), ui-sans-serif, cursive;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans);
+  overflow-x: clip;
 }
 
 .font-display {
@@ -24,4 +29,39 @@ body {
 
 .font-hand {
   font-family: var(--font-hand);
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(6deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(4.5deg);
+  }
+}
+
+@keyframes float-left {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-6deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(-4.5deg);
+  }
+}
+
+.animate-float {
+  animation: float 5.5s ease-in-out infinite;
+}
+
+.animate-float-left {
+  animation: float-left 6.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-float-left {
+    animation: none;
+  }
 }
