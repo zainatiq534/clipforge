@@ -4,7 +4,6 @@ import {
 } from "lucide-react";
 import { BeforeAfterDemo } from "@/components/home/BeforeAfterDemo";
 import { FAQ } from "@/components/home/FAQ";
-import { Features } from "@/components/features/Features";
 import { FloatingClips } from "@/components/home/FloatingClips";
 import { Hero } from "@/components/home/Hero";
 import { HowItWorks } from "@/components/home/HowItWorks";
