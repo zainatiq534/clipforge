@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
 import { FullyCustomizable } from "@/components/how-it-works/FullyCustomizable";
 import { HowItWorksHero } from "@/components/how-it-works/HowItWorksHero";
 import { PublishAnywhere } from "@/components/how-it-works/PublishAnywhere";
 import { SmartAiAnalysis } from "@/components/how-it-works/SmartAiAnalysis";
-import { HowItWorks } from "@/components/HowItWorks";
+import { HowItWorks } from "@/components/home/HowItWorks";
 
 export const metadata: Metadata = {
   title: "How It Works — ClipForge",
@@ -41,14 +39,12 @@ export default function HowItWorksPage() {
         />
       </div>
 
-      <div className="relative z-10 flex min-h-dvh flex-col">
-        <Header tone="light" />
+      <div className="relative z-10 flex min-h-dvh flex-col pt-20">
         <HowItWorksHero />
         <HowItWorks />
         <FullyCustomizable />
         <SmartAiAnalysis />
         <PublishAnywhere />
-        <Footer />
       </div>
     </div>
   );

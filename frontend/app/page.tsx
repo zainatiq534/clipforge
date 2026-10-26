@@ -2,23 +2,22 @@ import {
   ArrowRight,
   Check,
 } from "lucide-react";
-import { BeforeAfterDemo } from "@/components/BeforeAfterDemo";
-import { FAQ } from "@/components/FAQ";
-import { Features } from "@/components/Features";
-import { FloatingClips } from "@/components/FloatingClips";
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
-import { Hero } from "@/components/Hero";
-import { HowItWorks } from "@/components/HowItWorks";
-import { Pricing } from "@/components/Pricing";
-import { Testimonials } from "@/components/Testimonials";
-import { TrustedBy } from "@/components/TrustedBy";
+import { BeforeAfterDemo } from "@/components/home/BeforeAfterDemo";
+import { FAQ } from "@/components/home/FAQ";
+import { Features } from "@/components/features/Features";
+import { FloatingClips } from "@/components/home/FloatingClips";
+import { Hero } from "@/components/home/Hero";
+import { HowItWorks } from "@/components/home/HowItWorks";
+import { Pricing } from "@/components/home/Pricing";
+import { Testimonials } from "@/components/home/Testimonials";
+import { TrustedBy } from "@/components/home/TrustedBy";
 import { Badge } from "@/components/ui/Badge";
 import { GradientButton } from "@/components/ui/Button";
 import { BackgroundImage } from "@/components/ui/Image";
 import { Icon } from "@/components/ui/Icon";
 import { Reveal } from "@/components/ui/Reveal";
 import { cn } from "@/lib/cn";
+import { FeaturesHome } from "@/components/home/FeaturesHome";
 
 const trustItems = [
   "No credit card required",
@@ -35,8 +34,7 @@ export default function Home() {
         </div>
         <FloatingClips />
 
-        <div className="relative z-10 flex min-h-dvh flex-col">
-          <Header />
+        <div className="relative z-10 flex min-h-dvh flex-col pt-20">
           <Hero />
         </div>
       </div>
@@ -46,7 +44,7 @@ export default function Home() {
         <SharedLightAtmosphere />
         <TrustedBy />
         <HowItWorks />
-        <Features />
+        <FeaturesHome />
         <BeforeAfterDemo />
         <Testimonials />
         <Pricing />
@@ -142,8 +140,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        <Footer />
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
+import { Caveat, Outfit, Plus_Jakarta_Sans } from "next/font/google";
+import { SiteShell } from "@/components/layout/SiteShell";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -14,6 +15,12 @@ const plusJakarta = Plus_Jakarta_Sans({
   display: "swap",
 });
 
+const caveat = Caveat({
+  variable: "--font-caveat",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "ClipForge — Turn Long Videos Into Viral-Ready Clips",
   description:
@@ -24,10 +31,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${outfit.variable} ${plusJakarta.variable} antialiased`}
+      className={`${outfit.variable} ${plusJakarta.variable} ${caveat.variable} h-full antialiased`}
     >
       <body className="min-h-dvh bg-background font-sans text-foreground">
-        {children}
+        <SiteShell>{children}</SiteShell>
       </body>
     </html>
   );
