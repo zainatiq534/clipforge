@@ -1,4 +1,5 @@
 import { ArrowRight, Sparkles } from "lucide-react";
+import { HeroVisual } from "@/components/HeroVisual";
 import { PlatformPills } from "@/components/PlatformPills";
 import { Badge } from "@/components/ui/Badge";
 import { GradientButton, OutlineButton } from "@/components/ui/Button";
@@ -15,7 +16,7 @@ export function Hero({ className }: HeroProps) {
   return (
     <section
       className={cn(
-        "relative z-10 mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center px-5 pb-16 pt-6 text-center sm:px-8 sm:pb-20 sm:pt-10",
+        "relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-5 pb-16 pt-6 sm:px-8 sm:pb-20 sm:pt-10",
         className,
       )}
     >

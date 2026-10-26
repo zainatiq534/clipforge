@@ -5,9 +5,13 @@ import { cn } from "@/lib/cn";
 type LogoProps = {
   className?: string;
   href?: string;
+  /** `light` = dark navy wordmark for light page headers (blog article). */
+  tone?: "dark" | "light";
 };
 
-export function Logo({ className, href = "#" }: LogoProps) {
+export function Logo({ className, href = "#", tone = "dark" }: LogoProps) {
+  const isLight = tone === "light";
+
   return (
     <a
       href={href}

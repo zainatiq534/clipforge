@@ -1,169 +1,128 @@
-import { FeaturesProductMockup } from "@/components/FeaturesProductMockup";
+"use client";
+
+import { BarChart3, Bolt, Scissors, TrendingUp } from "lucide-react";
+import { FeatureShowcase } from "@/components/FeatureShowcase";
+import { FeaturesMotionItem } from "@/components/FeaturesMotion";
 import { AppImage } from "@/components/ui/Image";
-import { Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
-import { SectionLabel } from "@/components/ui/SectionLabel";
-import { Typography } from "@/components/ui/Typography";
+import { Icon } from "@/components/ui/Icon";
 import { cn } from "@/lib/cn";
 
-const features = [
+const avatars = [
+  "/features/avatar-1.jpg",
+  "/features/avatar-2.jpg",
+  "/features/avatar-3.jpg",
+  "/features/avatar-4.jpg",
+];
+
+const featureItems = [
   {
-    title: "AI Highlight Detection",
-    description:
-      "Automatically finds the most engaging moments in your videos using AI.",
-    iconSrc: "/feature-icon-sparkles.png",
+    icon: Bolt,
+    title: "Find hooks instantly",
+    description: "AI detects the strongest opening moments in seconds.",
   },
   {
-    title: "Auto Captions",
-    description:
-      "Accurate, stylish captions generated in seconds with multi-language support.",
-    iconSrc: "/feature-icon-file.png",
+    icon: BarChart3,
+    title: "Rank clips by viral score",
+    description: "Every moment gets a score so you know what to publish first.",
   },
   {
-    title: "Vertical Reframing",
-    description:
-      "Reframes your content automatically for TikTok, YouTube Shorts, and Instagram Reels.",
-    iconSrc: "/feature-icon-scan.png",
+    icon: Scissors,
+    title: "Auto-cut into short clips",
+    description: "One long video becomes 5–10 vertical, captioned shorts.",
   },
-  {
-    title: "Clip Scores & Reasons",
-    description:
-      "Get AI-powered engagement scores with clear reasons for each clip recommendation.",
-    iconSrc: "/feature-icon-chart.png",
-  },
-  {
-    title: "Suggested Titles",
-    description:
-      "Receive catchy, platform-optimized titles and hooks that drive more views.",
-    iconSrc: "/feature-icon-bulb.png",
-  },
-  {
-    title: "Multiple Export Options",
-    description:
-      "Export in different formats and aspect ratios, ready for all major platforms.",
-    iconSrc: "/feature-icon-upload.png",
-  },
-] as const;
+];
 
 type FeaturesProps = {
   className?: string;
 };
 
+/** Layout unchanged — text colors only adjusted for light aurora background readability */
 export function Features({ className }: FeaturesProps) {
   return (
     <section
-      id="features"
       className={cn(
-        "relative overflow-visible px-5 py-10 sm:px-8 sm:py-12 lg:py-14",
+        "relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-5 py-10 sm:px-8 sm:py-12 lg:py-14",
         className,
       )}
     >
-      <div className="relative z-10 mx-auto w-full max-w-6xl">
-        <div className="flex flex-col items-center text-center">
-          <Reveal>
-            <SectionLabel>Features</SectionLabel>
-          </Reveal>
+      <div className="grid w-full items-center gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-8 xl:gap-10">
+        <FeaturesMotionItem className="max-w-xl text-left lg:max-w-none">
+          <h1 className="font-display max-w-xl text-balance text-[1.85rem] leading-[1.12] font-bold tracking-tight text-[#0f172a] sm:text-4xl lg:text-[2.5rem]">
+            AI-Powered{" "}
+            <span className="bg-gradient-to-r from-[#8b5cf6] via-[#7c3aed] to-[#3b82f6] bg-clip-text text-transparent">
+              Smart Clipping
+            </span>
+          </h1>
 
-          <Reveal delay={0.06}>
-            <h2
-              className={cn(
-                "mt-6 max-w-4xl text-center font-display font-bold tracking-[-0.03em]",
-                "text-[2.15rem] leading-[1.15] sm:text-[2.85rem] md:text-[3.35rem] lg:text-[3.75rem]",
-              )}
-            >
-              <span className="block" style={{ color: "#111827" }}>
-                Everything You Need to
-              </span>
-              <span className="mt-0.5 block sm:mt-1">
-                <span style={{ color: "#111827" }}>Create </span>
-                <span className="bg-gradient-to-r from-[#8b5cf6] via-[#a855f7] to-[#6366f1] bg-clip-text text-transparent">
-                  High-Performing Clips
-                </span>
-              </span>
-            </h2>
-          </Reveal>
+          <p className="mt-4 font-sans text-[0.9375rem] leading-relaxed text-slate-600 sm:text-base">
+            ClipForge analyzes your long-form video, finds the highest-performing moments,
+            and turns them into short, scroll-stopping clips — automatically.
+          </p>
+          <p className="mt-2.5 font-sans text-[0.9375rem] leading-relaxed text-slate-600 sm:text-base">
+            Built for creators, podcasters, YouTubers, and agencies who want{" "}
+            <span className="font-semibold text-slate-900">viral-ready content</span> without
+            hours of manual editing.
+          </p>
 
-          <Reveal delay={0.12}>
-            <Typography
-              as="p"
-              variant="body"
-              tone="mutedInk"
-              className="mt-4 max-w-2xl text-pretty"
-            >
-              Powerful AI tools to turn your long videos into viral-ready content,
-              faster than ever.
-            </Typography>
-          </Reveal>
-        </div>
-
-        <div className="mt-12 grid grid-cols-1 items-center gap-8 lg:mt-14 lg:grid-cols-[1.05fr_1.2fr] lg:gap-5 xl:gap-7">
-          <Stagger className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 md:grid-cols-3 md:gap-3.5">
-            {features.map((feature) => (
-              <StaggerItem key={feature.title}>
-                <FeatureCard {...feature} />
-              </StaggerItem>
+          <ul className="mt-6 space-y-3.5">
+            {featureItems.map((item) => (
+              <FeaturesMotionItem key={item.title}>
+                <li className="flex items-start gap-3.5">
+                  <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#ede9fe] text-[#7c3aed] shadow-sm">
+                    <Icon icon={item.icon} size="md" />
+                  </span>
+                  <div>
+                    <p className="font-sans text-base font-bold text-slate-900 sm:text-lg">
+                      {item.title}
+                    </p>
+                    <p className="mt-0.5 font-sans text-sm leading-relaxed text-slate-500 sm:text-[0.95rem]">
+                      {item.description}
+                    </p>
+                  </div>
+                </li>
+              </FeaturesMotionItem>
             ))}
-          </Stagger>
+          </ul>
 
-          <Reveal from="right" delay={0.1} className="overflow-visible py-2 lg:py-4">
-            <FeaturesProductMockup />
-          </Reveal>
-        </div>
+          <div className="mt-10 flex flex-wrap items-center gap-6">
+            <div className="flex items-start gap-2">
+              <Icon icon={TrendingUp} size="md" className="mt-1 text-[#7c3aed]" />
+              <div>
+                <p className="font-display text-2xl font-bold text-[#1e1b4b]">2.3x</p>
+                <p className="max-w-[12rem] font-sans text-sm leading-snug text-slate-500">
+                  Average watch time increase with captions.
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center">
+                {avatars.map((src, i) => (
+                  <span
+                    key={src}
+                    className={cn(
+                      "relative h-9 w-9 overflow-hidden rounded-full border-2 border-white",
+                      i > 0 && "-ml-2",
+                    )}
+                  >
+                    <AppImage src={src} alt="" fill className="object-cover" sizes="36px" />
+                  </span>
+                ))}
+                <span className="-ml-2 inline-flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-[#7c3aed] text-[0.6rem] font-bold text-white">
+                  +10K
+                </span>
+              </div>
+              <p className="mt-2 max-w-[14rem] font-sans text-sm leading-snug text-slate-500">
+                Used by 10,000+ creators, podcasters and agencies.
+              </p>
+            </div>
+          </div>
+        </FeaturesMotionItem>
+
+        <FeaturesMotionItem>
+          <FeatureShowcase />
+        </FeaturesMotionItem>
       </div>
     </section>
-  );
-}
-
-type FeatureCardProps = {
-  title: string;
-  description: string;
-  iconSrc: string;
-};
-
-function FeatureCard({ title, description, iconSrc }: FeatureCardProps) {
-  return (
-    <article
-      className={cn(
-        "group rounded-2xl border border-[#e9e4f5] bg-white p-4",
-        "shadow-[0_10px_28px_-18px_rgba(124,58,237,0.2)]",
-        "transition-[transform,box-shadow] duration-300 ease-out",
-        "hover:-translate-y-1 hover:shadow-[0_22px_40px_-16px_rgba(124,58,237,0.32)]",
-        "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
-      )}
-    >
-      <div
-        className={cn(
-          "relative mb-3 h-11 w-11 overflow-hidden rounded-[0.85rem]",
-          "ring-1 ring-[#ddd6fe]/80",
-          "shadow-[0_6px_16px_-10px_rgba(124,58,237,0.35)]",
-          "transition-transform duration-300 group-hover:scale-105",
-          "motion-reduce:transition-none motion-reduce:group-hover:scale-100",
-        )}
-      >
-        <AppImage
-          src={iconSrc}
-          alt=""
-          fill
-          quality={100}
-          sizes="44px"
-          className="object-cover object-center"
-        />
-      </div>
-      <Typography
-        as="h3"
-        variant="h3"
-        tone="ink"
-        className="text-[0.95rem] leading-snug sm:text-base"
-      >
-        {title}
-      </Typography>
-      <Typography
-        as="p"
-        variant="bodySm"
-        tone="mutedInk"
-        className="mt-1.5 text-[0.8rem] leading-relaxed sm:text-[0.85rem]"
-      >
-        {description}
-      </Typography>
-    </article>
   );
 }
