@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import { Clapperboard, ShieldCheck, Sparkles, Star } from "lucide-react";
-import { Header } from "@/components/Header";
 import {
   LOGIN_VIDEO_BOTTOM,
   LOGIN_VIDEO_TOP,
   LoginClipCard,
-} from "@/components/LoginClipVideos";
-import { SignupForm } from "@/components/SignupForm";
+} from "@/components/auth/LoginClipVideos";
+import { SignupForm } from "@/components/auth/SignupForm";
 
 export const metadata: Metadata = {
   title: "Get Started — ClipForge AI",
@@ -33,9 +32,7 @@ export default function SignupPage() {
         aria-hidden
       />
 
-      <div className="relative z-10">
-        <Header tone="light" />
-
+      <div className="relative z-10 pt-20">
         <main className="mx-auto mt-1 mb-8 grid w-[min(980px,calc(100%-2rem))] grid-cols-1 items-center gap-5 sm:mt-3 sm:mb-10 sm:w-[min(980px,calc(100%-2.5rem))] lg:grid-cols-[1fr_0.95fr] lg:gap-8">
           {/* Left: diagonal videos + text (kal wala signup layout) */}
           <section

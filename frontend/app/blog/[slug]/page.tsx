@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { BlogLightHeader } from "@/components/BlogLightHeader";
-import { BlogPostDetail } from "@/components/BlogPostDetail";
-import { SoftContinuousBackground } from "@/components/SoftContinuousBackground";
+import { BlogPostDetail } from "@/components/blog/BlogPostDetail";
+import { SoftContinuousBackground } from "@/components/shared/SoftContinuousBackground";
 import { getAllBlogSlugs, getBlogPost } from "@/lib/blogPosts";
 import { SOFT_PAGE_BASE } from "@/lib/softPageBg";
 
@@ -37,8 +36,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       style={{ background: SOFT_PAGE_BASE }}
     >
       <SoftContinuousBackground />
-      <div className="relative z-10 flex min-h-screen flex-col">
-        <BlogLightHeader />
+      <div className="relative z-10 flex min-h-screen flex-col pt-20">
         <BlogPostDetail post={post} withBackground={false} />
       </div>
     </div>

@@ -4,7 +4,9 @@ import { cn } from "@/lib/cn";
 export type ButtonVariant =
   | "gradient"
   | "outline"
+  | "outlineInk"
   | "ghost"
+  | "ghostInk"
   | "secondary"
   | "soft"
   | "danger";
@@ -30,8 +32,14 @@ const variantClass: Record<ButtonVariant, string> = {
     "border border-transparent bg-gradient-to-r from-[#a78bfa] via-[#8b5cf6] to-[#3b82f6] text-white shadow-[0_10px_40px_rgba(99,102,241,0.35)] hover:brightness-110 hover:shadow-[0_14px_48px_rgba(99,102,241,0.45)]",
   outline:
     "border border-white/40 bg-transparent text-white backdrop-blur-sm hover:border-white/70 hover:bg-white/5",
+  /** Dark border + ink text for light backgrounds (How It Works, etc.) */
+  outlineInk:
+    "border border-[#111827] bg-transparent text-[#111827] hover:border-[#111827] hover:bg-[#111827]/5",
   ghost:
     "border border-transparent bg-transparent text-white/90 hover:text-white hover:bg-white/5",
+  /** Dark text for light backgrounds (How It Works header Log In, etc.) */
+  ghostInk:
+    "border border-transparent bg-transparent text-[#4b5563] hover:bg-[#7c3aed]/8 hover:text-[#111827]",
   secondary:
     "border border-white/15 bg-white/10 text-white hover:bg-white/15",
   soft:
@@ -103,8 +111,16 @@ export function OutlineButton(props: Omit<ButtonProps, "variant">) {
   return <Button {...props} variant="outline" />;
 }
 
+export function OutlineInkButton(props: Omit<ButtonProps, "variant">) {
+  return <Button {...props} variant="outlineInk" />;
+}
+
 export function GhostButton(props: Omit<ButtonProps, "variant">) {
   return <Button {...props} variant="ghost" />;
+}
+
+export function GhostInkButton(props: Omit<ButtonProps, "variant">) {
+  return <Button {...props} variant="ghostInk" />;
 }
 
 export function SecondaryButton(props: Omit<ButtonProps, "variant">) {

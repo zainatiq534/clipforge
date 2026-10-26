@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
-import { CaptionsFeature } from "@/components/CaptionsFeature";
-import { Features } from "@/components/Features";
-import { FeaturesLightCanvas } from "@/components/FeaturesLightCanvas";
-import { FeaturesMotion } from "@/components/FeaturesMotion";
-import { Header } from "@/components/Header";
-import { Hero } from "@/components/Hero";
-import { HeroMotion } from "@/components/HeroMotion";
-import { AiEngineFeature } from "@/components/AiEngineFeature";
-import { EditingExportFeature } from "@/components/EditingExportFeature";
-import { PlatformFeature } from "@/components/PlatformFeature";
-import { ReframeFeature } from "@/components/ReframeFeature";
+import { CaptionsFeature } from "@/components/features/CaptionsFeature";
+import { Features } from "@/components/features/Features";
+import { FeaturesLightCanvas } from "@/components/features/FeaturesLightCanvas";
+import { FeaturesMotion } from "@/components/features/FeaturesMotion";
+import { Hero } from "@/components/home/Hero";
+import { AiEngineFeature } from "@/components/features/AiEngineFeature";
+import { EditingExportFeature } from "@/components/features/EditingExportFeature";
+import { PlatformFeature } from "@/components/features/PlatformFeature";
+import { ReframeFeature } from "@/components/features/ReframeFeature";
 import { BackgroundImage } from "@/components/ui/Image";
+import { FloatingClips } from "@/components/home/FloatingClips";
 
 export const metadata: Metadata = {
   title: "Features — ClipForge",
@@ -22,14 +21,14 @@ export default function FeaturesPage() {
   return (
     <>
       {/* Home hero — dark theme */}
-      <div className="relative flex min-h-screen flex-1 flex-col overflow-hidden">
-        <BackgroundImage src="/hero-bg.jpg" />
+      <div className="relative flex min-h-dvh flex-col overflow-x-clip">
+        <div className="absolute inset-0 overflow-hidden" aria-hidden>
+          <BackgroundImage src="/hero-bg.jpg" />
+        </div>
+        <FloatingClips />
 
-        <div className="relative z-10 flex min-h-screen flex-1 flex-col">
-          <Header />
-          <HeroMotion>
-            <Hero />
-          </HeroMotion>
+        <div className="relative z-10 flex min-h-dvh flex-col pt-20">
+          <Hero />
         </div>
       </div>
 

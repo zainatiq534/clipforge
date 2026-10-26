@@ -56,13 +56,18 @@ export function IconBadge({ children, className }: IconBadgeProps) {
 
 type PlayCircleProps = {
   className?: string;
+  /** light = white disc (dark pages). ink = dark disc (light pages). */
+  tone?: "light" | "ink";
 };
 
-export function PlayCircleIcon({ className }: PlayCircleProps) {
+export function PlayCircleIcon({ className, tone = "light" }: PlayCircleProps) {
   return (
     <span
       className={cn(
-        "inline-flex h-6 w-6 items-center justify-center rounded-full bg-white text-[#050814]",
+        "inline-flex h-6 w-6 items-center justify-center rounded-full",
+        tone === "ink"
+          ? "bg-[#111827] text-white"
+          : "bg-white text-[#050814]",
         className,
       )}
     >

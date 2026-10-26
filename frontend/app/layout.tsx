@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Caveat, Outfit, Plus_Jakarta_Sans } from "next/font/google";
+import { SiteShell } from "@/components/layout/SiteShell";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -33,7 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${outfit.variable} ${plusJakarta.variable} ${caveat.variable} h-full antialiased`}
     >
       <body className="min-h-dvh bg-background font-sans text-foreground">
-        {children}
+        <SiteShell>{children}</SiteShell>
       </body>
     </html>
   );

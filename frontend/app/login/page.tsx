@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { BarChart3, Bolt, Zap } from "lucide-react";
-import { Header } from "@/components/Header";
-import { LoginForm } from "@/components/LoginForm";
+import { LoginForm } from "@/components/auth/LoginForm";
 import { AppImage } from "@/components/ui/Image";
 import { cn } from "@/lib/cn";
 
@@ -28,9 +27,7 @@ export default function LoginPage() {
         }}
       />
 
-      <div className="relative z-10 flex min-h-screen flex-col">
-        <Header tone="light" />
-
+      <div className="relative z-10 flex min-h-screen flex-col pt-20">
         <main className="mx-auto grid w-[min(1040px,calc(100%-2rem))] flex-1 grid-cols-1 items-center gap-10 py-6 sm:py-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12 xl:gap-16">
           {/* Left — brand / value */}
           <section className="max-w-[480px]" aria-labelledby="intro-title">
