@@ -1,9 +1,9 @@
 import { ArrowRight, Sparkles } from "lucide-react";
-import { HeroVisual } from "@/components/home/HeroVisual";
 import { PlatformPills } from "@/components/home/PlatformPills";
+import { UploadFilesPill } from "@/components/home/UploadFilesPill";
 import { Badge } from "@/components/ui/Badge";
-import { GradientButton, OutlineButton } from "@/components/ui/Button";
-import { Icon, PlayCircleIcon } from "@/components/ui/Icon";
+import { GradientButton } from "@/components/ui/Button";
+import { Icon } from "@/components/ui/Icon";
 import { Reveal } from "@/components/ui/Reveal";
 import { Typography } from "@/components/ui/Typography";
 import { cn } from "@/lib/cn";
@@ -77,14 +77,7 @@ export function Hero({ className }: HeroProps) {
             >
               Start Creating Clips
             </GradientButton>
-            <OutlineButton
-              size="lg"
-              href="#demo"
-              leftIcon={<PlayCircleIcon />}
-              className="w-full sm:w-auto"
-            >
-              Watch Demo
-            </OutlineButton>
+            <UploadFilesPill className="w-full sm:w-auto" />
           </div>
         </Reveal>
       </div>

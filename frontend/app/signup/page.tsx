@@ -39,7 +39,7 @@ export default function SignupPage() {
             className="relative flex flex-col justify-center px-1 py-3 sm:py-4"
             aria-labelledby="intro-title"
           >
-            <div className="relative z-20 mb-2 flex justify-start pl-1">
+            <div className="relative z-20 mb-2 flex justify-start pl-0 -ml-3 sm:-ml-7 lg:-ml-12 xl:-ml-14">
               <LoginClipCard
                 src={LOGIN_VIDEO_TOP}
                 label="Clip preview 1"

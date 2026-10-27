@@ -13,19 +13,20 @@ type FeaturesMotionProps = {
   direction?: FeaturesMotionDirection;
 };
 
-const ease = [0.22, 1, 0.36, 1] as const;
+/** Soft ease-out — less snap, more glide */
+const ease = [0.16, 1, 0.3, 1] as const;
 
 function sectionVariants(direction: FeaturesMotionDirection): Variants {
   const hidden =
     direction === "left"
-      ? { opacity: 0, x: -48, y: 12, filter: "blur(6px)" }
+      ? { opacity: 0, x: -28, y: 6 }
       : direction === "right"
-        ? { opacity: 0, x: 48, y: 12, filter: "blur(6px)" }
+        ? { opacity: 0, x: 28, y: 6 }
         : direction === "scale"
-          ? { opacity: 0, scale: 0.96, y: 20, filter: "blur(6px)" }
+          ? { opacity: 0, scale: 0.98, y: 14 }
           : direction === "fade"
-            ? { opacity: 0, filter: "blur(8px)" }
-            : { opacity: 0, y: 40, filter: "blur(6px)" };
+            ? { opacity: 0 }
+            : { opacity: 0, y: 28 };
 
   return {
     hidden,
@@ -34,23 +35,23 @@ function sectionVariants(direction: FeaturesMotionDirection): Variants {
       x: 0,
       y: 0,
       scale: 1,
-      filter: "blur(0px)",
       transition: {
-        duration: 0.75,
+        duration: 0.95,
         ease,
         when: "beforeChildren",
-        staggerChildren: 0.08,
+        staggerChildren: 0.1,
+        delayChildren: 0.06,
       },
     },
   };
 }
 
 const childVariants: Variants = {
-  hidden: { opacity: 0, y: 18 },
+  hidden: { opacity: 0, y: 12 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.55, ease },
+    transition: { duration: 0.7, ease },
   },
 };
 
@@ -73,7 +74,7 @@ export function FeaturesMotion({
       variants={sectionVariants(direction)}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.16, margin: "0px 0px -8% 0px" }}
+      viewport={{ once: true, amount: 0.12, margin: "0px 0px -6% 0px" }}
       transition={{ delay }}
     >
       {children}
@@ -100,7 +101,7 @@ export function FeaturesMotionItem({
       variants={childVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
+      viewport={{ once: true, amount: 0.15 }}
     >
       {children}
     </motion.div>
