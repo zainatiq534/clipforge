@@ -13,7 +13,7 @@ export function UpgradeCard() {
       <div className="pointer-events-none absolute -right-3 -bottom-4 h-20 w-20" aria-hidden>
         <div className="absolute inset-0 rounded-full border-[10px] border-[#a78bfa]/55" />
         <div className="absolute inset-4 rounded-full border-[8px] border-[#8b5cf6]/45" />
-        <div className="absolute inset-9 rounded-full bg-[#3b82f6]/30" />
+        <div className="absolute inset-9 rounded-full bg-gradient-to-br from-[#8b5cf6]/40 to-[#3b82f6]/35" />
       </div>
     </section>
   );
