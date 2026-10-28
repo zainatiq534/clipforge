@@ -20,14 +20,14 @@ export function DashboardShell() {
           <DashboardBanner />
         </DashboardMotion>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
           <DashboardMotion delay={0.2}>
             <MembersCard />
           </DashboardMotion>
           <DashboardMotion delay={0.28}>
             <DataCard />
           </DashboardMotion>
-          <DashboardMotion delay={0.36}>
+          <DashboardMotion delay={0.36} className="sm:col-span-2 xl:col-span-1">
             <ImpactCard />
           </DashboardMotion>
         </div>

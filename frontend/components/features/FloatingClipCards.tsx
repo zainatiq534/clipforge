@@ -59,7 +59,7 @@ export function FloatingClipCards({ className }: FloatingClipCardsProps) {
   return (
     <div
       className={cn(
-        "relative z-20 -mt-8 flex items-end justify-center gap-3.5 px-2 sm:-mt-10 sm:gap-5 lg:justify-end lg:pr-4",
+        "relative z-20 -mt-4 flex items-end justify-center gap-2 px-1 sm:-mt-10 sm:gap-5 sm:px-2 lg:justify-end lg:pr-4",
         className,
       )}
     >
@@ -67,7 +67,7 @@ export function FloatingClipCards({ className }: FloatingClipCardsProps) {
         <motion.div
           key={clip.caption}
           className={cn(
-            "relative w-[104px] shrink-0 overflow-hidden rounded-[18px] border-2 border-[#c4b5fd]/80 sm:w-[128px]",
+            "relative w-[72px] shrink-0 overflow-hidden rounded-[14px] border-2 border-[#c4b5fd]/80 min-[400px]:w-[88px] sm:w-[128px] sm:rounded-[18px]",
             "aspect-[9/16] shadow-[0_0_22px_rgba(139,92,246,0.4),0_18px_48px_rgba(5,8,20,0.55)]",
           )}
           style={{ rotate: clip.rotate }}

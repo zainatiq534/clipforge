@@ -85,12 +85,12 @@ export function HowItWorksEditorMockup({ className }: HowItWorksEditorMockupProp
   return (
     <div className={cn("relative w-full", className)}>
       {/* Floating chips above the card */}
-      <div className="absolute -top-5 left-3 z-20 sm:-top-6 sm:left-5">
+      <div className="absolute top-2 left-2 z-20 max-w-[45%] sm:-top-6 sm:left-5 sm:max-w-none">
         <span
           className={cn(
-            "inline-flex items-center gap-1.5 rounded-full px-2.5 py-[0.35rem]",
+            "inline-flex items-center gap-1.5 rounded-full px-2 py-[0.35rem] sm:px-2.5",
             "border border-[#d4d0e8] bg-[#f7f5fc]",
-            "text-[0.68rem] font-semibold tracking-tight text-[#1f2937] sm:text-[0.72rem]",
+            "truncate text-[0.62rem] font-semibold tracking-tight text-[#1f2937] sm:text-[0.72rem]",
             "shadow-[0_6px_16px_-8px_rgba(124,58,237,0.28)]",
           )}
         >
@@ -99,19 +99,22 @@ export function HowItWorksEditorMockup({ className }: HowItWorksEditorMockupProp
         </span>
       </div>
 
-      <div className="absolute -top-7 right-1 z-20 sm:-top-8 sm:right-3">
+      <div className="absolute top-2 right-2 z-20 max-w-[52%] sm:-top-8 sm:right-3 sm:max-w-none">
         <div
           className={cn(
-            "flex items-center gap-2 rounded-2xl px-2.5 py-2 sm:px-3 sm:py-2.5",
+            "flex items-center gap-1.5 rounded-2xl px-2 py-1.5 sm:gap-2 sm:px-3 sm:py-2.5",
             "border border-[#d4c4f5] bg-[#f3f0ff]",
             "shadow-[0_10px_24px_-12px_rgba(124,58,237,0.35)]",
           )}
         >
           <CreateClipsBoltIcon />
-          <span className="pr-0.5 text-[0.72rem] leading-[1.2] font-semibold text-[#1f2937] sm:text-[0.78rem]">
-            Create clips in
-            <br />
-            minutes
+          <span className="truncate pr-0.5 text-[0.62rem] leading-[1.2] font-semibold text-[#1f2937] sm:text-[0.78rem]">
+            <span className="sm:hidden">Fast clips</span>
+            <span className="hidden sm:inline">
+              Create clips in
+              <br />
+              minutes
+            </span>
           </span>
         </div>
       </div>

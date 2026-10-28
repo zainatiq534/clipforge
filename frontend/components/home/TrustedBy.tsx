@@ -63,7 +63,7 @@ export function TrustedBy({ className }: TrustedByProps) {
 
               <h2
                 className={cn(
-                  "font-display px-12 text-center font-bold tracking-[-0.03em] sm:px-16 lg:px-20",
+                  "font-display px-0 text-center font-bold tracking-[-0.03em] sm:px-16 lg:px-20",
                   "text-[2.15rem] leading-[1.12] sm:text-[2.85rem] md:text-[3.35rem] lg:text-[3.75rem]",
                 )}
               >

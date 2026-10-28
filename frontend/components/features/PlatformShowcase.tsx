@@ -192,7 +192,7 @@ export function PlatformShowcase({ className }: PlatformShowcaseProps) {
                       <span className="absolute top-2.5 left-2 z-[1] rounded-md bg-[#d4d4d8]/92 px-1.5 py-[3px] font-sans text-[8px] font-bold text-[#18181b] sm:text-[9px]">
                         9:16
                       </span>
-                      <span className="absolute top-2.5 right-2 z-[1] rounded-md bg-[#d4d4d8]/92 px-1.5 py-[3px] font-sans text-[8px] font-bold text-[#18181b] sm:text-[9px]">
+                      <span className="absolute top-2.5 right-2 z-[1] hidden rounded-md bg-[#d4d4d8]/92 px-1.5 py-[3px] font-sans text-[8px] font-bold text-[#18181b] min-[400px]:inline-block sm:text-[9px]">
                         1080×1920
                       </span>
 
@@ -264,9 +264,9 @@ export function PlatformShowcase({ className }: PlatformShowcaseProps) {
                 </span>
               </div>
               <div className="flex shrink-0 items-center gap-1.5">
-                <span className="inline-flex items-center gap-1 rounded-full border border-[#ddd6fe] bg-[#f5f3ff] px-2.5 py-1 font-sans text-[9px] font-semibold text-[#7c3aed] sm:text-[10px]">
-                  <Sparkles className="h-3.5 w-3.5" strokeWidth={2.2} />
-                  Optimize for each platform
+                <span className="inline-flex max-w-[9.5rem] items-center gap-1 rounded-full border border-[#ddd6fe] bg-[#f5f3ff] px-2 py-1 font-sans text-[8px] font-semibold text-[#7c3aed] sm:max-w-none sm:px-2.5 sm:text-[10px]">
+                  <Sparkles className="h-3.5 w-3.5 shrink-0" strokeWidth={2.2} />
+                  <span className="truncate">Optimize for each platform</span>
                 </span>
                 <MoreHorizontal className="h-4 w-4 text-slate-400" />
               </div>
@@ -278,27 +278,33 @@ export function PlatformShowcase({ className }: PlatformShowcaseProps) {
                 return (
                   <div
                     key={row.name}
-                    className="flex items-center gap-2.5 rounded-[14px] border border-[#efeaf8] bg-[#faf9fd] px-2.5 py-2.5 sm:gap-3 sm:rounded-[15px] sm:px-3 sm:py-3"
+                    className="flex flex-col gap-2 rounded-[14px] border border-[#efeaf8] bg-[#faf9fd] px-2.5 py-2.5 min-[420px]:flex-row min-[420px]:items-center sm:gap-3 sm:rounded-[15px] sm:px-3 sm:py-3"
                   >
-                    <span
-                      className={cn(
-                        "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] shadow-sm ring-1 ring-slate-100 sm:h-10 sm:w-10 sm:rounded-[11px]",
-                        row.iconWrap,
-                      )}
-                    >
-                      <Brand className="h-4 w-4 sm:h-[1.125rem] sm:w-[1.125rem]" />
-                    </span>
+                    <div className="flex min-w-0 flex-1 items-center gap-2.5">
+                      <span
+                        className={cn(
+                          "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] shadow-sm ring-1 ring-slate-100 sm:h-10 sm:w-10 sm:rounded-[11px]",
+                          row.iconWrap,
+                        )}
+                      >
+                        <Brand className="h-4 w-4 sm:h-[1.125rem] sm:w-[1.125rem]" />
+                      </span>
 
-                    <div className="min-w-0 shrink-0 basis-[7.75rem] sm:basis-[9rem]">
-                      <p className="truncate font-sans text-[12px] font-bold leading-tight text-[#1e1b4b] sm:text-[13px]">
-                        {row.name}
-                      </p>
-                      <p className="mt-0.5 truncate font-sans text-[9px] font-medium text-slate-400 sm:text-[10px]">
-                        {row.meta}
-                      </p>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-sans text-[12px] font-bold leading-tight text-[#1e1b4b] sm:text-[13px]">
+                          {row.name}
+                        </p>
+                        <p className="mt-0.5 truncate font-sans text-[9px] font-medium text-slate-400 sm:text-[10px]">
+                          {row.meta}
+                        </p>
+                      </div>
+
+                      <span className="relative ml-auto h-[22px] w-10 shrink-0 rounded-full bg-[#7c3aed] min-[420px]:hidden sm:h-6 sm:w-11">
+                        <span className="absolute top-[3px] right-[3px] h-4 w-4 rounded-full bg-white shadow" />
+                      </span>
                     </div>
 
-                    <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1">
+                    <div className="flex min-w-0 flex-wrap items-center gap-1 min-[420px]:flex-1">
                       {row.tags.map((tag) => (
                         <span
                           key={tag}
@@ -309,7 +315,7 @@ export function PlatformShowcase({ className }: PlatformShowcaseProps) {
                       ))}
                     </div>
 
-                    <span className="relative ml-auto h-[22px] w-10 shrink-0 rounded-full bg-[#7c3aed] sm:h-6 sm:w-11">
+                    <span className="relative ml-auto hidden h-[22px] w-10 shrink-0 rounded-full bg-[#7c3aed] min-[420px]:block sm:h-6 sm:w-11">
                       <span className="absolute top-[3px] right-[3px] h-4 w-4 rounded-full bg-white shadow sm:top-[3.5px] sm:right-[3.5px] sm:h-[17px] sm:w-[17px]" />
                     </span>
                   </div>

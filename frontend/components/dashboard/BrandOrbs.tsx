@@ -12,7 +12,7 @@ export function BrandOrbs({ className }: BrandOrbsProps) {
   return (
     <div
       className={cn(
-        "pointer-events-none absolute -top-4 -right-2 h-32 w-32 sm:top-0 sm:right-3 sm:h-40 sm:w-40",
+        "pointer-events-none absolute -top-4 -right-2 h-24 w-24 scale-90 opacity-80 sm:top-0 sm:right-3 sm:h-40 sm:w-40 sm:scale-100 sm:opacity-100",
         className,
       )}
       aria-hidden

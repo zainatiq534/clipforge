@@ -76,15 +76,19 @@ export function BeforeAfterDemo({ className }: BeforeAfterDemoProps) {
                 "text-[2.15rem] leading-[1.15] sm:text-[2.85rem] md:text-[3.35rem] lg:text-[3.75rem]",
               )}
             >
-              <span className="relative inline-flex items-center justify-center gap-5 sm:gap-7 md:gap-8">
-                <AccentLines side="left" size="lg" />
+              <span className="relative inline-flex items-center justify-center gap-2 sm:gap-7 md:gap-8">
+                <span className="hidden sm:inline-flex">
+                  <AccentLines side="left" size="lg" />
+                </span>
                 <span style={{ color: "#111827" }}>
                   Turn This{" "}
                   <span className="bg-gradient-to-r from-[#8b5cf6] via-[#a855f7] to-[#6366f1] bg-clip-text text-transparent">
                     Long Video
                   </span>
                 </span>
-                <AccentLines side="right" size="lg" />
+                <span className="hidden sm:inline-flex">
+                  <AccentLines side="right" size="lg" />
+                </span>
               </span>
               <span className="mt-0.5 block sm:mt-1" style={{ color: "#111827" }}>
                 Into Viral Clips
@@ -416,22 +420,26 @@ function TransformHub() {
 function ViralClipsColumn() {
   return (
     <div className="w-full">
-      <div className="mb-4 flex items-center justify-center gap-4 sm:gap-5">
-        <AccentLines side="left" size="sm" />
+      <div className="mb-4 flex items-center justify-center gap-3 sm:gap-5">
+        <span className="hidden sm:inline-flex">
+          <AccentLines side="left" size="sm" />
+        </span>
         <span
           className={cn(
-            "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5",
+            "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 sm:px-3",
             "border border-[#ddd6fe] bg-[#f3e8ff]/95",
-            "text-[0.68rem] font-semibold tracking-[0.04em] text-[#7c3aed] uppercase sm:text-[0.72rem]",
+            "text-[0.65rem] font-semibold tracking-[0.04em] text-[#7c3aed] uppercase sm:text-[0.72rem]",
           )}
         >
           <Scissors className="h-3.5 w-3.5" strokeWidth={2.25} />
           3 Viral Clips Generated
         </span>
-        <AccentLines side="right" size="sm" />
+        <span className="hidden sm:inline-flex">
+          <AccentLines side="right" size="sm" />
+        </span>
       </div>
 
-      <div className="grid grid-cols-3 items-start gap-2.5 sm:gap-3">
+      <div className="-mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1 sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-3 sm:overflow-visible sm:px-0 sm:pb-0">
         {clips.map((clip) => (
           <ViralClipCard key={clip.clipLabel} {...clip} />
         ))}
@@ -451,7 +459,7 @@ function ViralClipCard({
   icon,
 }: (typeof clips)[number]) {
   return (
-    <article className="flex min-w-0 flex-col">
+    <article className="flex w-[42%] min-w-[8.5rem] shrink-0 flex-col sm:w-auto sm:min-w-0 sm:shrink">
       <div
         className={cn(
           "relative overflow-hidden rounded-[0.85rem] sm:rounded-[1rem]",

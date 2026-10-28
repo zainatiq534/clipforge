@@ -11,7 +11,7 @@ export function HowItWorksHero({ className }: HowItWorksHeroProps) {
   return (
     <section
       className={cn(
-        "relative z-10 mx-auto w-full max-w-7xl px-5 pb-16 pt-6 sm:px-8 sm:pb-20 sm:pt-10 lg:pb-24",
+        "relative z-10 mx-auto w-full max-w-7xl px-5 pb-14 pt-8 sm:px-8 sm:pb-20 sm:pt-10 lg:pb-24",
         className,
       )}
     >

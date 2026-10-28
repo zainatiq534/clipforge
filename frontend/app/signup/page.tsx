@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function SignupPage() {
   return (
-    <div className="relative isolate min-h-dvh w-full bg-[#fbf9ff] text-[#171126]">
+    <div className="relative isolate min-h-dvh w-full overflow-x-clip bg-[#fbf9ff] text-[#171126]">
       <div
         className="pointer-events-none fixed inset-0 z-0 bg-[#fbf9ff]"
         aria-hidden
@@ -20,29 +20,29 @@ export default function SignupPage() {
         }}
       />
       <div className="relative z-10 flex min-h-dvh w-full flex-col pt-16 pb-5 sm:pt-[4.5rem] lg:pt-20">
-        <main className="grid w-full flex-1 grid-cols-1 content-start items-start gap-8 px-4 pt-2 sm:gap-10 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-12 lg:px-12 lg:pt-4 xl:px-16">
-          {/* Extra margin so outside videos have room; block nudged right */}
+        <main className="grid w-full flex-1 grid-cols-1 content-start items-start gap-6 px-4 pt-2 sm:gap-8 sm:px-6 md:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-10 lg:px-12 lg:pt-4 xl:px-16">
           <section
-            className="relative w-full overflow-visible pt-16 pb-[7rem] pl-4 pr-2 sm:pt-20 sm:pb-32 sm:pl-8 lg:pt-14 lg:pl-12 lg:pr-4 xl:pl-16"
+            className="relative w-full overflow-visible px-2 py-6 sm:px-4 sm:py-10 md:pt-16 md:pb-28 lg:pt-14 lg:pb-24 lg:pl-8 xl:pl-12"
             aria-labelledby="intro-title"
           >
-            {/* Tight wrap around text — videos position against THIS box only */}
-            <div className="relative ml-auto w-fit max-w-[min(100%,420px)] -translate-y-3 overflow-visible sm:max-w-[460px] sm:-translate-y-5 lg:mr-2 lg:-translate-y-6 xl:mr-6">
+            <div className="relative mx-auto w-full max-w-[22rem] overflow-visible sm:ml-auto sm:max-w-[26rem] md:max-w-[30rem] lg:mr-2 xl:mr-6">
               <SignupScatterVideos />
 
-              <div className="relative z-30 flex flex-col items-center bg-transparent px-5 py-4 text-center sm:px-7 sm:py-5">
-                <div className="inline-flex items-center gap-2 rounded-full border border-[#e6d5ff] bg-white/90 px-3.5 py-1.5 font-sans text-[12px] font-extrabold tracking-[0.08em] text-[#7c35df] uppercase sm:text-[13px]">
+              <div className="relative z-30 flex flex-col items-center bg-transparent px-2 py-3 text-center sm:px-5 sm:py-5">
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#e6d5ff] bg-white/90 px-3 py-1.5 font-sans text-[11px] font-extrabold tracking-[0.08em] text-[#7c35df] uppercase sm:px-3.5 sm:text-[13px]">
                   <Sparkles className="h-3.5 w-3.5" strokeWidth={2.2} aria-hidden />
                   Your Creative Workspace
                 </div>
 
                 <h1
                   id="intro-title"
-                  className="mt-3.5 font-display text-[clamp(2.55rem,5vw,3.75rem)] leading-[1.04] font-black tracking-[-0.045em] text-[#171126]"
+                  className="mt-3 font-display text-[clamp(2rem,7vw,3.75rem)] leading-[1.08] font-black tracking-[-0.045em] text-[#171126] sm:mt-3.5"
                 >
                   Welcome back.
                   <br />
-                  <span className="whitespace-nowrap">Make something</span>
+                  <span className="inline-block max-w-full sm:whitespace-nowrap">
+                    Make something
+                  </span>
                   <br />
                   <span className="bg-gradient-to-r from-[#9b4dff] via-[#6f2be5] to-[#c052eb] bg-clip-text text-transparent">
                     brilliant.

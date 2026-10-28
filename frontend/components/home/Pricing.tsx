@@ -119,7 +119,7 @@ export function Pricing({ className }: PricingProps) {
             aria-hidden
           />
 
-          <Stagger className="grid grid-cols-1 items-stretch gap-5 md:grid-cols-3 md:gap-5 lg:gap-6">
+          <Stagger className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-3 lg:gap-6">
             {plans.map((plan) => (
               <StaggerItem key={plan.id} className="h-full">
                 <PricingCard plan={plan} />

@@ -227,7 +227,7 @@ export function CustomizableEditorMockup({ className }: CustomizableEditorMockup
           </div>
 
           {/* Right panel */}
-          <aside className="w-[7.75rem] shrink-0 border-l border-[#eeeaf5] bg-white px-2 py-2.5 sm:w-[9rem] sm:px-2.5 sm:py-3">
+          <aside className="hidden w-[7.75rem] shrink-0 border-l border-[#eeeaf5] bg-white px-2 py-2.5 md:block md:w-[9rem] md:px-2.5 md:py-3">
             <p className="text-[0.68rem] font-extrabold tracking-tight text-[#0f172a] sm:text-[0.72rem]">
               Text Styles
             </p>

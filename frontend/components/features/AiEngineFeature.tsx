@@ -168,11 +168,14 @@ export function AiEngineFeature({ className }: AiEngineFeatureProps) {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 sm:gap-2.5">
-                {clipThumbs.map((src) => (
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2.5">
+                {clipThumbs.map((src, i) => (
                   <span
                     key={src}
-                    className="relative h-[3.35rem] w-[3.35rem] shrink-0 overflow-hidden rounded-[11px] ring-[1.5px] ring-[#d8b4fe] sm:h-14 sm:w-14 sm:rounded-[12px]"
+                    className={cn(
+                      "relative h-10 w-10 shrink-0 overflow-hidden rounded-[10px] ring-[1.5px] ring-[#d8b4fe] sm:h-14 sm:w-14 sm:rounded-[12px]",
+                      i >= 2 && "hidden min-[400px]:block",
+                    )}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -187,11 +190,11 @@ export function AiEngineFeature({ className }: AiEngineFeatureProps) {
                     />
                   </span>
                 ))}
-                <span className="inline-flex h-[3.35rem] w-[3.35rem] shrink-0 flex-col items-center justify-center rounded-full border-[1.5px] border-[#c4b5fd] bg-[#f5f3ff] sm:h-14 sm:w-14">
-                  <span className="font-sans text-[12px] leading-none font-extrabold text-[#7c3aed] sm:text-[13px]">
+                <span className="inline-flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-full border-[1.5px] border-[#c4b5fd] bg-[#f5f3ff] sm:h-14 sm:w-14">
+                  <span className="font-sans text-[11px] leading-none font-extrabold text-[#7c3aed] sm:text-[13px]">
                     +3
                   </span>
-                  <span className="mt-0.5 font-sans text-[9px] leading-none font-semibold text-[#a78bfa]">
+                  <span className="mt-0.5 font-sans text-[8px] leading-none font-semibold text-[#a78bfa] sm:text-[9px]">
                     more
                   </span>
                 </span>

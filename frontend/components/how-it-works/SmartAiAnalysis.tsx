@@ -58,7 +58,7 @@ export function SmartAiAnalysis({ className }: SmartAiAnalysisProps) {
 
           <Reveal delay={0.08} className="w-full min-w-0 overflow-visible">
             {/* Own size (not display) so "Potential" never gets clipped */}
-            <p className="mt-3 w-full whitespace-nowrap font-display text-[clamp(1.15rem,3.4vw,1.7rem)] leading-tight font-bold tracking-tight text-[#1f2937] sm:mt-3.5">
+            <p className="mt-3 w-full font-display text-[clamp(1.15rem,5.5vw,1.7rem)] leading-tight font-bold tracking-tight text-[#1f2937] sm:mt-3.5 sm:whitespace-nowrap sm:text-[clamp(1.15rem,3.4vw,1.7rem)]">
               Unlock{" "}
               <span className="bg-gradient-to-r from-[#b56cff] via-[#9b6bff] to-[#6ea8ff] bg-clip-text text-transparent">
                 Viral Potential

@@ -96,7 +96,7 @@ export function FeaturesHome({ className }: FeaturesHomeProps) {
         </div>
 
         <div className="mt-12 grid grid-cols-1 items-center gap-8 lg:mt-14 lg:grid-cols-[1.05fr_1.2fr] lg:gap-5 xl:gap-7">
-          <Stagger className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 md:grid-cols-3 md:gap-3.5">
+          <Stagger className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
             {features.map((feature) => (
               <StaggerItem key={feature.title}>
                 <FeatureCard {...feature} />

@@ -44,7 +44,7 @@ export function DashboardSidebar() {
   const router = useRouter();
 
   return (
-    <aside className="flex h-full min-h-[calc(100dvh-1.5rem)] w-[64px] shrink-0 flex-col items-center rounded-[24px] bg-[#1a1a1f] py-5 shadow-[0_14px_32px_rgba(15,15,25,0.16)] sm:min-h-[calc(100dvh-2rem)]">
+    <aside className="flex h-full min-h-[calc(100dvh-5rem)] w-[64px] shrink-0 flex-col items-center rounded-[24px] bg-[#1a1a1f] py-5 shadow-[0_14px_32px_rgba(15,15,25,0.16)] lg:min-h-[calc(100dvh-2rem)]">
       <Link
         href="/"
         className="relative mb-6 block h-9 w-9 overflow-hidden rounded-xl bg-[#7c3aed]"

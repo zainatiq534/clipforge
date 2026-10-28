@@ -74,7 +74,7 @@ export function SignupForm({ compact = false }: SignupFormProps) {
     >
       <div
         className={cn(
-          "flex items-center justify-between gap-3",
+          "flex flex-wrap items-center justify-between gap-2",
           compact ? "mb-2.5" : "mb-4",
         )}
       >
@@ -82,12 +82,12 @@ export function SignupForm({ compact = false }: SignupFormProps) {
           id="form-title"
           className={cn(
             "font-display font-extrabold tracking-tight text-[#171126]",
-            compact ? "text-[1.25rem]" : "text-[1.45rem]",
+            compact ? "text-[1.2rem] sm:text-[1.25rem]" : "text-[1.35rem] sm:text-[1.45rem]",
           )}
         >
           Sign in
         </h2>
-        <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-[#f4eaff] px-2.5 py-1 font-sans text-[10px] font-extrabold tracking-wide text-[#7e36df] uppercase">
+        <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#f4eaff] px-2 py-1 font-sans text-[9px] font-extrabold tracking-wide text-[#7e36df] uppercase sm:px-2.5 sm:text-[10px]">
           <Sparkles className="h-3 w-3" strokeWidth={2.2} aria-hidden />
           Secure Access
         </span>

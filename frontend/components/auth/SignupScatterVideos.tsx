@@ -8,9 +8,6 @@ import {
 } from "@/components/auth/LoginClipVideos";
 import { cn } from "@/lib/cn";
 
-/**
- * Fully outside the text border — offsets ≈ video size so they never collapse in.
- */
 const clips = [
   {
     key: "tl",
@@ -18,7 +15,7 @@ const clips = [
     label: "Clip preview 1",
     rotate: "-rotate-[8deg]",
     badgeStart: 0,
-    place: "absolute -top-[5.75rem] -left-[5.75rem] z-20 sm:-top-[6.5rem] sm:-left-[6.5rem]",
+    place: "absolute -top-[3.5rem] -left-[3.25rem] z-20 md:-top-[6.5rem] md:-left-[6.5rem]",
     origin: "origin-bottom-right",
     from: { x: 90, y: 100, rotate: 22 },
     delay: 0.06,
@@ -29,7 +26,7 @@ const clips = [
     label: "Clip preview 2",
     rotate: "rotate-[7deg]",
     badgeStart: 1,
-    place: "absolute -top-[5.75rem] -right-[5.75rem] z-20 sm:-top-[6.5rem] sm:-right-[6.5rem]",
+    place: "absolute -top-[3.5rem] -right-[3.25rem] z-20 md:-top-[6.5rem] md:-right-[6.5rem]",
     origin: "origin-bottom-left",
     from: { x: -90, y: 100, rotate: -20 },
     delay: 0.14,
@@ -40,7 +37,7 @@ const clips = [
     label: "Clip preview 3",
     rotate: "rotate-[5deg]",
     badgeStart: 2,
-    place: "absolute -bottom-[5.75rem] -left-[5.75rem] z-20 sm:-bottom-[6.5rem] sm:-left-[6.5rem]",
+    place: "absolute -bottom-[3.5rem] -left-[3.25rem] z-20 md:-bottom-[6.5rem] md:-left-[6.5rem]",
     origin: "origin-top-right",
     from: { x: 90, y: -100, rotate: -18 },
     delay: 0.22,
@@ -51,34 +48,33 @@ const clips = [
     label: "Clip preview 4",
     rotate: "-rotate-[6deg]",
     badgeStart: 0,
-    place: "absolute -right-[5.75rem] -bottom-[5.75rem] z-20 sm:-right-[6.5rem] sm:-bottom-[6.5rem]",
+    place: "absolute -right-[3.25rem] -bottom-[3.5rem] z-20 md:-right-[6.5rem] md:-bottom-[6.5rem]",
     origin: "origin-top-left",
     from: { x: -90, y: -100, rotate: 20 },
     delay: 0.3,
   },
 ] as const;
 
-/** Login: pull top two clips nearer the headline */
 const topCloserPlace: Record<"tl" | "tr", string> = {
-  tl: "absolute -top-[3.25rem] -left-[4.25rem] z-20 sm:-top-[3.75rem] sm:-left-[5rem]",
-  tr: "absolute -top-[3.25rem] -right-[4.25rem] z-20 sm:-top-[3.75rem] sm:-right-[5rem]",
+  tl: "absolute -top-[2.25rem] -left-[2.75rem] z-20 md:-top-[3.75rem] md:-left-[5rem]",
+  tr: "absolute -top-[2.25rem] -right-[2.75rem] z-20 md:-top-[3.75rem] md:-right-[5rem]",
 };
 
 type SignupScatterVideosProps = {
-  /** Bring the top-left & top-right videos closer to the text */
   topCloser?: boolean;
 };
 
-/** 4 clips sit in open space outside the text border corners. */
+/** 4 corner clips — hidden on small phones, shown from sm+ */
 export function SignupScatterVideos({ topCloser = false }: SignupScatterVideosProps) {
   const reduce = useReducedMotion();
 
   return (
-    <>
+    <div className="pointer-events-none absolute inset-0 hidden sm:block" aria-hidden>
       {clips.map((clip) => (
         <motion.div
           key={clip.key}
           className={cn(
+            "pointer-events-auto",
             topCloser && (clip.key === "tl" || clip.key === "tr")
               ? topCloserPlace[clip.key]
               : clip.place,
@@ -133,11 +129,11 @@ export function SignupScatterVideos({ topCloser = false }: SignupScatterVideosPr
               label={clip.label}
               rotate={clip.rotate}
               badgeStart={clip.badgeStart}
-              className={cn("w-[72px] sm:w-[82px]", clip.origin)}
+              className={cn("w-[64px] md:w-[72px] lg:w-[82px]", clip.origin)}
             />
           </motion.div>
         </motion.div>
       ))}
-    </>
+    </div>
   );
 }

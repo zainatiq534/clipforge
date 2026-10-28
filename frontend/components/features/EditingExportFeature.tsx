@@ -232,11 +232,11 @@ function PublishStrip() {
           </div>
 
           {/* Right — platforms */}
-          <div className="flex w-full shrink-0 justify-center gap-3 sm:gap-4 lg:w-auto lg:justify-end lg:gap-3.5 xl:gap-4">
+          <div className="flex w-full shrink-0 flex-wrap justify-center gap-2 sm:gap-3 lg:w-auto lg:flex-nowrap lg:justify-end lg:gap-3.5 xl:gap-4">
             {publishPlatformIcons.map((p) => (
               <div
                 key={p.label}
-                className="flex w-[3.6rem] flex-col items-center gap-1.5 sm:w-[4.1rem]"
+                className="flex w-[2.85rem] flex-col items-center gap-1.5 sm:w-[4.1rem]"
               >
                 <span className="relative h-10 w-10 overflow-hidden rounded-[12px] shadow-[0_6px_14px_rgba(15,23,42,0.16)] sm:h-11 sm:w-11 sm:rounded-[13px]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -254,7 +254,7 @@ function PublishStrip() {
                 </span>
               </div>
             ))}
-            <div className="flex w-[3.6rem] flex-col items-center gap-1.5 sm:w-[4.1rem]">
+            <div className="hidden w-[2.85rem] flex-col items-center gap-1.5 sm:flex sm:w-[4.1rem]">
               <span className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#e8e8ec] shadow-[0_6px_14px_rgba(15,23,42,0.08)] sm:h-11 sm:w-11 sm:rounded-[13px]">
                 <span className="flex gap-[3px]">
                   <span className="h-[3px] w-[3px] rounded-full bg-[#52525b]" />

@@ -26,7 +26,7 @@ export function Logo({ className, href = "/", tone = "dark" }: LogoProps) {
         height={64}
         priority
         unoptimized
-        className="h-8 w-8 shrink-0 object-contain"
+        className="h-7 w-7 shrink-0 object-contain sm:h-8 sm:w-8"
         aria-hidden
       />
       <Typography
@@ -34,7 +34,7 @@ export function Logo({ className, href = "/", tone = "dark" }: LogoProps) {
         variant="nav"
         tone={tone === "light" ? "ink" : "white"}
         weight="bold"
-        className="text-[1.125rem] leading-none tracking-tight"
+        className="text-[1rem] leading-none tracking-tight sm:text-[1.125rem]"
       >
         ClipForge
       </Typography>

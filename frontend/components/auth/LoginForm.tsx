@@ -67,12 +67,12 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
 
   return (
     <section
-      className="w-full rounded-[22px] border border-[#efeaf8] bg-white p-7 shadow-[0_20px_50px_rgba(74,37,128,0.1)] sm:p-8"
+      className="w-full rounded-[20px] border border-[#efeaf8] bg-white p-5 shadow-[0_20px_50px_rgba(74,37,128,0.1)] sm:rounded-[22px] sm:p-7 md:p-8"
       aria-labelledby="form-title"
     >
       <h2
         id="form-title"
-        className="font-display text-[1.65rem] font-extrabold tracking-tight text-[#171126]"
+        className="font-display text-[1.4rem] font-extrabold tracking-tight text-[#171126] sm:text-[1.65rem]"
       >
         {isSignup ? "Create account" : "Sign in"}
       </h2>

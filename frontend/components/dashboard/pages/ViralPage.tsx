@@ -62,7 +62,7 @@ export function ViralPage() {
         />
       </DashboardMotion>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
         {[
           { label: "Top score", value: "96", icon: Flame },
           { label: "Avg score", value: "84", icon: TrendingUp },
@@ -113,7 +113,7 @@ export function ViralPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3 sm:shrink-0">
-                  <div className="min-w-[7rem]">
+                  <div className="min-w-0 flex-1 sm:min-w-[7rem]">
                     <div className="mb-1 flex items-center justify-between font-sans text-[10px] font-semibold">
                       <span className="text-[#6b6680]">Score</span>
                       <span className="text-[#111827]">{clip.score}</span>

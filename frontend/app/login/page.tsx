@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <div className="relative isolate min-h-dvh w-full bg-[#fbf9ff] text-[#171126]">
+    <div className="relative isolate min-h-dvh w-full overflow-x-clip bg-[#fbf9ff] text-[#171126]">
       <div
         className="pointer-events-none fixed inset-0 z-0 bg-[#fbf9ff]"
         aria-hidden
@@ -21,8 +21,7 @@ export default function LoginPage() {
       />
 
       <div className="relative z-10 flex min-h-dvh w-full flex-col pt-16 pb-5 sm:pt-[4.5rem] lg:pt-20">
-        <main className="grid w-full flex-1 grid-cols-1 content-start items-start gap-8 px-4 pt-2 sm:gap-10 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-10 lg:px-12 lg:pt-4 xl:px-16">
-          {/* Left — login form */}
+        <main className="grid w-full flex-1 grid-cols-1 content-start items-start gap-6 px-4 pt-2 sm:gap-8 sm:px-6 md:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-10 lg:px-12 lg:pt-4 xl:px-16">
           <div
             id="create-account"
             className="order-2 w-full max-w-[520px] justify-self-center lg:order-1 lg:max-w-[480px] lg:justify-self-start xl:ml-4"
@@ -30,16 +29,15 @@ export default function LoginPage() {
             <LoginForm />
           </div>
 
-          {/* Right — bigger text + 4 videos outside corners */}
           <section
-            className="relative order-1 w-full overflow-visible pt-20 pb-[8rem] pl-2 pr-4 sm:pt-24 sm:pb-36 sm:pr-10 lg:order-2 lg:pt-16 lg:pr-14 lg:pl-6 xl:pr-20"
+            className="relative order-1 w-full overflow-visible px-2 py-6 sm:px-4 sm:py-10 md:pt-16 md:pb-28 lg:order-2 lg:pt-14 lg:pr-10 lg:pb-24 xl:pr-16"
             aria-labelledby="intro-title"
           >
-            <div className="relative mx-auto w-fit min-w-[min(100%,22rem)] max-w-[min(100%,34rem)] overflow-visible sm:min-w-[26rem] lg:mx-0 lg:ml-4 xl:ml-8">
+            <div className="relative mx-auto w-full max-w-[22rem] overflow-visible sm:max-w-[26rem] md:max-w-[30rem] lg:mx-0 lg:ml-4 xl:ml-8">
               <SignupScatterVideos topCloser />
 
-              <div className="relative z-30 flex flex-col items-center overflow-visible bg-transparent px-3 py-4 text-center sm:px-5 sm:py-5">
-                <div className="inline-flex items-center gap-2 rounded-full border border-[#e6d5ff] bg-white/90 px-3.5 py-1.5 font-sans text-[12px] font-extrabold tracking-[0.08em] text-[#7c35df] uppercase sm:px-4 sm:text-[13px]">
+              <div className="relative z-30 flex flex-col items-center overflow-visible bg-transparent px-2 py-3 text-center sm:px-4 sm:py-5">
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#e6d5ff] bg-white/90 px-3 py-1.5 font-sans text-[11px] font-extrabold tracking-[0.08em] text-[#7c35df] uppercase sm:px-3.5 sm:text-[13px]">
                   <Zap
                     className="h-3.5 w-3.5"
                     strokeWidth={2.4}
@@ -51,11 +49,11 @@ export default function LoginPage() {
 
                 <h1
                   id="intro-title"
-                  className="mt-4 overflow-visible font-display text-[clamp(2.75rem,5.2vw,4.1rem)] leading-[1.08] font-black tracking-[-0.04em] text-[#171126]"
+                  className="mt-3 overflow-visible font-display text-[clamp(2rem,7vw,4.1rem)] leading-[1.1] font-black tracking-[-0.04em] text-[#171126] sm:mt-4"
                 >
                   <span className="block">Log in to</span>
-                  <span className="mt-1 inline-block overflow-visible pr-2 pb-1 whitespace-nowrap bg-gradient-to-r from-[#8b5cf6] via-[#7c3aed] to-[#4f46e5] bg-clip-text text-transparent">
-                     ClipForge
+                  <span className="mt-1 inline-block max-w-full overflow-visible break-words px-1 pb-1 sm:whitespace-nowrap sm:pr-2 bg-gradient-to-r from-[#8b5cf6] via-[#7c3aed] to-[#4f46e5] bg-clip-text text-transparent">
+                    your ClipForge
                   </span>
                 </h1>
               </div>

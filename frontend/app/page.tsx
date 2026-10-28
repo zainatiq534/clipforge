@@ -49,85 +49,102 @@ export default function Home() {
       {/* Final CTA + Footer — dark navy matching footer mock */}
       <div className="relative w-full overflow-x-clip bg-[#07102a]">
         <section id="start" className="relative w-full bg-[#07102a]">
-          {/* Image sets the height — no object-cover crop, all faces stay visible */}
           <div className="relative w-full">
-            <img
-              src="/cta-bg.png"
-              alt=""
-              width={2048}
-              height={798}
-              className="block h-auto w-full"
-              decoding="async"
-              loading="eager"
-              draggable={false}
-            />
+            {/* Mobile: image as background band; content stacks below so it never clips */}
+            <div
+              className="relative flex min-h-[22rem] flex-col items-center justify-center px-5 py-12 text-center sm:hidden"
+              style={{
+                backgroundImage:
+                  "linear-gradient(180deg, rgba(7,16,42,0.55) 0%, rgba(7,16,42,0.72) 100%), url(/cta-bg.png)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              <CtaContent />
+            </div>
 
-            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-5 pb-6 text-center sm:px-8 sm:pb-8 lg:px-16">
-              <div className="mx-auto flex w-full max-w-[34rem] flex-col items-center lg:max-w-[38rem]">
-                <Reveal>
-                  <Badge
-                    icon={<FilledZapIcon />}
-                    className="border-[#9b7bff]/40 bg-[#1a1230]/75 shadow-[0_0_24px_rgba(139,92,246,0.22)]"
-                  >
-                    <span className="font-sans text-[0.8rem] font-medium tracking-normal text-white normal-case sm:text-[0.85rem]">
-                      Turn Ideas Into Impact
-                    </span>
-                  </Badge>
-                </Reveal>
-
-                <Reveal delay={0.06}>
-                  <h2
-                    className={cn(
-                      "mt-4 max-w-3xl font-display font-bold tracking-[-0.03em] text-white sm:mt-5",
-                      "text-[1.85rem] leading-[1.12] sm:text-[2.5rem] md:text-[3rem] lg:text-[3.4rem]",
-                    )}
-                  >
-                    Your Next Great Clip
-                  </h2>
-                  <p
-                    className={cn(
-                      "mt-1 font-display font-bold tracking-[-0.03em]",
-                      "bg-gradient-to-r from-[#c084fc] via-[#a78bfa] to-[#60a5fa] bg-clip-text text-transparent",
-                      "text-[2rem] leading-[1.08] sm:text-[2.75rem] md:text-[3.25rem] lg:text-[3.6rem]",
-                      "drop-shadow-[0_0_40px_rgba(167,139,250,0.45)]",
-                    )}
-                  >
-                    Starts Here
-                  </p>
-                </Reveal>
-
-                <Reveal delay={0.12}>
-                  <p className="mt-3 max-w-lg font-sans text-sm leading-relaxed text-white/90 sm:mt-4 sm:text-base md:text-lg">
-                    Join thousands of creators, marketers, and businesses turning
-                    long videos into viral-ready clips with ClipForge.
-                  </p>
-                </Reveal>
-
-                <Reveal delay={0.18}>
-                  <UploadFilesPill className="mt-5 sm:mt-6" />
-
-                  <ul className="mt-4 flex flex-col items-center gap-2.5 sm:mt-5 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-5 sm:gap-y-2">
-                    {trustItems.map((item) => (
-                      <li
-                        key={item}
-                        className="inline-flex items-center gap-2 font-sans text-sm text-white/90 sm:text-[0.95rem]"
-                      >
-                        <span className="inline-flex h-4 w-4 items-center justify-center rounded-[4px] bg-[#7c3aed]">
-                          <Check
-                            className="h-2.5 w-2.5 text-white"
-                            strokeWidth={3}
-                          />
-                        </span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </Reveal>
+            {/* md+: image sets height, content overlays */}
+            <div className="relative hidden w-full sm:block">
+              <img
+                src="/cta-bg.png"
+                alt=""
+                width={2048}
+                height={798}
+                className="block h-auto w-full"
+                decoding="async"
+                loading="eager"
+                draggable={false}
+              />
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-8 pb-8 text-center lg:px-16">
+                <CtaContent />
               </div>
             </div>
           </div>
         </section>
       </div>
+    </div>
+  );
+}
+
+function CtaContent() {
+  return (
+    <div className="mx-auto flex w-full max-w-[34rem] flex-col items-center lg:max-w-[38rem]">
+      <Reveal>
+        <Badge
+          icon={<FilledZapIcon />}
+          className="border-[#9b7bff]/40 bg-[#1a1230]/75 shadow-[0_0_24px_rgba(139,92,246,0.22)]"
+        >
+          <span className="font-sans text-[0.8rem] font-medium tracking-normal text-white normal-case sm:text-[0.85rem]">
+            Turn Ideas Into Impact
+          </span>
+        </Badge>
+      </Reveal>
+
+      <Reveal delay={0.06}>
+        <h2
+          className={cn(
+            "mt-4 max-w-3xl font-display font-bold tracking-[-0.03em] text-white sm:mt-5",
+            "text-[1.85rem] leading-[1.12] sm:text-[2.5rem] md:text-[3rem] lg:text-[3.4rem]",
+          )}
+        >
+          Your Next Great Clip
+        </h2>
+        <p
+          className={cn(
+            "mt-1 font-display font-bold tracking-[-0.03em]",
+            "bg-gradient-to-r from-[#c084fc] via-[#a78bfa] to-[#60a5fa] bg-clip-text text-transparent",
+            "text-[2rem] leading-[1.08] sm:text-[2.75rem] md:text-[3.25rem] lg:text-[3.6rem]",
+            "drop-shadow-[0_0_40px_rgba(167,139,250,0.45)]",
+          )}
+        >
+          Starts Here
+        </p>
+      </Reveal>
+
+      <Reveal delay={0.12}>
+        <p className="mt-3 max-w-lg font-sans text-sm leading-relaxed text-white/90 sm:mt-4 sm:text-base md:text-lg">
+          Join thousands of creators, marketers, and businesses turning long
+          videos into viral-ready clips with ClipForge.
+        </p>
+      </Reveal>
+
+      <Reveal delay={0.18}>
+        <UploadFilesPill className="mt-5 sm:mt-6" />
+
+        <ul className="mt-4 flex flex-col items-center gap-2.5 sm:mt-5 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-5 sm:gap-y-2">
+          {trustItems.map((item) => (
+            <li
+              key={item}
+              className="inline-flex items-center gap-2 font-sans text-sm text-white/90 sm:text-[0.95rem]"
+            >
+              <span className="inline-flex h-4 w-4 items-center justify-center rounded-[4px] bg-[#7c3aed]">
+                <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />
+              </span>
+              {item}
+            </li>
+          ))}
+        </ul>
+      </Reveal>
     </div>
   );
 }

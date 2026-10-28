@@ -15,7 +15,7 @@ export default function BlogPage() {
   return (
     <>
       {/* Home section — same as homepage */}
-      <div className="relative flex min-h-full flex-1 flex-col overflow-hidden">
+      <div className="relative flex min-h-full flex-1 flex-col overflow-x-clip">
         <BackgroundImage src="/hero-bg.jpg" />
 
         <div className="relative z-10 flex min-h-full flex-1 flex-col pt-20">

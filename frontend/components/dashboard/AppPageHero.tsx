@@ -11,7 +11,7 @@ type AppPageHeroProps = {
 export function AppPageHero({ title, description, action, onAction }: AppPageHeroProps) {
   return (
     <section className="relative overflow-hidden rounded-[22px] bg-[#ede9fe] px-5 py-5 shadow-[0_10px_28px_rgba(124,58,237,0.12)] sm:px-6 sm:py-6">
-      <div className="relative z-10 max-w-[32rem]">
+      <div className="relative z-10 max-w-[32rem] pr-16 sm:pr-28">
         <h1 className="font-sans text-[1.25rem] leading-[1.15] font-extrabold tracking-[-0.03em] text-[#111827] sm:text-[1.45rem]">
           {title}
         </h1>

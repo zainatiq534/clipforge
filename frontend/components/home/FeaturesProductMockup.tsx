@@ -169,10 +169,10 @@ export function FeaturesProductMockup({ className }: FeaturesProductMockupProps)
         }}
       />
 
-      <div className="relative py-10 pl-9 sm:py-12 sm:pl-11 lg:py-14 lg:pl-12">
+      <div className="relative flex flex-col gap-3 py-6 sm:gap-0 sm:py-12 sm:pl-11 lg:py-14 lg:pl-12">
         <div
           className={cn(
-            "relative z-0 mr-[32%] flex flex-col sm:mr-[33%]",
+            "relative z-0 flex flex-col lg:mr-[33%]",
             "rounded-[1.35rem] bg-[#0b0d14] sm:rounded-[1.5rem]",
             "shadow-[0_28px_60px_-16px_rgba(76,29,149,0.55)]",
             "ring-1 ring-white/[0.06]",
@@ -287,7 +287,7 @@ export function FeaturesProductMockup({ className }: FeaturesProductMockupProps)
 
         <div
           className={cn(
-            "absolute top-1/2 left-0 z-30 -translate-y-1/2",
+            "absolute top-4 left-3 z-30 sm:top-1/2 sm:left-0 sm:-translate-y-1/2",
             "rounded-[0.85rem] bg-[#0b0e16] px-2.5 py-2 sm:rounded-xl sm:px-3 sm:py-2.5",
             "shadow-[0_0_0_1.5px_rgba(96,165,250,0.7),0_0_22px_rgba(59,130,246,0.55)]",
           )}
@@ -313,10 +313,10 @@ export function FeaturesProductMockup({ className }: FeaturesProductMockupProps)
 
         <div
           className={cn(
-            "absolute inset-y-0 right-0 z-20 flex w-[33%] max-w-[11.25rem] flex-col sm:w-[34%] sm:max-w-[12rem]",
+            "relative z-20 flex w-full flex-col lg:absolute lg:inset-y-0 lg:right-0 lg:w-[34%] lg:max-w-[12rem]",
             "overflow-hidden rounded-[0.9rem] bg-[#12141d] sm:rounded-[1rem]",
             "border border-[#3a3f4d]",
-            "shadow-[-12px_0_32px_-10px_rgba(0,0,0,0.65),0_28px_60px_-16px_rgba(76,29,149,0.45)]",
+            "shadow-[0_16px_40px_-12px_rgba(0,0,0,0.45),0_28px_60px_-16px_rgba(76,29,149,0.45)] lg:shadow-[-12px_0_32px_-10px_rgba(0,0,0,0.65)]",
           )}
         >
           <div className="flex items-center gap-1.5 px-2.5 pt-3 pb-2 sm:px-3 sm:pt-3.5">

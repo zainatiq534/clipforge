@@ -88,21 +88,21 @@ export function FullyCustomizable({ className }: FullyCustomizableProps) {
           </Reveal>
 
           <Reveal delay={0.2}>
-            <ul className="mt-8 flex w-full max-w-xl flex-row items-start justify-between gap-3 sm:mt-9 sm:gap-4">
+            <ul className="mt-8 grid w-full max-w-xl grid-cols-2 gap-4 sm:mt-9 sm:grid-cols-4 sm:gap-4">
               {features.map((feature) => (
                 <li
                   key={feature.label}
-                  className="flex min-w-0 flex-1 flex-col items-start gap-2.5 sm:gap-3"
+                  className="flex min-w-0 flex-col items-start gap-2.5 sm:gap-3"
                 >
                   <span
                     className={cn(
-                      "inline-flex h-14 w-14 items-center justify-center rounded-[1.15rem] sm:h-16 sm:w-16 sm:rounded-[1.25rem]",
+                      "inline-flex h-12 w-12 items-center justify-center rounded-[1.05rem] sm:h-16 sm:w-16 sm:rounded-[1.25rem]",
                       FEATURE_WRAP,
                     )}
                   >
                     {feature.icon}
                   </span>
-                  <span className="max-w-[7rem] text-[0.82rem] leading-snug font-semibold text-[#1e293b] sm:max-w-[8rem] sm:text-[0.92rem]">
+                  <span className="max-w-[8rem] text-[0.8rem] leading-snug font-semibold text-[#1e293b] sm:text-[0.92rem]">
                     {feature.label}
                   </span>
                 </li>

@@ -168,12 +168,12 @@ export function CaptionsShowcase({ className }: CaptionsShowcaseProps) {
       aria-hidden
     >
       {/* Aspect close to ref (~420×594) — floating blocks, no outer card */}
-      <div className="grid grid-cols-[58px_minmax(0,1.35fr)_132px] grid-rows-[auto_auto] items-stretch gap-2.5 bg-transparent sm:grid-cols-[64px_minmax(0,1.4fr)_148px] sm:gap-3">
+      <div className="grid grid-cols-1 grid-rows-[auto] items-stretch gap-2.5 bg-transparent sm:grid-cols-[64px_minmax(0,1.4fr)_148px] sm:grid-rows-[auto_auto] sm:gap-3">
         {/* LEFT — nav (same layout as reference: CC active pill + stacked icons) */}
         <aside
           className={cn(
             panel,
-            "flex h-full flex-col items-center justify-evenly px-1.5 py-2.5 sm:px-2 sm:py-3",
+            "hidden h-full flex-col items-center justify-evenly px-1.5 py-2.5 sm:flex sm:px-2 sm:py-3",
           )}
         >
           {navItems.map((item) => {
@@ -267,7 +267,7 @@ export function CaptionsShowcase({ className }: CaptionsShowcaseProps) {
         </div>
 
         {/* RIGHT — Caption Styles floating card */}
-        <aside className={cn(panel, "flex flex-col p-2 sm:p-2.5")}>
+        <aside className={cn(panel, "hidden flex-col p-2 sm:flex sm:p-2.5")}>
           <p className="mb-1.5 font-sans text-[10px] font-bold text-[#1e1b4b] sm:text-[11px]">
             Caption Styles
           </p>
@@ -297,7 +297,7 @@ export function CaptionsShowcase({ className }: CaptionsShowcaseProps) {
         </aside>
 
         {/* BOTTOM — captions + dual-track timeline (same layout as reference crop) */}
-        <div className={cn(panel, "col-span-3 p-2.5 sm:p-3")}>
+        <div className={cn(panel, "p-2.5 sm:col-span-3 sm:p-3")}>
           <div className="mb-2.5 flex items-center gap-3.5 border-b border-slate-100 pb-2 sm:gap-4">
             {["Transcript", "Captions", "Timeline"].map((tab) => (
               <span

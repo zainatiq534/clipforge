@@ -26,7 +26,7 @@ export function ReframePage() {
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
         <DashboardMotion delay={0.14}>
           <section className="rounded-[22px] bg-white p-3.5 shadow-[0_10px_28px_rgba(20,20,40,0.06)] sm:p-4">
-            <div className="grid grid-cols-[1.2fr_0.7fr] gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1.2fr_0.7fr]">
               <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-[18px] bg-gradient-to-br from-[#ede9fe] via-[#a78bfa] to-[#3b82f6]">
                 <div className="absolute inset-y-3 left-1/2 w-[38%] -translate-x-1/2 rounded-[14px] border-2 border-white/90 shadow-[0_0_0_9999px_rgba(5,8,20,0.28)]" />
                 <span className="relative z-10 inline-flex items-center gap-1.5 rounded-[12px] bg-gradient-to-r from-[#a78bfa] via-[#8b5cf6] to-[#3b82f6] px-3 py-1.5 font-sans text-[11px] font-semibold text-white shadow-[0_8px_20px_rgba(99,102,241,0.3)]">

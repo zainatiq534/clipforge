@@ -95,11 +95,11 @@ export function PublishAnywhere({ className }: PublishAnywhereProps) {
           </Reveal>
 
           <Reveal delay={0.14}>
-            <ul className="mt-8 flex w-full max-w-xl flex-nowrap items-start justify-between gap-1.5 sm:mt-9 sm:gap-2.5">
+            <ul className="mt-8 grid w-full max-w-xl grid-cols-3 gap-x-2 gap-y-3 sm:mt-9 sm:grid-cols-6 sm:gap-2.5">
               {platforms.map((p) => (
                 <li
                   key={p.id}
-                  className="flex w-[3.55rem] shrink-0 flex-col items-center gap-1 sm:w-[4rem]"
+                  className="flex flex-col items-center gap-1"
                 >
                   <span
                     className={cn(
@@ -125,7 +125,7 @@ export function PublishAnywhere({ className }: PublishAnywhereProps) {
             className={cn(
               "relative w-full max-w-[820px] sm:max-w-[900px] overflow-visible",
               /* pull social-hub artwork much further left */
-              "mx-auto -translate-x-8 sm:-translate-x-14 lg:-translate-x-24 xl:-translate-x-32 2xl:-translate-x-36",
+              "mx-auto translate-x-0 sm:-translate-x-6 lg:-translate-x-16 xl:-translate-x-24",
               "-mt-1 sm:-mt-2",
             )}
           >
@@ -146,7 +146,7 @@ export function PublishAnywhere({ className }: PublishAnywhereProps) {
               quality={100}
               unoptimized
               sizes="(max-width: 1024px) 100vw, 900px"
-              className="relative z-[1] h-auto w-full scale-[1.1] origin-left select-none object-contain sm:scale-[1.14]"
+              className="relative z-[1] h-auto w-full origin-center scale-100 select-none object-contain sm:origin-left sm:scale-[1.05] lg:scale-[1.1]"
             />
           </div>
         </Reveal>
