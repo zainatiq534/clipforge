@@ -33,7 +33,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${outfit.variable} ${plusJakarta.variable} ${caveat.variable} h-full antialiased`}
     >
-      <body className="min-h-dvh bg-background font-sans text-foreground">
+      <body className="min-h-dvh w-full overflow-x-clip bg-background font-sans text-foreground">
         <SiteShell>{children}</SiteShell>
       </body>
     </html>

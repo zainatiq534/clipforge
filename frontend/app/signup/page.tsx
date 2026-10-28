@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
-import { Clapperboard, ShieldCheck, Sparkles, Star } from "lucide-react";
-import {
-  LOGIN_VIDEO_BOTTOM,
-  LOGIN_VIDEO_TOP,
-  LoginClipCard,
-} from "@/components/auth/LoginClipVideos";
+import { Sparkles } from "lucide-react";
+import { SignupScatterVideos } from "@/components/auth/SignupScatterVideos";
 import { SignupForm } from "@/components/auth/SignupForm";
 
 export const metadata: Metadata = {
@@ -14,116 +10,55 @@ export const metadata: Metadata = {
 
 export default function SignupPage() {
   return (
-    <div className="relative isolate min-h-screen bg-[#fbf9ff] text-[#171126]">
+    <div className="relative isolate min-h-dvh w-full bg-[#fbf9ff] text-[#171126]">
       <div
-        className="pointer-events-none fixed inset-0 -z-10"
+        className="pointer-events-none fixed inset-0 z-0 bg-[#fbf9ff]"
         aria-hidden
         style={{
           background:
             "radial-gradient(ellipse at 12% 10%, rgba(196,160,255,0.28), transparent 34%), radial-gradient(ellipse at 88% 82%, rgba(223,202,255,0.4), transparent 33%), #fbf9ff",
         }}
       />
-      <div
-        className="pointer-events-none fixed -top-[200px] -right-[80px] -z-10 h-[340px] w-[340px] rounded-full border border-[rgba(151,91,255,0.12)]"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none fixed -bottom-[220px] -left-[100px] -z-10 h-[400px] w-[400px] rounded-full border border-[rgba(151,91,255,0.12)]"
-        aria-hidden
-      />
-
-      <div className="relative z-10 pt-20">
-        <main className="mx-auto mt-1 mb-8 grid w-[min(980px,calc(100%-2rem))] grid-cols-1 items-center gap-5 sm:mt-3 sm:mb-10 sm:w-[min(980px,calc(100%-2.5rem))] lg:grid-cols-[1fr_0.95fr] lg:gap-8">
-          {/* Left: diagonal videos + text (kal wala signup layout) */}
+      <div className="relative z-10 flex min-h-dvh w-full flex-col pt-16 pb-5 sm:pt-[4.5rem] lg:pt-20">
+        <main className="grid w-full flex-1 grid-cols-1 content-start items-start gap-8 px-4 pt-2 sm:gap-10 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-12 lg:px-12 lg:pt-4 xl:px-16">
+          {/* Extra margin so outside videos have room; block nudged right */}
           <section
-            className="relative flex flex-col justify-center px-1 py-3 sm:py-4"
+            className="relative w-full overflow-visible pt-16 pb-[7rem] pl-4 pr-2 sm:pt-20 sm:pb-32 sm:pl-8 lg:pt-14 lg:pl-12 lg:pr-4 xl:pl-16"
             aria-labelledby="intro-title"
           >
-            <div className="relative z-20 mb-2 flex justify-start pl-0 -ml-3 sm:-ml-7 lg:-ml-12 xl:-ml-14">
-              <LoginClipCard
-                src={LOGIN_VIDEO_TOP}
-                label="Clip preview 1"
-                rotate="-rotate-[7deg]"
-                badgeStart={0}
-              />
-            </div>
+            {/* Tight wrap around text — videos position against THIS box only */}
+            <div className="relative ml-auto w-fit max-w-[min(100%,420px)] -translate-y-3 overflow-visible sm:max-w-[460px] sm:-translate-y-5 lg:mr-2 lg:-translate-y-6 xl:mr-6">
+              <SignupScatterVideos />
 
-            <div className="relative z-10 max-w-[400px]">
-              <div className="inline-flex items-center gap-1.5 self-start rounded-full border border-[#e6d5ff] bg-white/74 px-2.5 py-1.5 font-sans text-[10px] font-extrabold tracking-[0.08em] text-[#7c35df] uppercase">
-                <Sparkles className="h-3 w-3" strokeWidth={2.2} aria-hidden />
-                Your Creative Workspace
+              <div className="relative z-30 flex flex-col items-center bg-transparent px-5 py-4 text-center sm:px-7 sm:py-5">
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#e6d5ff] bg-white/90 px-3.5 py-1.5 font-sans text-[12px] font-extrabold tracking-[0.08em] text-[#7c35df] uppercase sm:text-[13px]">
+                  <Sparkles className="h-3.5 w-3.5" strokeWidth={2.2} aria-hidden />
+                  Your Creative Workspace
+                </div>
+
+                <h1
+                  id="intro-title"
+                  className="mt-3.5 font-display text-[clamp(2.55rem,5vw,3.75rem)] leading-[1.04] font-black tracking-[-0.045em] text-[#171126]"
+                >
+                  Welcome back.
+                  <br />
+                  <span className="whitespace-nowrap">Make something</span>
+                  <br />
+                  <span className="bg-gradient-to-r from-[#9b4dff] via-[#6f2be5] to-[#c052eb] bg-clip-text text-transparent">
+                    brilliant.
+                  </span>
+                </h1>
               </div>
-
-              <h1
-                id="intro-title"
-                className="mt-3 max-w-[420px] font-display text-[clamp(1.85rem,3.8vw,2.55rem)] leading-[1.05] font-black tracking-[-0.05em] text-[#171126]"
-              >
-                Welcome back.
-                <br />
-                Make something{" "}
-                <span className="bg-gradient-to-r from-[#9b4dff] via-[#6f2be5] to-[#c052eb] bg-clip-text text-transparent">
-                  brilliant.
-                </span>
-              </h1>
-
-              <p className="mt-3 max-w-[380px] font-sans text-[13.5px] leading-[1.65] text-[#6e687b]">
-                Sign in to your workspace and keep turning your videos into
-                scroll-stopping content. Your next great clip is just a few clicks
-                away.
-              </p>
-
-              <ul className="mt-4 hidden max-w-[380px] flex-col gap-2.5 lg:flex">
-                {[
-                  {
-                    icon: Clapperboard,
-                    text: "Create clips faster with AI-powered tools",
-                  },
-                  {
-                    icon: Star,
-                    text: "Keep your projects and edits in one place",
-                  },
-                  {
-                    icon: ShieldCheck,
-                    text: "Your creative workspace, ready when you are",
-                  },
-                ].map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <li
-                      key={item.text}
-                      className="flex items-center gap-2.5 font-sans text-[12.5px] font-semibold text-[#494254]"
-                    >
-                      <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-[#f0e5ff] text-[#8538ee]">
-                        <Icon className="h-3.5 w-3.5" strokeWidth={1.9} aria-hidden />
-                      </span>
-                      {item.text}
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-
-            <div className="relative z-20 mt-2 flex justify-end pr-1 sm:pr-4 lg:pr-6">
-              <LoginClipCard
-                src={LOGIN_VIDEO_BOTTOM}
-                label="Clip preview 2"
-                rotate="rotate-[6deg]"
-                badgeStart={1}
-              />
             </div>
           </section>
 
           <div
             id="create-account"
-            className="w-full max-w-[460px] justify-self-center lg:max-w-none lg:justify-self-stretch"
+            className="w-full max-w-[520px] justify-self-center lg:max-w-[480px] lg:justify-self-end xl:mr-4"
           >
-            <SignupForm />
+            <SignupForm compact />
           </div>
         </main>
-
-        <footer className="pb-5 text-center font-sans text-[11px] text-[#aaa2b5]">
-          © 2026 ClipForge AI · Made for creators
-        </footer>
       </div>
     </div>
   );

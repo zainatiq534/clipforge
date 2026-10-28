@@ -14,8 +14,13 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 
+type SignupFormProps = {
+  /** Tighter spacing so the page fits one viewport without scroll */
+  compact?: boolean;
+};
+
 /** Original signup/login card used on the video diagonal page. */
-export function SignupForm() {
+export function SignupForm({ compact = false }: SignupFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState<{
     type: "error" | "success";
@@ -61,28 +66,48 @@ export function SignupForm() {
 
   return (
     <section
-      className="w-full self-center rounded-[24px] border border-white/95 bg-white/88 p-6 shadow-[0_18px_50px_rgba(74,37,128,0.1)] backdrop-blur-md sm:p-7"
+      className={cn(
+        "w-full self-center rounded-[24px] border border-white/95 bg-white/88 shadow-[0_18px_50px_rgba(74,37,128,0.1)] backdrop-blur-md",
+        compact ? "p-4 sm:p-5" : "p-6 sm:p-7",
+      )}
       aria-labelledby="form-title"
     >
-      <div className="mb-4 flex items-center justify-between gap-3">
+      <div
+        className={cn(
+          "flex items-center justify-between gap-3",
+          compact ? "mb-2.5" : "mb-4",
+        )}
+      >
         <h2
           id="form-title"
-          className="font-display text-[1.45rem] font-extrabold tracking-tight text-[#171126]"
+          className={cn(
+            "font-display font-extrabold tracking-tight text-[#171126]",
+            compact ? "text-[1.25rem]" : "text-[1.45rem]",
+          )}
         >
           Sign in
         </h2>
-        <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-[#f4eaff] px-2.5 py-1.5 font-sans text-[10px] font-extrabold tracking-wide text-[#7e36df] uppercase">
+        <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-[#f4eaff] px-2.5 py-1 font-sans text-[10px] font-extrabold tracking-wide text-[#7e36df] uppercase">
           <Sparkles className="h-3 w-3" strokeWidth={2.2} aria-hidden />
           Secure Access
         </span>
       </div>
 
-      <p className="mb-4 font-sans text-[13px] leading-relaxed text-[#777184]">
+      <p
+        className={cn(
+          "font-sans leading-relaxed text-[#777184]",
+          compact ? "mb-2.5 text-[12px]" : "mb-4 text-[13px]",
+        )}
+      >
         Enter your details below to access your account.
       </p>
 
-      <form onSubmit={onSubmit} noValidate className="space-y-3.5">
-        <Field label="Email address" htmlFor="email">
+      <form
+        onSubmit={onSubmit}
+        noValidate
+        className={cn(compact ? "space-y-2.5" : "space-y-3.5")}
+      >
+        <Field label="Email address" htmlFor="email" compact={compact}>
           <Mail className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-[#9a8eaa]" />
           <input
             id="email"
@@ -91,11 +116,11 @@ export function SignupForm() {
             autoComplete="email"
             placeholder="you@example.com"
             required
-            className={inputClass}
+            className={cn(inputClass, compact && compactInputClass)}
           />
         </Field>
 
-        <Field label="Password" htmlFor="password">
+        <Field label="Password" htmlFor="password" compact={compact}>
           <Lock className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-[#9a8eaa]" />
           <input
             id="password"
@@ -105,7 +130,7 @@ export function SignupForm() {
             placeholder="Enter your password"
             required
             minLength={8}
-            className={cn(inputClass, "pr-14")}
+            className={cn(inputClass, "pr-14", compact && compactInputClass)}
           />
           <button
             type="button"
@@ -125,7 +150,7 @@ export function SignupForm() {
           </button>
         </Field>
 
-        <Field label="Address" htmlFor="address">
+        <Field label="Address" htmlFor="address" compact={compact}>
           <MapPin className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-[#9a8eaa]" />
           <input
             id="address"
@@ -134,11 +159,11 @@ export function SignupForm() {
             autoComplete="street-address"
             placeholder="Enter your address"
             required
-            className={inputClass}
+            className={cn(inputClass, compact && compactInputClass)}
           />
         </Field>
 
-        <Field label="Phone number" htmlFor="phone">
+        <Field label="Phone number" htmlFor="phone" compact={compact}>
           <Phone className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-[#9a8eaa]" />
           <input
             id="phone"
@@ -147,7 +172,7 @@ export function SignupForm() {
             autoComplete="tel"
             placeholder="+92 300 1234567"
             required
-            className={inputClass}
+            className={cn(inputClass, compact && compactInputClass)}
           />
         </Field>
 
@@ -179,7 +204,7 @@ export function SignupForm() {
           <p
             role="status"
             className={cn(
-              "rounded-[10px] border px-3 py-2.5 font-sans text-xs leading-relaxed",
+              "rounded-[10px] border px-3 py-2 font-sans text-xs leading-relaxed",
               message.type === "error"
                 ? "border-[#ffd8e1] bg-[#fff0f3] text-[#9d2945]"
                 : "border-[#c8f4db] bg-[#edfff5] text-[#246c4b]",
@@ -191,14 +216,22 @@ export function SignupForm() {
 
         <button
           type="submit"
-          className="inline-flex h-[50px] w-full items-center justify-center gap-2 rounded-[13px] bg-gradient-to-r from-[#a34dff] via-[#8134ed] to-[#6d29df] font-sans text-[13px] font-extrabold text-white shadow-[0_10px_22px_rgba(131,52,237,0.24)] transition hover:-translate-y-px hover:shadow-[0_13px_25px_rgba(131,52,237,0.3)]"
+          className={cn(
+            "inline-flex w-full items-center justify-center gap-2 rounded-[13px] bg-gradient-to-r from-[#a34dff] via-[#8134ed] to-[#6d29df] font-sans text-[13px] font-extrabold text-white shadow-[0_10px_22px_rgba(131,52,237,0.24)] transition hover:-translate-y-px hover:shadow-[0_13px_25px_rgba(131,52,237,0.3)]",
+            compact ? "h-11" : "h-[50px]",
+          )}
         >
           Sign in to ClipForge
           <ArrowRight className="h-4 w-4" strokeWidth={2.4} aria-hidden />
         </button>
       </form>
 
-      <div className="my-5 flex items-center gap-3 text-[10px] text-[#a39aaa]">
+      <div
+        className={cn(
+          "flex items-center gap-3 text-[10px] text-[#a39aaa]",
+          compact ? "my-3" : "my-5",
+        )}
+      >
         <span className="h-px flex-1 bg-[#eee8f5]" />
         OR
         <span className="h-px flex-1 bg-[#eee8f5]" />
@@ -210,7 +243,12 @@ export function SignupForm() {
           Log In
         </Link>
       </p>
-      <p className="mt-5 text-center font-sans text-[10px] leading-relaxed text-[#a39aaa]">
+      <p
+        className={cn(
+          "text-center font-sans text-[10px] leading-relaxed text-[#a39aaa]",
+          compact ? "mt-2.5" : "mt-5",
+        )}
+      >
         By continuing, you agree to our{" "}
         <Link href="#terms" className="font-bold text-[#6825d9] hover:underline">
           Terms of Service
@@ -228,20 +266,27 @@ export function SignupForm() {
 const inputClass =
   "h-12 w-full rounded-xl border border-[#e8e1f1] bg-white py-0 pr-4 pl-11 font-sans text-[13px] text-[#171126] outline-none transition placeholder:text-[#aaa2b5] focus:border-[#a66aff] focus:shadow-[0_0_0_4px_rgba(139,61,255,0.10)]";
 
+const compactInputClass = "h-10 rounded-[11px] text-[12.5px]";
+
 function Field({
   label,
   htmlFor,
   children,
+  compact = false,
 }: {
   label: string;
   htmlFor: string;
   children: React.ReactNode;
+  compact?: boolean;
 }) {
   return (
     <div>
       <label
         htmlFor={htmlFor}
-        className="mb-2 block font-sans text-xs font-extrabold text-[#30283d]"
+        className={cn(
+          "block font-sans font-extrabold text-[#30283d]",
+          compact ? "mb-1 text-[11px]" : "mb-2 text-xs",
+        )}
       >
         {label}
       </label>

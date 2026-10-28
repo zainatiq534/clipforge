@@ -1,25 +1,18 @@
 import type { Metadata } from "next";
-import { BarChart3, Bolt, Zap } from "lucide-react";
+import { Zap } from "lucide-react";
 import { LoginForm } from "@/components/auth/LoginForm";
-import { AppImage } from "@/components/ui/Image";
-import { cn } from "@/lib/cn";
+import { SignupScatterVideos } from "@/components/auth/SignupScatterVideos";
 
 export const metadata: Metadata = {
   title: "Sign in — ClipForge AI",
   description: "Sign in to your ClipForge workspace and keep creating scroll-stopping clips.",
 };
 
-const avatars = [
-  "/features/avatar-1.jpg",
-  "/features/avatar-2.jpg",
-  "/features/avatar-3.jpg",
-];
-
 export default function LoginPage() {
   return (
-    <div className="relative isolate min-h-screen bg-[#fbf9ff] text-[#171126]">
+    <div className="relative isolate min-h-dvh w-full bg-[#fbf9ff] text-[#171126]">
       <div
-        className="pointer-events-none fixed inset-0 -z-10"
+        className="pointer-events-none fixed inset-0 z-0 bg-[#fbf9ff]"
         aria-hidden
         style={{
           background:
@@ -27,87 +20,47 @@ export default function LoginPage() {
         }}
       />
 
-      <div className="relative z-10 flex min-h-screen flex-col pt-20">
-        <main className="mx-auto grid w-[min(1040px,calc(100%-2rem))] flex-1 grid-cols-1 items-center gap-10 py-6 sm:py-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12 xl:gap-16">
-          {/* Left — brand / value */}
-          <section className="max-w-[480px]" aria-labelledby="intro-title">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#efe6ff] px-3 py-1.5 font-sans text-[10px] font-extrabold tracking-[0.08em] text-[#7c3aed] uppercase">
-              <Zap className="h-3 w-3" strokeWidth={2.4} aria-hidden fill="currentColor" />
-              Welcome back
-            </div>
-
-            <h1
-              id="intro-title"
-              className="mt-5 font-display text-[clamp(2.1rem,4.2vw,3.15rem)] leading-[1.08] font-black tracking-[-0.045em] text-[#171126]"
-            >
-              Log in to
-              <br />
-              <span className="bg-gradient-to-r from-[#8b5cf6] via-[#7c3aed] to-[#4f46e5] bg-clip-text text-transparent">
-                your ClipForge
-              </span>
-            </h1>
-
-            <p className="mt-4 max-w-[400px] font-sans text-[15px] leading-[1.7] text-[#5b5568]">
-              Pick up where you left off and turn your long videos into
-              viral-ready short clips.
-            </p>
-
-            <ul className="mt-7 space-y-4">
-              <li className="flex items-start gap-3">
-                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#efe6ff] text-[#7c3aed]">
-                  <Bolt className="h-4 w-4" strokeWidth={2.2} aria-hidden />
-                </span>
-                <div>
-                  <p className="font-sans text-[14px] font-bold text-[#171126]">
-                    Find hooks instantly
-                  </p>
-                  <p className="mt-0.5 font-sans text-[13px] text-[#6e687b]">
-                    AI detects your best moments.
-                  </p>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#efe6ff] text-[#7c3aed]">
-                  <BarChart3 className="h-4 w-4" strokeWidth={2.2} aria-hidden />
-                </span>
-                <div>
-                  <p className="font-sans text-[14px] font-bold text-[#171126]">
-                    Rank by viral potential
-                  </p>
-                  <p className="mt-0.5 font-sans text-[13px] text-[#6e687b]">
-                    An AI score for every moment.
-                  </p>
-                </div>
-              </li>
-            </ul>
-
-            <div className="mt-8 flex items-center gap-3">
-              <div className="flex items-center">
-                {avatars.map((src, i) => (
-                  <span
-                    key={src}
-                    className={cn(
-                      "relative h-9 w-9 overflow-hidden rounded-full border-2 border-white",
-                      i > 0 && "-ml-2.5",
-                    )}
-                  >
-                    <AppImage src={src} alt="" fill className="object-cover" sizes="36px" />
-                  </span>
-                ))}
-                <span className="-ml-2.5 inline-flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-[#7c3aed] text-[0.58rem] font-bold text-white">
-                  +10K
-                </span>
-              </div>
-              <p className="font-sans text-[13px] font-medium text-[#6e687b]">
-                Trusted by 10,000+ creators
-              </p>
-            </div>
-          </section>
-
-          {/* Right — sign in card */}
-          <div id="create-account" className="mx-auto w-full max-w-[420px] lg:mx-0 lg:justify-self-end">
+      <div className="relative z-10 flex min-h-dvh w-full flex-col pt-16 pb-5 sm:pt-[4.5rem] lg:pt-20">
+        <main className="grid w-full flex-1 grid-cols-1 content-start items-start gap-8 px-4 pt-2 sm:gap-10 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-10 lg:px-12 lg:pt-4 xl:px-16">
+          {/* Left — login form */}
+          <div
+            id="create-account"
+            className="order-2 w-full max-w-[520px] justify-self-center lg:order-1 lg:max-w-[480px] lg:justify-self-start xl:ml-4"
+          >
             <LoginForm />
           </div>
+
+          {/* Right — bigger text + 4 videos outside corners */}
+          <section
+            className="relative order-1 w-full overflow-visible pt-20 pb-[8rem] pl-2 pr-4 sm:pt-24 sm:pb-36 sm:pr-10 lg:order-2 lg:pt-16 lg:pr-14 lg:pl-6 xl:pr-20"
+            aria-labelledby="intro-title"
+          >
+            <div className="relative mx-auto w-fit min-w-[min(100%,22rem)] max-w-[min(100%,34rem)] overflow-visible sm:min-w-[26rem] lg:mx-0 lg:ml-4 xl:ml-8">
+              <SignupScatterVideos topCloser />
+
+              <div className="relative z-30 flex flex-col items-center overflow-visible bg-transparent px-3 py-4 text-center sm:px-5 sm:py-5">
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#e6d5ff] bg-white/90 px-3.5 py-1.5 font-sans text-[12px] font-extrabold tracking-[0.08em] text-[#7c35df] uppercase sm:px-4 sm:text-[13px]">
+                  <Zap
+                    className="h-3.5 w-3.5"
+                    strokeWidth={2.4}
+                    aria-hidden
+                    fill="currentColor"
+                  />
+                  Welcome back
+                </div>
+
+                <h1
+                  id="intro-title"
+                  className="mt-4 overflow-visible font-display text-[clamp(2.75rem,5.2vw,4.1rem)] leading-[1.08] font-black tracking-[-0.04em] text-[#171126]"
+                >
+                  <span className="block">Log in to</span>
+                  <span className="mt-1 inline-block overflow-visible pr-2 pb-1 whitespace-nowrap bg-gradient-to-r from-[#8b5cf6] via-[#7c3aed] to-[#4f46e5] bg-clip-text text-transparent">
+                     ClipForge
+                  </span>
+                </h1>
+              </div>
+            </div>
+          </section>
         </main>
       </div>
     </div>
