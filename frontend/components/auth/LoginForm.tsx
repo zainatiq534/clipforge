@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -33,6 +34,7 @@ type LoginFormProps = {
 };
 
 export function LoginForm({ mode = "login" }: LoginFormProps) {
+  const router = useRouter();
   const isSignup = mode === "signup";
   const [message, setMessage] = useState<{
     type: "error" | "success";
@@ -59,12 +61,8 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
       return;
     }
 
-    setMessage({
-      type: "success",
-      text: isSignup
-        ? "Form looks good. Connect this page to your authentication backend to create an account."
-        : "Form looks good. Connect this page to your authentication backend to sign in.",
-    });
+    // Valid form → open ClipForge dashboard
+    router.push("/dashboard");
   }
 
   return (

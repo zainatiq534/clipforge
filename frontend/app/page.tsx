@@ -1,7 +1,4 @@
-import {
-  ArrowRight,
-  Check,
-} from "lucide-react";
+import { Check } from "lucide-react";
 import { BeforeAfterDemo } from "@/components/home/BeforeAfterDemo";
 import { FAQ } from "@/components/home/FAQ";
 import { FloatingClips } from "@/components/home/FloatingClips";
@@ -10,10 +7,9 @@ import { HowItWorks } from "@/components/home/HowItWorks";
 import { Pricing } from "@/components/home/Pricing";
 import { Testimonials } from "@/components/home/Testimonials";
 import { TrustedBy } from "@/components/home/TrustedBy";
+import { UploadFilesPill } from "@/components/home/UploadFilesPill";
 import { Badge } from "@/components/ui/Badge";
-import { GradientButton } from "@/components/ui/Button";
 import { BackgroundImage } from "@/components/ui/Image";
-import { Icon } from "@/components/ui/Icon";
 import { Reveal } from "@/components/ui/Reveal";
 import { cn } from "@/lib/cn";
 import { FeaturesHome } from "@/components/home/FeaturesHome";
@@ -108,15 +104,7 @@ export default function Home() {
                 </Reveal>
 
                 <Reveal delay={0.18}>
-                  <GradientButton
-                    size="lg"
-                    href="#start"
-                    leftIcon={<FilledSparklesIcon />}
-                    rightIcon={<Icon icon={ArrowRight} size="md" />}
-                    className="mt-5 w-full shadow-[0_12px_40px_rgba(99,102,241,0.45)] sm:mt-6 sm:w-auto"
-                  >
-                    Start for Free
-                  </GradientButton>
+                  <UploadFilesPill className="mt-5 sm:mt-6" />
 
                   <ul className="mt-4 flex flex-col items-center gap-2.5 sm:mt-5 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-5 sm:gap-y-2">
                     {trustItems.map((item) => (
@@ -179,21 +167,4 @@ function FilledZapIcon() {
   );
 }
 
-function FilledSparklesIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="h-4 w-4 shrink-0 text-white"
-      aria-hidden
-      fill="currentColor"
-    >
-      {/* Main 4-point sparkle */}
-      <path d="M12 2.2 13.85 9.15 20.8 11 13.85 12.85 12 19.8 10.15 12.85 3.2 11 10.15 9.15 12 2.2Z" />
-      {/* Small sparkle top-right */}
-      <path d="M19.2 3.2 19.85 5.55 22.2 6.2 19.85 6.85 19.2 9.2 18.55 6.85 16.2 6.2 18.55 5.55 19.2 3.2Z" />
-      {/* Small sparkle bottom-left */}
-      <path d="M5.4 15.4 5.9 17.15 7.65 17.65 5.9 18.15 5.4 19.9 4.9 18.15 3.15 17.65 4.9 17.15 5.4 15.4Z" />
-    </svg>
-  );
-}
 
