@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowRight,
   Eye,
@@ -12,17 +13,21 @@ import {
   Phone,
   Sparkles,
 } from "lucide-react";
+import { registerUser } from "@/lib/api";
+import { firebaseAuthErrorMessage, loginWithEmail } from "@/lib/auth";
 import { cn } from "@/lib/cn";
 
 /** Original signup/login card used on the video diagonal page. */
 export function SignupForm() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [pending, setPending] = useState(false);
   const [message, setMessage] = useState<{
     type: "error" | "success";
     text: string;
   } | null>(null);
 
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
     const data = new FormData(form);
@@ -53,10 +58,18 @@ export function SignupForm() {
       return;
     }
 
-    setMessage({
-      type: "success",
-      text: "Form looks good. Connect this page to your authentication backend to create an account.",
-    });
+    setPending(true);
+    setMessage(null);
+    try {
+      await registerUser({ email, password, address, phone });
+      await loginWithEmail(email, password);
+      setMessage({ type: "success", text: "Account created. Welcome to ClipForge." });
+      router.push("/dashboard");
+    } catch (error) {
+      setMessage({ type: "error", text: firebaseAuthErrorMessage(error) });
+    } finally {
+      setPending(false);
+    }
   }
 
   return (
@@ -191,9 +204,10 @@ export function SignupForm() {
 
         <button
           type="submit"
-          className="inline-flex h-[50px] w-full items-center justify-center gap-2 rounded-[13px] bg-gradient-to-r from-[#a34dff] via-[#8134ed] to-[#6d29df] font-sans text-[13px] font-extrabold text-white shadow-[0_10px_22px_rgba(131,52,237,0.24)] transition hover:-translate-y-px hover:shadow-[0_13px_25px_rgba(131,52,237,0.3)]"
+          disabled={pending}
+          className="inline-flex h-[50px] w-full items-center justify-center gap-2 rounded-[13px] bg-gradient-to-r from-[#a34dff] via-[#8134ed] to-[#6d29df] font-sans text-[13px] font-extrabold text-white shadow-[0_10px_22px_rgba(131,52,237,0.24)] transition hover:-translate-y-px hover:shadow-[0_13px_25px_rgba(131,52,237,0.3)] disabled:opacity-60"
         >
-          Sign in to ClipForge
+          {pending ? "Creating account…" : "Create account"}
           <ArrowRight className="h-4 w-4" strokeWidth={2.4} aria-hidden />
         </button>
       </form>

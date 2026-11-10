@@ -65,3 +65,56 @@ body {
     animation: none;
   }
 }
+
+/* Caption pack motion (from Lykhaari) */
+@keyframes cap-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes cap-pop-in {
+  from { opacity: 0; transform: scale(0.7); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes cap-zoom-in {
+  from { opacity: 0; transform: scale(1.25); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes cap-slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes cap-slide-down {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes cap-slide-left {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes cap-slide-right {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes cap-word-pop {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes cap-word-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.cap-motion-fade { animation: cap-fade-in 0.35s ease-out both; }
+.cap-motion-pop { animation: cap-pop-in 0.35s cubic-bezier(0.34, 1.4, 0.64, 1) both; }
+.cap-motion-zoom { animation: cap-zoom-in 0.35s ease-out both; }
+.cap-motion-scale { animation: cap-pop-in 0.3s ease-out both; }
+.cap-motion-slide-up { animation: cap-slide-up 0.35s ease-out both; }
+.cap-motion-slide-down { animation: cap-slide-down 0.35s ease-out both; }
+.cap-motion-slide-left { animation: cap-slide-left 0.35s ease-out both; }
+.cap-motion-slide-right { animation: cap-slide-right 0.35s ease-out both; }
+
+.cap-word-pop { display: inline-block; animation: cap-word-pop 0.25s ease-out both; }
+.cap-word-fade { display: inline-block; animation: cap-word-fade 0.25s ease-out both; }
+.cap-word-typewriter { display: inline-block; animation: cap-word-fade 0.2s ease-out both; }
+
+/* Editor layout tokens + grid live in editor-layout-skeleton/editor-layout.css */

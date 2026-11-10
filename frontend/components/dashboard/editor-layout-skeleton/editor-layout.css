@@ -1,0 +1,310 @@
+/* ClipForge editor layout — Lykhaari grid positions, ClipForge light colors */
+
+.editor-shell {
+  --bg-app: #f7f5fc;
+  --bg-panel: #ffffff;
+  --bg-raised: #f5f3ff;
+  --ed-bg: var(--bg-app);
+  --ed-panel: var(--bg-panel);
+  --ed-raised: var(--bg-raised);
+  --ed-elevated: #ede9fe;
+  --ed-stage: #0b0d14;
+  --ed-field: #ffffff;
+  --ed-border: #ddd6fe;
+  --ed-line: #ddd6fe;
+  --ed-line-strong: #c4b5fd;
+  --ed-accent: #8b5cf6;
+  --ed-accent-ink: #ffffff;
+  --ed-accent-soft: rgba(139, 92, 246, 0.12);
+  --ed-accent-glow: rgba(139, 92, 246, 0.28);
+  --ed-muted: #7a738c;
+  --ed-text-1: #111827;
+  --ed-text-2: #5b21b6;
+  --ed-text-3: #7a738c;
+  --ed-radius-panel: 14px;
+  --ed-radius-sm: 10px;
+  --ed-h-ctrl: 32px;
+  --timeline-h: 220px;
+  --inspector-w: 280px;
+  --preview-w: 420px;
+
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  padding: 0;
+  gap: 8px;
+  overflow: hidden;
+  background: var(--bg-app);
+  color: var(--ed-text-1);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  grid-template-rows: 48px 44px minmax(0, 1fr) var(--timeline-h, 220px);
+  grid-template-columns:
+    minmax(280px, 1fr)
+    var(--inspector-w, 280px)
+    var(--preview-w, 420px);
+  grid-template-areas:
+    "title    title     title"
+    "tabs     tabs      preview"
+    "work     inspect   preview"
+    "time     time      preview";
+}
+
+.editor-shell .editor-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--ed-line);
+  border-radius: var(--ed-radius-panel);
+  overflow: hidden;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 24px rgba(20, 20, 40, 0.05);
+}
+
+.editor-shell .editor-header {
+  grid-area: title;
+  flex-shrink: 0;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 14px;
+  border-radius: var(--ed-radius-panel);
+  border: 1px solid var(--ed-line);
+  background: var(--bg-panel);
+  box-shadow: 0 8px 24px rgba(20, 20, 40, 0.05);
+}
+
+.editor-shell .editor-mode-tabs-wrap {
+  grid-area: tabs;
+  display: flex;
+  min-width: 0;
+}
+
+.editor-shell .editor-mode-tabs {
+  flex: 1;
+  height: 44px;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  padding: 0 8px;
+  overflow-x: auto;
+  border-radius: var(--ed-radius-panel);
+  border: 1px solid var(--ed-line);
+  background: var(--bg-panel);
+  box-shadow: 0 8px 24px rgba(20, 20, 40, 0.05);
+}
+
+.editor-shell .editor-mode-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  padding: 0 14px;
+  border: 0;
+  background: transparent;
+  color: var(--ed-text-3);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.editor-shell .editor-mode-tab:hover {
+  color: var(--ed-text-1);
+}
+
+.editor-shell .editor-mode-tab[data-active="true"] {
+  color: var(--ed-text-2);
+}
+
+.editor-shell .editor-mode-tab[data-active="true"]::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 0;
+  height: 2px;
+  background: var(--ed-accent);
+}
+
+.editor-shell .editor-grid {
+  display: contents;
+}
+
+.editor-shell .editor-left-stack {
+  grid-area: work;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  min-width: 0;
+}
+
+.editor-shell .editor-inspector {
+  grid-area: inspect;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  min-width: 0;
+}
+
+.editor-shell .editor-inspector-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 10px 12px;
+}
+
+.editor-shell .editor-video-col {
+  grid-area: preview;
+  grid-row: 2 / -1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  min-width: 0;
+  background: var(--ed-stage);
+}
+
+.editor-shell .editor-timeline {
+  grid-area: time;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
+}
+
+.editor-shell .editor-preview-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  height: 40px;
+  padding: 0 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: #121214;
+}
+
+.editor-shell .editor-video-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  container-type: size;
+  overflow: hidden;
+  background: var(--ed-stage);
+  padding: 12px;
+}
+
+.editor-shell .editor-video-frame {
+  position: relative;
+  width: min(100cqw, calc(100cqh * var(--preview-ar, 0.5625)));
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  aspect-ratio: var(--preview-ar, 0.5625);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.editor-shell .editor-video-frame.is-landscape {
+  --preview-ar: 1.777;
+}
+
+.editor-shell .editor-player-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 52px;
+  padding: 0 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #121214;
+}
+
+.editor-shell .ed-panel-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ed-text-3);
+}
+
+.editor-shell .silk-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #c4b5fd transparent;
+}
+.editor-shell .silk-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.editor-shell .silk-scroll::-webkit-scrollbar-thumb {
+  background: #c4b5fd;
+  border-radius: 999px;
+}
+
+@media (max-width: 1023px) {
+  .editor-shell {
+    height: auto;
+    min-height: 100%;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    grid-template-rows: none;
+    grid-template-columns: none;
+    grid-template-areas: none;
+  }
+  .editor-shell .editor-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .editor-shell .editor-header,
+  .editor-shell .editor-mode-tabs-wrap,
+  .editor-shell .editor-left-stack,
+  .editor-shell .editor-inspector,
+  .editor-shell .editor-video-col,
+  .editor-shell .editor-timeline {
+    grid-area: auto;
+    grid-row: auto;
+    width: 100%;
+  }
+  .editor-shell .editor-video-col {
+    order: 1;
+    height: 48dvh;
+  }
+  .editor-shell .editor-mode-tabs-wrap {
+    order: 2;
+  }
+  .editor-shell .editor-left-stack {
+    order: 3;
+    max-height: 40dvh;
+  }
+  .editor-shell .editor-inspector {
+    order: 4;
+    max-height: 36dvh;
+  }
+  .editor-shell .editor-timeline {
+    order: 5;
+    min-height: 200px;
+  }
+}

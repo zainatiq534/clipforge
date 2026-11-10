@@ -4,6 +4,11 @@ import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
+import {
+  firebaseAuthErrorMessage,
+  loginWithEmail,
+  loginWithGoogle,
+} from "@/lib/auth";
 import { cn } from "@/lib/cn";
 
 function GoogleGlyph({ className }: { className?: string }) {
@@ -34,14 +39,15 @@ type LoginFormProps = {
 };
 
 export function LoginForm({ mode = "login" }: LoginFormProps) {
-  const router = useRouter();
   const isSignup = mode === "signup";
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
   const [message, setMessage] = useState<{
     type: "error" | "success";
     text: string;
   } | null>(null);
 
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
     const data = new FormData(form);
@@ -61,8 +67,36 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
       return;
     }
 
-    // Valid form → open ClipForge dashboard
-    router.push("/dashboard");
+    if (isSignup) {
+      router.push("/signup");
+      return;
+    }
+
+    setPending(true);
+    setMessage(null);
+    try {
+      await loginWithEmail(email, password);
+      setMessage({ type: "success", text: "Signed in successfully." });
+      router.push("/dashboard");
+    } catch (error) {
+      setMessage({ type: "error", text: firebaseAuthErrorMessage(error) });
+    } finally {
+      setPending(false);
+    }
+  }
+
+  async function onGoogleClick() {
+    setPending(true);
+    setMessage(null);
+    try {
+      await loginWithGoogle();
+      setMessage({ type: "success", text: "Signed in with Google." });
+      router.push("/dashboard");
+    } catch (error) {
+      setMessage({ type: "error", text: firebaseAuthErrorMessage(error) });
+    } finally {
+      setPending(false);
+    }
   }
 
   return (
@@ -84,13 +118,9 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
 
       <button
         type="button"
-        className="mt-6 inline-flex h-11 w-full items-center justify-center gap-2.5 rounded-xl border border-[#e8e1f1] bg-white font-sans text-[13px] font-semibold text-[#30283d] transition hover:bg-[#faf8ff]"
-        onClick={() =>
-          setMessage({
-            type: "success",
-            text: "Connect this button to Google OAuth when ready.",
-          })
-        }
+        disabled={pending}
+        className="mt-6 inline-flex h-11 w-full items-center justify-center gap-2.5 rounded-xl border border-[#e8e1f1] bg-white font-sans text-[13px] font-semibold text-[#30283d] transition hover:bg-[#faf8ff] disabled:opacity-60"
+        onClick={() => void onGoogleClick()}
       >
         <GoogleGlyph className="h-4 w-4" />
         Continue with Google
@@ -102,7 +132,7 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
         <span className="h-px flex-1 bg-[#eee8f5]" />
       </div>
 
-      <form onSubmit={onSubmit} noValidate className="space-y-4">
+      <form onSubmit={(e) => void onSubmit(e)} noValidate className="space-y-4">
         <div>
           <label
             htmlFor="email"
@@ -137,7 +167,7 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
                   e.preventDefault();
                   setMessage({
                     type: "success",
-                    text: "Connect this link to your password recovery page.",
+                    text: "Password reset will be connected next.",
                   });
                 }}
               >
@@ -173,9 +203,10 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
 
         <button
           type="submit"
-          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#8b5cf6] via-[#7c3aed] to-[#4f46e5] font-sans text-[14px] font-bold text-white shadow-[0_12px_28px_rgba(124,58,237,0.28)] transition hover:-translate-y-px hover:shadow-[0_14px_32px_rgba(124,58,237,0.34)]"
+          disabled={pending}
+          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#8b5cf6] via-[#7c3aed] to-[#4f46e5] font-sans text-[14px] font-bold text-white shadow-[0_12px_28px_rgba(124,58,237,0.28)] transition hover:-translate-y-px hover:shadow-[0_14px_32px_rgba(124,58,237,0.34)] disabled:opacity-60"
         >
-          {isSignup ? "Get Started" : "Log In"}
+          {pending ? "Please wait…" : isSignup ? "Get Started" : "Log In"}
           <ArrowRight className="h-4 w-4" strokeWidth={2.4} aria-hidden />
         </button>
       </form>
