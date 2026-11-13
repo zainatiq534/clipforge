@@ -34,12 +34,12 @@ export function AppPageHero({
       : []);
 
   return (
-    <section className="relative overflow-hidden rounded-[22px] bg-[#ede9fe] px-5 py-4 shadow-[0_10px_28px_rgba(124,58,237,0.12)] sm:px-6 sm:py-5">
+    <section className="relative overflow-hidden rounded-[18px] bg-[#ede9fe] px-3.5 py-3.5 shadow-[0_10px_28px_rgba(124,58,237,0.12)] sm:rounded-[22px] sm:px-6 sm:py-5">
       <div className="relative z-10 max-w-[40rem]">
-        <h1 className="font-sans text-[1.25rem] leading-[1.15] font-extrabold tracking-[-0.03em] text-[#111827] sm:text-[1.45rem]">
+        <h1 className="font-sans text-[1.15rem] leading-[1.15] font-extrabold tracking-[-0.03em] text-[#111827] sm:text-[1.45rem]">
           {title}
         </h1>
-        <p className="mt-1.5 max-w-[32rem] font-sans text-[12px] leading-relaxed text-[#5b21b6]/75">
+        <p className="mt-1.5 max-w-[32rem] font-sans text-[11px] leading-relaxed text-[#5b21b6]/75 sm:text-[12px]">
           {description}
         </p>
         {list.length ? (

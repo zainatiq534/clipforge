@@ -1,51 +1,83 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import Link from "next/link";
 import { Search } from "lucide-react";
-import { AppImage } from "@/components/ui/Image";
 import { cn } from "@/lib/cn";
 
-const tabs = ["Overview", "Shared", "Comments"] as const;
+const tabs = ["Overview", "Clips", "Uploads"] as const;
 
-const items = [
-  {
-    name: "Jennifer Campbell",
-    text: "invites you to a brainstorm session",
-    time: "30 mins ago",
-    tag: "Invite",
-    src: "/features/avatar-1.jpg",
-  },
-  {
-    name: "Marcus Lee",
-    text: "shared a new project board with you",
-    time: "1 hour ago",
-    tag: "Shared",
-    src: "/features/avatar-2.jpg",
-  },
-  {
-    name: "Ava Martinez",
-    text: "commented on your latest video draft",
-    time: "2 hours ago",
-    tag: "Comment",
-    src: "/features/avatar-3.jpg",
-  },
-];
+export type ActivityItem = {
+  id: string;
+  name: string;
+  text: string;
+  time: string;
+  tag: string;
+};
 
-export function NotificationsCard() {
+type NotificationsCardProps = {
+  items: ActivityItem[];
+  initials: string;
+  loading?: boolean;
+};
+
+export function NotificationsCard({
+  items,
+  initials,
+  loading,
+}: NotificationsCardProps) {
   const [tab, setTab] = useState<(typeof tabs)[number]>("Overview");
+  const [query, setQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  const filtered = useMemo(() => {
+    let list = items;
+    if (tab === "Clips") {
+      list = list.filter(
+        (i) => i.tag === "Clip" || i.tag === "Manual",
+      );
+    } else if (tab === "Uploads") {
+      list = list.filter(
+        (i) =>
+          i.tag === "Upload" || i.tag === "Ready" || i.tag === "Failed",
+      );
+    }
+    const q = query.trim().toLowerCase();
+    if (q) {
+      list = list.filter(
+        (i) =>
+          i.text.toLowerCase().includes(q) ||
+          i.name.toLowerCase().includes(q) ||
+          i.tag.toLowerCase().includes(q),
+      );
+    }
+    return list.slice(0, 6);
+  }, [items, tab, query]);
 
   return (
     <section className="rounded-[22px] bg-white p-3.5 shadow-[0_10px_28px_rgba(20,20,40,0.06)]">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="font-sans text-[13px] font-bold text-[#1a1a1f]">Notifications</h2>
+        <h2 className="font-sans text-[13px] font-bold text-[#1a1a1f]">
+          Activity
+        </h2>
         <button
           type="button"
           className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[#8b849c] hover:bg-[#f3f1f8]"
-          aria-label="Search notifications"
+          aria-label="Search activity"
+          onClick={() => setSearchOpen((v) => !v)}
         >
           <Search className="h-4 w-4" strokeWidth={1.8} />
         </button>
       </div>
+
+      {searchOpen ? (
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search activity…"
+          className="mt-2 w-full rounded-[12px] border-0 bg-[#f7f5fb] px-3 py-2 font-sans text-[12px] text-[#1a1a1f] outline-none ring-1 ring-[#ede9fe] focus:ring-[#c4b5fd]"
+        />
+      ) : null}
 
       <div className="mt-3 flex gap-1 border-b border-[#efeaf8]">
         {tabs.map((item) => (
@@ -55,7 +87,9 @@ export function NotificationsCard() {
             onClick={() => setTab(item)}
             className={cn(
               "relative px-2.5 pb-2.5 font-sans text-[12px] font-semibold transition",
-              tab === item ? "text-[#1a1a1f]" : "text-[#8b849c] hover:text-[#1a1a1f]",
+              tab === item
+                ? "text-[#1a1a1f]"
+                : "text-[#8b849c] hover:text-[#1a1a1f]",
             )}
           >
             {item}
@@ -67,23 +101,48 @@ export function NotificationsCard() {
       </div>
 
       <ul className="mt-3 space-y-3">
-        {items.map((item) => (
-          <li key={item.name} className="flex items-start gap-2.5">
-            <span className="relative mt-0.5 h-9 w-9 shrink-0 overflow-hidden rounded-full">
-              <AppImage src={item.src} alt="" fill className="object-cover" sizes="36px" />
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="font-sans text-[12px] leading-snug text-[#3d3558]">
-                <span className="font-semibold text-[#1a1a1f]">{item.name}</span>{" "}
-                {item.text}
-              </p>
-              <p className="mt-1 font-sans text-[10px] text-[#9a93a8]">{item.time}</p>
+        {loading ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <li
+              key={i}
+              className="h-12 animate-pulse rounded-[14px] bg-[#f7f5fb]"
+            />
+          ))
+        ) : filtered.length === 0 ? (
+          <li className="rounded-[14px] bg-[#f7f5fb] px-3 py-5 text-center font-sans text-[11px] text-[#7a738c]">
+            No activity yet. Upload a video to get started.
+            <div className="mt-2">
+              <Link
+                href="/dashboard/upload"
+                className="font-semibold text-[#7c3aed] hover:underline"
+              >
+                Go to Upload
+              </Link>
             </div>
-            <span className="shrink-0 rounded-[10px] bg-gradient-to-r from-[#a78bfa] via-[#8b5cf6] to-[#3b82f6] px-2.5 py-1 font-sans text-[9px] font-semibold text-white">
-              {item.tag}
-            </span>
           </li>
-        ))}
+        ) : (
+          filtered.map((item) => (
+            <li key={item.id} className="flex items-start gap-2.5">
+              <span className="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-[#a78bfa] to-[#7c3aed] font-sans text-[10px] font-bold text-white">
+                {initials}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="font-sans text-[12px] leading-snug text-[#3d3558]">
+                  <span className="font-semibold text-[#1a1a1f]">
+                    {item.name}
+                  </span>{" "}
+                  {item.text}
+                </p>
+                <p className="mt-1 font-sans text-[10px] text-[#9a93a8]">
+                  {item.time}
+                </p>
+              </div>
+              <span className="shrink-0 rounded-[10px] bg-gradient-to-r from-[#a78bfa] via-[#8b5cf6] to-[#3b82f6] px-2.5 py-1 font-sans text-[9px] font-semibold text-white">
+                {item.tag}
+              </span>
+            </li>
+          ))
+        )}
       </ul>
     </section>
   );

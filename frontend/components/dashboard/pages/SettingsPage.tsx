@@ -9,13 +9,11 @@ import {
   KeyRound,
   Loader2,
   Lock,
-  LogOut,
   Mail,
   MapPin,
   Pencil,
   Phone,
   Save,
-  Settings2,
   Shield,
   Sparkles,
   User,
@@ -44,7 +42,6 @@ import {
 import {
   changeAccountPassword,
   firebaseAuthErrorMessage,
-  logout,
   sendResetPasswordEmail,
 } from "@/lib/auth";
 import { getFirebaseAuth } from "@/lib/firebase";
@@ -217,7 +214,7 @@ function GlassPanel({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
       transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-      className="relative overflow-hidden rounded-[28px] border border-white/50 bg-white/55 p-5 shadow-[0_24px_60px_rgba(88,28,135,0.12)] backdrop-blur-2xl sm:p-7"
+      className="relative rounded-[28px] border border-white/60 bg-white/50 p-5 shadow-[0_18px_40px_rgba(88,28,135,0.08)] backdrop-blur-xl sm:p-7"
     >
       <div className="mb-6 flex items-start gap-3.5">
         <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[16px] bg-gradient-to-br from-[#f3e8ff] to-[#ede9fe] text-[#9333ea] shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
@@ -399,11 +396,6 @@ export function SettingsPage() {
     }
   };
 
-  const signOut = async () => {
-    await logout();
-    router.replace("/login");
-  };
-
   const initials = useMemo(() => {
     const name = form?.displayName?.trim() || form?.email || "CF";
     return name
@@ -416,9 +408,8 @@ export function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="relative flex min-h-[60vh] items-center justify-center overflow-hidden rounded-[28px]">
-        <SettingsAtmosphere />
-        <div className="relative z-10 flex items-center gap-2 font-sans text-[13px] text-[#6b21a8]">
+      <div className="relative flex min-h-[60vh] items-center justify-center">
+        <div className="flex items-center gap-2 font-sans text-[13px] text-[#6b21a8]">
           <Loader2 className="h-4 w-4 animate-spin" />
           Loading settings…
         </div>
@@ -428,20 +419,17 @@ export function SettingsPage() {
 
   if (!form) {
     return (
-      <div className="relative overflow-hidden rounded-[28px] p-8 text-center">
-        <SettingsAtmosphere />
-        <div className="relative z-10">
-          <p className="font-sans text-[13px] text-[#6b21a8]">
-            {error ?? "Could not load your profile."}
-          </p>
-          <button
-            type="button"
-            onClick={() => void load()}
-            className="mt-4 inline-flex h-10 items-center rounded-full bg-gradient-to-r from-[#c084fc] to-[#7c3aed] px-5 text-[13px] font-bold text-white"
-          >
-            Retry
-          </button>
-        </div>
+      <div className="relative p-8 text-center">
+        <p className="font-sans text-[13px] text-[#6b21a8]">
+          {error ?? "Could not load your profile."}
+        </p>
+        <button
+          type="button"
+          onClick={() => void load()}
+          className="mt-4 inline-flex h-10 items-center rounded-full bg-gradient-to-r from-[#c084fc] to-[#7c3aed] px-5 text-[13px] font-bold text-white"
+        >
+          Retry
+        </button>
       </div>
     );
   }
@@ -449,10 +437,8 @@ export function SettingsPage() {
   const usedPct = storage?.storagePercent ?? 0;
 
   return (
-    <div className="relative min-h-[calc(100dvh-2rem)] min-w-0 overflow-hidden rounded-[28px] pb-28">
-      <SettingsAtmosphere />
-
-      <div className="relative z-10 mx-auto max-w-5xl px-3 pt-3 sm:px-5 sm:pt-5">
+    <div className="relative min-h-[calc(100dvh-2rem)] min-w-0 pb-32 md:pb-28">
+      <div className="relative mx-auto max-w-5xl px-1 pt-1 sm:px-2 sm:pt-3">
         <motion.header
           initial={reduce ? false : { opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -469,16 +455,11 @@ export function SettingsPage() {
             </div>
 
             <div className="min-w-0 flex-1">
-              <p className="inline-flex items-center gap-1.5 font-[family-name:var(--font-outfit)] text-[11px] font-bold uppercase tracking-[0.18em] text-[#9333ea]">
-                <Settings2 className="h-3.5 w-3.5" />
-                Workspace settings
-              </p>
-              <h1 className="mt-1 truncate font-[family-name:var(--font-outfit)] text-[2rem] font-extrabold leading-none tracking-[-0.045em] text-[#2a2140] sm:text-[2.35rem]">
+              <h1 className="truncate font-[family-name:var(--font-outfit)] text-[1.55rem] font-extrabold leading-none tracking-[-0.045em] text-[#2a2140] sm:text-[2.35rem]">
                 {form.displayName || "Your studio"}
               </h1>
               <p className="mt-2 truncate font-sans text-[13px] text-[#7c6b99]">
-                {form.workspaceName} · {storage?.planLabel ?? "Free"} plan ·{" "}
-                {form.email}
+                {storage?.planLabel ?? "Free"} plan
               </p>
             </div>
 
@@ -491,21 +472,13 @@ export function SettingsPage() {
                 <Bell className="h-4 w-4" />
                 <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[#ef4444] ring-2 ring-white" />
               </button>
-              <button
-                type="button"
-                onClick={() => void signOut()}
-                className="inline-flex h-10 items-center gap-2 rounded-full bg-white/55 px-4 font-[family-name:var(--font-outfit)] text-[13px] font-semibold text-[#6b21a8] shadow-[0_8px_20px_rgba(88,28,135,0.1)] ring-1 ring-white/70 backdrop-blur-md"
-              >
-                <LogOut className="h-3.5 w-3.5" />
-                Sign out
-              </button>
               <SaveBtn saving={saving} onClick={() => void save()} />
             </div>
           </div>
 
           {/* Tabs — active = solid purple pill */}
-          <div className="mt-6 overflow-x-auto">
-            <div className="inline-flex min-w-full gap-1.5 rounded-[22px] bg-white/40 p-1.5 shadow-[0_10px_30px_rgba(88,28,135,0.08)] ring-1 ring-white/60 backdrop-blur-xl sm:min-w-0">
+          <div className="mt-5 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="inline-flex min-w-full gap-1 rounded-[22px] bg-white/40 p-1.5 shadow-[0_10px_30px_rgba(88,28,135,0.08)] ring-1 ring-white/60 backdrop-blur-xl sm:min-w-0 sm:gap-1.5">
               {TABS.map((item) => {
                 const Icon = item.icon;
                 const active = tab === item.id;
@@ -515,7 +488,7 @@ export function SettingsPage() {
                     type="button"
                     onClick={() => setTab(item.id)}
                     className={cn(
-                      "relative flex flex-1 items-center justify-center gap-2 rounded-[16px] px-3 py-2.5 font-[family-name:var(--font-outfit)] text-[13px] font-semibold transition-colors",
+                      "relative flex flex-1 items-center justify-center gap-1.5 rounded-[16px] px-2 py-2.5 font-[family-name:var(--font-outfit)] text-[11px] font-semibold transition-colors sm:gap-2 sm:px-3 sm:text-[13px]",
                       active
                         ? "text-white"
                         : "text-[#7c6b99] hover:text-[#2a2140]",
@@ -974,19 +947,6 @@ export function SettingsPage() {
                   </div>
                 )}
 
-                <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-[22px] bg-white/55 px-5 py-4 ring-1 ring-white/70">
-                  <p className="font-sans text-[12px] text-[#8b7aa8]">
-                    End this session on this device.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => void signOut()}
-                    className="inline-flex h-10 items-center gap-2 rounded-full bg-white/80 px-4 font-[family-name:var(--font-outfit)] text-[13px] font-semibold text-[#6b21a8] ring-1 ring-[#e9d5ff]"
-                  >
-                    <LogOut className="h-3.5 w-3.5" />
-                    Sign out
-                  </button>
-                </div>
               </GlassPanel>
             ) : null}
           </AnimatePresence>
@@ -994,11 +954,11 @@ export function SettingsPage() {
       </div>
 
       {/* Bottom dock */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-4 z-30 flex justify-center px-4">
+      <div className="pointer-events-none fixed inset-x-0 bottom-[calc(4.35rem+env(safe-area-inset-bottom))] z-30 flex justify-center px-4 md:bottom-4">
         <motion.div
           initial={reduce ? false : { y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="pointer-events-auto flex items-center gap-3 rounded-full border border-white/60 bg-white/55 px-2 py-2 pl-4 shadow-[0_18px_50px_rgba(88,28,135,0.2)] backdrop-blur-2xl"
+          className="pointer-events-auto flex max-w-[calc(100vw-1.5rem)] items-center gap-3 rounded-full border border-white/60 bg-white/55 px-2 py-2 pl-4 shadow-[0_18px_50px_rgba(88,28,135,0.2)] backdrop-blur-2xl"
         >
           <Info className="hidden h-3.5 w-3.5 text-[#a78bfa] sm:block" />
           <p className="hidden font-sans text-[12px] text-[#7c6b99] sm:block">
@@ -1011,23 +971,3 @@ export function SettingsPage() {
   );
 }
 
-/** Reference image as page atmosphere + matching liquid color wash. */
-function SettingsAtmosphere() {
-  return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-      {/* Same picture as background */}
-      <div
-        className="absolute inset-0 scale-110 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: "url('/settings-bg.jpg')",
-          filter: "blur(28px) saturate(1.25) brightness(1.05)",
-        }}
-      />
-      {/* Soft wash so UI stays readable while keeping the same palette */}
-      <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(250,232,255,0.55)_0%,rgba(237,233,254,0.45)_40%,rgba(252,231,243,0.5)_100%)]" />
-      <div className="absolute -left-20 top-10 h-72 w-72 rounded-full bg-[#e879f9]/35 blur-3xl" />
-      <div className="absolute right-0 top-0 h-80 w-80 rounded-full bg-[#a855f7]/30 blur-3xl" />
-      <div className="absolute bottom-10 left-1/3 h-64 w-64 rounded-full bg-[#f472b6]/25 blur-3xl" />
-    </div>
-  );
-}

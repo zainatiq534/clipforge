@@ -69,6 +69,8 @@ export type PeakWindow = {
   secureUrl?: string;
 };
 
+export type ExportRatio = "natural" | "yt-shorts" | "instagram" | "tiktok";
+
 export function buildCloudinaryClipUrl(
   cloudName: string,
   publicId: string,
@@ -80,7 +82,152 @@ export function buildCloudinaryClipUrl(
   return `https://res.cloudinary.com/${cloudName}/video/upload/so_${so},du_${duration},f_mp4,q_auto/${publicId}.mp4`;
 }
 
-export type ExportRatio = "natural" | "yt-shorts" | "instagram" | "tiktok";
+/** Letterbox to 9:16 (pad, never crop) — matches Shorts / Reels / TikTok preview. */
+function ratioTransform(ratio: ExportRatio): string | null {
+  if (ratio === "natural") return null;
+  // Force exact vertical delivery size (Cloudinary pads landscape inside).
+  return "c_pad,b_black,w_1080,h_1920";
+}
+
+/**
+ * Inject export-ratio transforms into an existing Cloudinary clip URL.
+ * Keeps so_/du_ trim; adds 9:16 letterbox for short-form ratios.
+ */
+export function buildExportClipUrl(
+  clipUrl: string,
+  ratio: ExportRatio = "natural",
+) {
+  const transform = ratioTransform(ratio);
+  if (!transform) return clipUrl;
+
+  try {
+    const u = new URL(clipUrl);
+    if (!u.hostname.includes("res.cloudinary.com")) return clipUrl;
+    const marker = "/video/upload/";
+    const idx = u.pathname.indexOf(marker);
+    if (idx < 0) return clipUrl;
+
+    const prefix = u.pathname.slice(0, idx + marker.length);
+    let after = u.pathname.slice(idx + marker.length);
+
+    // Strip a previous letterbox / attachment layer if re-exporting.
+    after = after
+      .replace(/^fl_attachment:[^/]+\//, "")
+      .replace(
+        /(?:^|\/)c_pad,b_black,ar_9:16(?:,w_\d+)?(?:,h_\d+)?(?=\/|,|$)/g,
+        "",
+      )
+      .replace(/^\/+/, "");
+
+    const slash = after.indexOf("/");
+    if (slash < 0) {
+      u.pathname = `${prefix}${transform},f_mp4,q_auto/${after}`;
+      return u.toString();
+    }
+
+    const first = after.slice(0, slash);
+    const rest = after.slice(slash + 1);
+
+    // Merge into the first transformation segment (alongside so_/du_).
+    const parts = first.split(",").filter(Boolean);
+    const withoutFormat = parts.filter(
+      (p) =>
+        !p.startsWith("f_") &&
+        !p.startsWith("q_") &&
+        !p.startsWith("c_pad") &&
+        !p.startsWith("ar_") &&
+        p !== "b_black" &&
+        !p.startsWith("w_1080") &&
+        !p.startsWith("h_1920"),
+    );
+    const merged = [
+      ...withoutFormat,
+      ...transform.split(","),
+      "f_mp4",
+      "q_auto",
+    ].join(",");
+
+    u.pathname = `${prefix}${merged}/${rest}`;
+    return u.toString();
+  } catch {
+    return clipUrl;
+  }
+}
+
+function sanitizeDownloadName(name: string) {
+  const base = name
+    .replace(/\.[^.]+$/, "")
+    .replace(/[^\w\-]+/g, "_")
+    .replace(/_+/g, "_")
+    .replace(/^_|_$/g, "")
+    .slice(0, 80);
+  return `${base || "clipforge-clip"}.mp4`;
+}
+
+/** Force Cloudinary to send Content-Disposition: attachment when possible. */
+export function buildClipAttachmentUrl(clipUrl: string, fileName: string) {
+  try {
+    const u = new URL(clipUrl);
+    if (!u.hostname.includes("res.cloudinary.com")) return clipUrl;
+    const marker = "/video/upload/";
+    const idx = u.pathname.indexOf(marker);
+    if (idx < 0) return clipUrl;
+    const after = u.pathname.slice(idx + marker.length);
+    const safe = sanitizeDownloadName(fileName).replace(/\.mp4$/i, "");
+    // Keep attachment as its own component so it doesn't break other transforms.
+    if (after.startsWith("fl_attachment:")) return u.toString();
+    u.pathname = `${u.pathname.slice(0, idx + marker.length)}fl_attachment:${safe}/${after}`;
+    return u.toString();
+  } catch {
+    return clipUrl;
+  }
+}
+
+/** Download a clip MP4 to the user's device, baked to the selected export ratio. */
+export async function downloadClipToDevice(input: {
+  url: string;
+  fileName: string;
+  ratio?: ExportRatio;
+}) {
+  const ratio = input.ratio ?? "natural";
+  const ratioSuffix =
+    ratio === "natural"
+      ? ""
+      : ratio === "yt-shorts"
+        ? "_yt_shorts_9x16"
+        : ratio === "instagram"
+          ? "_instagram_9x16"
+          : "_tiktok_9x16";
+  const fileName = sanitizeDownloadName(`${input.fileName}${ratioSuffix}`);
+  const exportUrl = buildExportClipUrl(input.url, ratio);
+  const attachmentUrl = buildClipAttachmentUrl(exportUrl, fileName);
+
+  try {
+    const res = await fetch(attachmentUrl, { mode: "cors" });
+    if (!res.ok) throw new Error(`Download failed (${res.status})`);
+    const blob = await res.blob();
+    const objectUrl = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = objectUrl;
+    a.download = fileName;
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(objectUrl);
+    return;
+  } catch {
+    // Cross-origin / CORS fallback — Cloudinary fl_attachment still triggers save.
+    const a = document.createElement("a");
+    a.href = attachmentUrl;
+    a.download = fileName;
+    a.target = "_blank";
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+}
 
 type SignResponse = {
   upload: VideoUpload;

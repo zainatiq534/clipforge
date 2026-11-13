@@ -1,30 +1,17 @@
 "use client";
 
-import {
-  Film,
-  Flame,
-  LayoutDashboard,
-  LogOut,
-  Scissors,
-  Settings,
-  UploadCloud,
-} from "lucide-react";
+import { LogOut } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import {
+  DASHBOARD_NAV,
+  isDashboardNavActive,
+} from "@/components/dashboard/dashboardNav";
 import { AppImage } from "@/components/ui/Image";
 import { logout } from "@/lib/auth";
 import { cn } from "@/lib/cn";
-
-const navItems = [
-  { key: "home", label: "Home", icon: LayoutDashboard, href: "/dashboard" },
-  { key: "upload", label: "Upload", icon: UploadCloud, href: "/dashboard/upload" },
-  { key: "projects", label: "Projects", icon: Film, href: "/dashboard/projects" },
-  { key: "viral", label: "Viral Score", icon: Flame, href: "/dashboard/viral" },
-  { key: "editor", label: "Clip Editor", icon: Scissors, href: "/dashboard/editor" },
-  { key: "settings", label: "Settings", icon: Settings, href: "/dashboard/settings" },
-] as const;
 
 const SIDEBAR_EXPANDED_KEY = "clipforge.sidebarExpanded";
 
@@ -34,11 +21,6 @@ const glassSpring = {
   damping: 34,
   mass: 0.55,
 };
-
-function isActive(pathname: string, href: string) {
-  if (href === "/dashboard") return pathname === "/dashboard";
-  return pathname === href || pathname.startsWith(`${href}/`);
-}
 
 function GlassHover({
   active,
@@ -145,9 +127,9 @@ export function DashboardSidebar({ dark = false }: { dark?: boolean }) {
         aria-label="Dashboard"
         onMouseLeave={() => setHovered(null)}
       >
-        {navItems.map((item) => {
+        {DASHBOARD_NAV.map((item) => {
           const Icon = item.icon;
-          const active = isActive(pathname, item.href);
+          const active = isDashboardNavActive(pathname, item.href);
           const isHovered = hovered === item.key;
 
           return (
@@ -160,9 +142,7 @@ export function DashboardSidebar({ dark = false }: { dark?: boolean }) {
               onFocus={() => setHovered(item.key)}
               className={cn(
                 "relative inline-flex h-10 shrink-0 items-center transition-colors duration-300",
-                expanded
-                  ? "w-full gap-3 px-2.5"
-                  : "w-10 justify-center",
+                expanded ? "w-full gap-3 px-2.5" : "w-10 justify-center",
                 itemRounded,
                 active || isHovered ? "text-white" : "text-white/55",
               )}
@@ -187,9 +167,7 @@ export function DashboardSidebar({ dark = false }: { dark?: boolean }) {
               <motion.span
                 className="relative z-10 inline-flex items-center gap-3"
                 animate={
-                  reduce
-                    ? undefined
-                    : { scale: isHovered ? 1.04 : 1 }
+                  reduce ? undefined : { scale: isHovered ? 1.04 : 1 }
                 }
                 transition={glassSpring}
               >
@@ -209,7 +187,13 @@ export function DashboardSidebar({ dark = false }: { dark?: boolean }) {
           onMouseEnter={() => setHovered("logout")}
           onFocus={() => setHovered("logout")}
           onClick={() => {
-            void logout().finally(() => router.replace("/login"));
+            void (async () => {
+              try {
+                await logout();
+              } finally {
+                router.replace("/login");
+              }
+            })();
           }}
           className={cn(
             "relative inline-flex h-10 shrink-0 items-center transition-colors duration-300",

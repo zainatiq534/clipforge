@@ -3,7 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Plus, Scissors, Sparkles, Upload, X } from "lucide-react";
 import { UploadIntakePanel } from "@/components/dashboard/UploadIntakePanel";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   useCallback,
   useEffect,
@@ -167,6 +167,8 @@ const RATIO_LABEL: Record<ExportRatio, string> = {
 
 export function UploadPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const deepLinkUploadId = searchParams.get("upload");
   const inputRef = useRef<HTMLInputElement>(null);
   const playerRef = useRef<HTMLVideoElement>(null);
   const manualVideoRef = useRef<HTMLVideoElement>(null);
@@ -241,6 +243,12 @@ export function UploadPage() {
       setError(null);
 
       setSelectedId((prev) => {
+        if (
+          deepLinkUploadId &&
+          nextRows.some((r) => r.id === deepLinkUploadId)
+        ) {
+          return deepLinkUploadId;
+        }
         if (prev && nextRows.some((r) => r.id === prev)) return prev;
         return nextRows.find((r) => r.status === "Ready")?.id ?? null;
       });
@@ -254,7 +262,7 @@ export function UploadPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not load uploads.");
     }
-  }, []);
+  }, [deepLinkUploadId]);
 
   useEffect(() => {
     void refresh();
@@ -633,7 +641,7 @@ export function UploadPage() {
         })();
 
   return (
-    <div className="flex min-w-0 flex-col gap-3">
+    <div className="flex min-w-0 flex-col gap-3 pb-2">
       <DashboardMotion delay={0.06}>
         <AppPageHero
           title="Upload your long-form video"

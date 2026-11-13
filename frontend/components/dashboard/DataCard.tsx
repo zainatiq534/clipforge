@@ -1,10 +1,15 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import {
+  animate,
+  motion,
+  useMotionValue,
+  useReducedMotion,
+} from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-/** Smooth wave path across the chart */
 const LINE =
   "M4 40 C18 38, 24 22, 38 24 S56 42, 70 30 S94 10, 116 16";
 const AREA =
@@ -16,26 +21,119 @@ const points = [
   { cx: 116, cy: 16 },
 ];
 
-const percents = [
-  { label: "+80%", color: "text-[#22c55e]" },
-  { label: "+50%", color: "text-[#22c55e]" },
-  { label: "-0%", color: "text-[#94a3b8]" },
-];
-
-export function DataCard() {
+function CountUp({
+  to,
+  duration = 1.2,
+  delay = 0,
+  decimals = 0,
+  format,
+  className,
+}: {
+  to: number;
+  duration?: number;
+  delay?: number;
+  decimals?: number;
+  format?: (n: number) => string;
+  className?: string;
+}) {
   const reduce = useReducedMotion();
+  const motionValue = useMotionValue(0);
+  const [display, setDisplay] = useState(reduce ? to : 0);
+
+  useEffect(() => {
+    if (reduce) {
+      setDisplay(to);
+      return;
+    }
+    motionValue.set(0);
+    setDisplay(0);
+    const controls = animate(motionValue, to, {
+      duration,
+      delay,
+      ease,
+    });
+    const unsub = motionValue.on("change", (v) => {
+      const next =
+        decimals > 0 ? Number(v.toFixed(decimals)) : Math.round(v);
+      setDisplay(next);
+    });
+    return () => {
+      controls.stop();
+      unsub();
+    };
+  }, [to, duration, delay, decimals, motionValue, reduce]);
+
+  const text = format
+    ? format(display)
+    : decimals > 0
+      ? display.toFixed(decimals).replace(".", ",")
+      : String(display);
+
+  return <span className={className}>{text}</span>;
+}
+
+type DataCardProps = {
+  hours: number;
+  clipCount: number;
+  uploadCount: number;
+  storagePercent: number;
+  loading?: boolean;
+};
+
+export function DataCard({
+  hours,
+  clipCount,
+  uploadCount,
+  storagePercent,
+  loading,
+}: DataCardProps) {
+  const reduce = useReducedMotion();
+
+  const percents = useMemo(() => {
+    const clipDelta = Math.min(99, clipCount * 8);
+    const uploadDelta = Math.min(99, uploadCount * 10);
+    const storageDelta = Math.round(storagePercent);
+    return [
+      {
+        value: clipDelta,
+        prefix: clipCount > 0 ? "+" : "",
+        suffix: "% clips",
+        color: clipCount > 0 ? "text-[#22c55e]" : "text-[#94a3b8]",
+      },
+      {
+        value: uploadDelta,
+        prefix: uploadCount > 0 ? "+" : "",
+        suffix: "% uploads",
+        color: uploadCount > 0 ? "text-[#22c55e]" : "text-[#94a3b8]",
+      },
+      {
+        value: storageDelta,
+        prefix: "",
+        suffix: "% used",
+        color: storageDelta > 80 ? "text-[#f59e0b]" : "text-[#94a3b8]",
+      },
+    ];
+  }, [clipCount, uploadCount, storagePercent]);
 
   return (
     <section className="rounded-[22px] bg-white p-3.5 shadow-[0_10px_28px_rgba(20,20,40,0.06)]">
-      <h2 className="font-sans text-[13px] font-bold text-[#1a1a1f]">Dsta</h2>
-      <motion.p
-        className="mt-3 font-display text-[1.85rem] leading-none font-extrabold tracking-tight text-[#1a1a1f]"
-        initial={reduce ? false : { opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.55, ease }}
-      >
-        10,3h
-      </motion.p>
+      <h2 className="font-sans text-[13px] font-bold text-[#1a1a1f]">Data</h2>
+      <p className="mt-3 font-display text-[1.55rem] leading-none font-extrabold tracking-tight text-[#1a1a1f] sm:text-[1.85rem]">
+        {loading ? (
+          "—"
+        ) : (
+          <CountUp
+            to={hours}
+            decimals={1}
+            duration={1.35}
+            delay={0.1}
+            format={(n) => `${n.toFixed(1).replace(".", ",")}h`}
+          />
+        )}
+      </p>
+      <p className="mt-1 font-sans text-[10px] text-[#8b849c]">
+        Total uploaded video length
+      </p>
 
       <div className="mt-4 flex items-end gap-3">
         <div className="relative min-w-0 flex-1">
@@ -62,11 +160,22 @@ export function DataCard() {
                   <feMergeNode in="SourceGraphic" />
                 </feMerge>
               </filter>
+              <clipPath id="dataAreaClip">
+                <motion.rect
+                  x="0"
+                  y="0"
+                  width="120"
+                  height="52"
+                  initial={reduce ? false : { scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  style={{ originX: 0, originY: 0.5 }}
+                  transition={{ duration: 1.4, ease, delay: 0.2 }}
+                />
+              </clipPath>
             </defs>
 
-            {/* Soft grid hints */}
-            {[16, 28, 40].map((y) => (
-              <line
+            {[16, 28, 40].map((y, i) => (
+              <motion.line
                 key={y}
                 x1="0"
                 x2="120"
@@ -74,19 +183,21 @@ export function DataCard() {
                 y2={y}
                 stroke="#efeaf8"
                 strokeWidth="1"
+                initial={reduce ? false : { pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: 1 }}
+                transition={{ duration: 0.7, delay: 0.05 + i * 0.08, ease }}
               />
             ))}
 
-            {/* Area fill draws in */}
             <motion.path
               d={AREA}
               fill="url(#dataAreaFill)"
+              clipPath="url(#dataAreaClip)"
               initial={reduce ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.45, ease }}
+              transition={{ duration: 0.9, delay: 0.55, ease }}
             />
 
-            {/* Line draws left ? right */}
             <motion.path
               d={LINE}
               fill="none"
@@ -95,12 +206,11 @@ export function DataCard() {
               strokeLinecap="round"
               strokeLinejoin="round"
               filter="url(#dataGlow)"
-              initial={reduce ? false : { pathLength: 0, opacity: 0.4 }}
+              initial={reduce ? false : { pathLength: 0, opacity: 0.35 }}
               animate={{ pathLength: 1, opacity: 1 }}
-              transition={{ duration: 1.35, ease, delay: 0.15 }}
+              transition={{ duration: 1.55, ease, delay: 0.18 }}
             />
 
-            {/* Animated dots on peaks */}
             {points.map((p, i) => (
               <motion.circle
                 key={`${p.cx}-${p.cy}`}
@@ -111,18 +221,12 @@ export function DataCard() {
                 stroke="#8b5cf6"
                 strokeWidth="2"
                 initial={reduce ? false : { scale: 0, opacity: 0 }}
-                animate={{
-                  scale: [1, 1.25, 1],
-                  opacity: 1,
-                }}
+                animate={{ scale: 1, opacity: 1 }}
                 transition={{
-                  scale: {
-                    duration: 1.8,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 1 + i * 0.25,
-                  },
-                  opacity: { duration: 0.35, delay: 0.9 + i * 0.15 },
+                  type: "spring",
+                  stiffness: 380,
+                  damping: 18,
+                  delay: 1.05 + i * 0.18,
                 }}
               />
             ))}
@@ -132,13 +236,15 @@ export function DataCard() {
         <div className="space-y-1.5 font-sans text-[10px] font-semibold">
           {percents.map((item, i) => (
             <motion.p
-              key={item.label}
+              key={`${item.suffix}`}
               className={item.color}
-              initial={reduce ? false : { opacity: 0, x: 8 }}
+              initial={reduce ? false : { opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.45, delay: 0.55 + i * 0.12, ease }}
+              transition={{ duration: 0.5, delay: 0.85 + i * 0.12, ease }}
             >
-              {item.label}
+              {item.prefix}
+              <CountUp to={item.value} duration={1} delay={0.9 + i * 0.12} />
+              {item.suffix}
             </motion.p>
           ))}
         </div>

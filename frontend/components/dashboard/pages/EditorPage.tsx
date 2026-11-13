@@ -53,7 +53,12 @@ import {
   getTextStylePack,
 } from "@/lib/textStyles";
 import {
+  exportCompositedClip,
+  type ExportTextLayer,
+} from "@/lib/exportCompositedClip";
+import {
   EDITOR_CLIPS_KEY,
+  downloadClipToDevice,
   generateEnglishCaptions,
   stashClipsForEditor,
   type ExportRatio,
@@ -181,6 +186,9 @@ export function EditorPage() {
   const [activeTextStyle, setActiveTextStyle] = useState<string>("creator");
   const [past, setPast] = useState<LayerSnapshot[]>([]);
   const [future, setFuture] = useState<LayerSnapshot[]>([]);
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
+  const [exportProgress, setExportProgress] = useState(0);
 
   const layersRef = useRef<LayerSnapshot>({ textOverlays: [], captions: [] });
   layersRef.current = { textOverlays, captions };
@@ -356,6 +364,105 @@ export function EditorPage() {
     setFuture([]);
     setPlaying(false);
   };
+
+  const exportClip = useCallback(async () => {
+    if (!active?.clipUrl) {
+      setExportError("Select a clip with video before exporting.");
+      return;
+    }
+    setExporting(true);
+    setExportProgress(0);
+    setExportError(null);
+    const wasPlaying = !videoRef.current?.paused;
+    try {
+      // Prefer the ratio currently selected in Crop; fall back to applied preview.
+      const exportRatio = draftRatio || appliedRatio;
+      if (exportRatio !== appliedRatio) {
+        setAppliedRatio(exportRatio);
+        persistEditor(exportRatio);
+      }
+
+      const layers: ExportTextLayer[] = [
+        ...textOverlays.map((t) => ({
+          kind: "text" as const,
+          startSec: t.startSec,
+          endSec: t.endSec,
+          text: t.text,
+          xPct: t.xPct,
+          yPct: t.yPct,
+          scale: t.scale,
+          widthPct: t.widthPct,
+          styleId: t.styleId,
+        })),
+        ...captions.map((c) => ({
+          kind: "caption" as const,
+          startSec: c.startSec,
+          endSec: c.endSec,
+          text: c.text,
+          xPct: c.xPct,
+          yPct: c.yPct,
+          scale: c.scale,
+          widthPct: c.widthPct,
+          captionPackId: activeCaptionPackId,
+          align: captionAlign,
+        })),
+      ];
+
+      const label =
+        active.title?.trim() ||
+        active.hook?.trim() ||
+        `clipforge-short-${clips.findIndex((c) => c.id === active.id) + 1 || 1}`;
+
+      // Pause editor preview while we composite a separate export player.
+      videoRef.current?.pause();
+      setSelectedBlockId(null);
+
+      try {
+        await exportCompositedClip({
+          videoUrl: active.clipUrl,
+          fileName: label,
+          ratio: exportRatio,
+          durationSec: clipDuration,
+          layers,
+          onProgress: setExportProgress,
+        });
+      } catch (compositeErr) {
+        // CORS / codec fallback: still export ratio-baked file without overlays.
+        if (layers.length) {
+          setExportError(
+            "Could not burn captions/text into the file (browser security). Downloading ratio-only version…",
+          );
+        }
+        await downloadClipToDevice({
+          url: active.clipUrl,
+          fileName: label,
+          ratio: exportRatio,
+        });
+        if (!layers.length) {
+          throw compositeErr;
+        }
+      }
+    } catch (err) {
+      setExportError(
+        err instanceof Error ? err.message : "Could not export this clip.",
+      );
+    } finally {
+      setExporting(false);
+      setExportProgress(0);
+      if (wasPlaying) void videoRef.current?.play().catch(() => undefined);
+    }
+  }, [
+    active,
+    clips,
+    draftRatio,
+    appliedRatio,
+    persistEditor,
+    textOverlays,
+    captions,
+    activeCaptionPackId,
+    captionAlign,
+    clipDuration,
+  ]);
 
   const generateCaptions = async () => {
     if (!active?.clipUrl) {
@@ -713,7 +820,23 @@ export function EditorPage() {
               );
             })}
           </div>
-          <GradientButton size="sm">Export clip</GradientButton>
+          <div className="flex flex-col items-end gap-1">
+            <GradientButton
+              size="sm"
+              disabled={exporting || !active?.clipUrl}
+              onClick={() => void exportClip()}
+              title={`Export as ${RATIO_LABEL[draftRatio || appliedRatio]} with captions/text`}
+            >
+              {exporting
+                ? `Exporting ${exportProgress || 1}%…`
+                : "Export clip"}
+            </GradientButton>
+            {exportError ? (
+              <p className="max-w-[14rem] text-right font-sans text-[10px] font-medium text-red-600">
+                {exportError}
+              </p>
+            ) : null}
+          </div>
         </>
       }
       modeTabs={TOOLS.map((tool) => (

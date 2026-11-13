@@ -272,6 +272,8 @@
     grid-template-rows: none;
     grid-template-columns: none;
     grid-template-areas: none;
+    /* Room for mobile bottom nav */
+    padding-bottom: 0.25rem;
   }
   .editor-shell .editor-grid {
     display: flex;
