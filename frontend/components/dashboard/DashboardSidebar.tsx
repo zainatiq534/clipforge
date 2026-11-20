@@ -1,7 +1,6 @@
 "use client";
 
 import { LogOut } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -15,13 +14,6 @@ import { cn } from "@/lib/cn";
 
 const SIDEBAR_EXPANDED_KEY = "clipforge.sidebarExpanded";
 
-const glassSpring = {
-  type: "spring" as const,
-  stiffness: 420,
-  damping: 34,
-  mass: 0.55,
-};
-
 function GlassHover({
   active,
   rounded,
@@ -29,20 +21,14 @@ function GlassHover({
   active: boolean;
   rounded: string;
 }) {
-  const reduce = useReducedMotion();
-
   return (
-    <motion.span
-      layoutId="sidebar-glass-hover"
+    <span
       className={cn(
-        "pointer-events-none absolute inset-0 z-0",
+        "pointer-events-none absolute inset-0 z-0 transition-colors duration-150",
         rounded,
-        "border border-white/30 bg-white/[0.14] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_8px_22px_rgba(0,0,0,0.28)] backdrop-blur-xl",
+        "border border-white/30 bg-white/[0.14] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_8px_22px_rgba(0,0,0,0.28)]",
         active && "border-white/40 bg-white/[0.18]",
       )}
-      initial={reduce ? false : { opacity: 0.7, scale: 0.92 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={reduce ? { duration: 0 } : glassSpring}
     />
   );
 }
@@ -50,7 +36,6 @@ function GlassHover({
 export function DashboardSidebar({ dark = false }: { dark?: boolean }) {
   const pathname = usePathname();
   const router = useRouter();
-  const reduce = useReducedMotion();
   const [expanded, setExpanded] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -164,12 +149,11 @@ export function DashboardSidebar({ dark = false }: { dark?: boolean }) {
                 <GlassHover active={active} rounded={itemRounded} />
               ) : null}
 
-              <motion.span
-                className="relative z-10 inline-flex items-center gap-3"
-                animate={
-                  reduce ? undefined : { scale: isHovered ? 1.04 : 1 }
-                }
-                transition={glassSpring}
+              <span
+                className={cn(
+                  "relative z-10 inline-flex items-center gap-3 transition-transform duration-150",
+                  isHovered && "scale-[1.04]",
+                )}
               >
                 <Icon className="h-[17px] w-[17px] shrink-0" strokeWidth={1.7} />
                 {expanded ? (
@@ -177,7 +161,7 @@ export function DashboardSidebar({ dark = false }: { dark?: boolean }) {
                     {item.label}
                   </span>
                 ) : null}
-              </motion.span>
+              </span>
             </Link>
           );
         })}
@@ -207,12 +191,11 @@ export function DashboardSidebar({ dark = false }: { dark?: boolean }) {
           {hovered === "logout" ? (
             <GlassHover active={false} rounded={itemRounded} />
           ) : null}
-          <motion.span
-            className="relative z-10 inline-flex items-center gap-3"
-            animate={
-              reduce ? undefined : { scale: hovered === "logout" ? 1.04 : 1 }
-            }
-            transition={glassSpring}
+          <span
+            className={cn(
+              "relative z-10 inline-flex items-center gap-3 transition-transform duration-150",
+              hovered === "logout" && "scale-[1.04]",
+            )}
           >
             <LogOut className="h-[17px] w-[17px] shrink-0" strokeWidth={1.7} />
             {expanded ? (
@@ -220,7 +203,7 @@ export function DashboardSidebar({ dark = false }: { dark?: boolean }) {
                 Log out
               </span>
             ) : null}
-          </motion.span>
+          </span>
         </button>
       </nav>
     </aside>

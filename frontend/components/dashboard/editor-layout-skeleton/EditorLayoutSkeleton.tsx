@@ -63,10 +63,8 @@ export function EditorLayoutSkeleton({
       }
     >
       <header className="editor-header">
-        <div className="min-w-0">{title}</div>
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          {headerRight}
-        </div>
+        <div className="min-w-0 shrink-0">{title}</div>
+        <div className="editor-header-right">{headerRight}</div>
       </header>
 
       <div className="editor-mode-tabs-wrap">

@@ -8,8 +8,11 @@ import {
   useRef,
   useState,
   type DragEvent,
+  type PointerEvent as ReactPointerEvent,
 } from "react";
 import { cn } from "@/lib/cn";
+import { VideoFilmstrip } from "@/components/dashboard/VideoFilmstrip";
+import { useVideoFrameStrip } from "@/lib/useVideoFrameStrip";
 
 export const TEXT_STYLE_MIME = "application/x-clipforge-text-style";
 export const TEXT_BLOCK_MIME = "application/x-clipforge-text-block";
@@ -28,6 +31,8 @@ type EditorTimelineProps = {
   onSeek: (sec: number) => void;
   cloudName?: string;
   publicId?: string;
+  /** Playable clip URL (R2) — used to paint timeline frames when Cloudinary is gone */
+  mediaUrl?: string;
   /** Absolute source offset when frames come from the long-form video */
   sourceOffsetSec?: number;
   textBlocks: TimelineBlock[];
@@ -86,17 +91,6 @@ function formatTs(sec: number) {
   return `${m}:${String(s).padStart(2, "0")}.${String(cs).padStart(2, "0")}`;
 }
 
-function frameUrl(
-  cloudName: string,
-  publicId: string,
-  atSec: number,
-  w = 120,
-  h = 68,
-) {
-  const so = Math.max(0, Math.floor(atSec * 10) / 10);
-  return `https://res.cloudinary.com/${cloudName}/video/upload/so_${so},w_${w},h_${h},c_fill,q_auto,f_jpg/${publicId}.jpg`;
-}
-
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
 }
@@ -107,6 +101,7 @@ export function EditorTimeline({
   onSeek,
   cloudName,
   publicId,
+  mediaUrl,
   sourceOffsetSec = 0,
   textBlocks,
   captionBlocks,
@@ -134,7 +129,15 @@ export function EditorTimeline({
   const captionTrackRef = useRef<HTMLDivElement>(null);
   const edgeDrag = useRef<EdgeDrag | null>(null);
   const zoomRef = useRef(DEFAULT_ZOOM);
+  const userScrollUntil = useRef(0);
+  const panGesture = useRef<{
+    pointerId: number;
+    startX: number;
+    startScroll: number;
+    moved: boolean;
+  } | null>(null);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
+  const [panning, setPanning] = useState(false);
   const [dropHintSec, setDropHintSec] = useState<number | null>(null);
   const [dragOverText, setDragOverText] = useState(false);
   const [trimming, setTrimming] = useState(false);
@@ -150,19 +153,22 @@ export function EditorTimeline({
     Math.max(24, Math.round(safeDuration * (4 + zoom * 0.55))),
   );
 
-  const frames = useMemo(() => {
-    return Array.from({ length: frameCount }, (_, i) => {
-      const t = (safeDuration * i) / Math.max(1, frameCount - 1);
-      const abs = sourceOffsetSec + t;
-      return {
-        t,
-        url:
-          cloudName && publicId
-            ? frameUrl(cloudName, publicId, abs)
-            : (null as string | null),
-      };
-    });
-  }, [cloudName, publicId, safeDuration, frameCount, sourceOffsetSec]);
+  const useCanvasStrip = Boolean(
+    mediaUrl && (!cloudName || cloudName === "r2"),
+  );
+
+  const frames = useVideoFrameStrip({
+    durationSec: safeDuration,
+    frameCount,
+    cloudName,
+    publicId,
+    // Canvas path owns R2 painting — skip data-URL capture here
+    mediaUrl: useCanvasStrip ? undefined : mediaUrl,
+    sourceOffsetSec:
+      cloudName && cloudName !== "r2" ? sourceOffsetSec : 0,
+    width: 120,
+    height: 68,
+  });
 
   const tickCount = Math.min(64, Math.max(8, Math.round(6 + zoom * 1.8)));
   const ticks = useMemo(
@@ -214,8 +220,13 @@ export function EditorTimeline({
   useEffect(() => {
     const scroller = scrollRef.current;
     if (!scroller) return;
+
+    const markUserScroll = () => {
+      userScrollUntil.current = Date.now() + 900;
+    };
+
     const onWheel = (e: WheelEvent) => {
-      // Ctrl/Cmd + wheel → zoom; otherwise allow native horizontal / shift+wheel pan
+      // Ctrl/Cmd + wheel → zoom
       if (e.ctrlKey || e.metaKey) {
         e.preventDefault();
         e.stopPropagation();
@@ -226,30 +237,43 @@ export function EditorTimeline({
         );
         return;
       }
-      if (e.shiftKey && Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
-        scroller.scrollLeft += e.deltaY;
-      }
+
+      // Vertical / trackpad scroll → smooth horizontal pan (CapCut-style)
+      const dx =
+        Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (dx === 0) return;
+      e.preventDefault();
+      markUserScroll();
+      scroller.scrollLeft += dx;
     };
+
+    const onScroll = () => markUserScroll();
+
     scroller.addEventListener("wheel", onWheel, { passive: false });
-    return () => scroller.removeEventListener("wheel", onWheel);
+    scroller.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      scroller.removeEventListener("wheel", onWheel);
+      scroller.removeEventListener("scroll", onScroll);
+    };
   }, [setZoomAroundCursor]);
 
-  // Keep playhead in view while playing / seeking
+  // Keep playhead in view while playing — but never fight user pan/scroll
   useEffect(() => {
+    if (Date.now() < userScrollUntil.current) return;
+    if (panning) return;
     const scroller = scrollRef.current;
     const track = trackRef.current;
     if (!scroller || !track || safeDuration <= 0) return;
     const playX = (playheadSec / safeDuration) * track.scrollWidth;
     const left = scroller.scrollLeft;
     const right = left + scroller.clientWidth;
-    const pad = 48;
+    const pad = 56;
     if (playX < left + pad) {
       scroller.scrollLeft = Math.max(0, playX - pad);
     } else if (playX > right - pad) {
       scroller.scrollLeft = playX - scroller.clientWidth + pad;
     }
-  }, [playheadSec, safeDuration, zoom]);
+  }, [playheadSec, safeDuration, zoom, panning]);
 
   const playPct = clamp((playheadSec / safeDuration) * 100, 0, 100);
   const dropPct =
@@ -512,10 +536,68 @@ export function EditorTimeline({
     ? "inline-flex h-8 w-8 items-center justify-center rounded-[6px] bg-[#17171a] text-[#a0a0a8] transition duration-150 hover:text-[#f2f2f3] disabled:opacity-40"
     : "inline-flex h-8 w-8 items-center justify-center rounded-[10px] bg-[#ede9fe] text-[#5b21b6] transition duration-150 disabled:opacity-40";
 
+  const beginPanOrSeek = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).closest("button")) return;
+    if ((e.target as HTMLElement).closest("[data-text-track]")) return;
+    if ((e.target as HTMLElement).closest("[data-caption-track]")) return;
+    if ((e.target as HTMLElement).closest("[data-handle]")) return;
+
+    const scroller = scrollRef.current;
+    if (!scroller) return;
+
+    panGesture.current = {
+      pointerId: e.pointerId,
+      startX: e.clientX,
+      startScroll: scroller.scrollLeft,
+      moved: false,
+    };
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const movePanOrSeek = (e: ReactPointerEvent<HTMLDivElement>) => {
+    const g = panGesture.current;
+    const scroller = scrollRef.current;
+    if (!g || !scroller || g.pointerId !== e.pointerId) return;
+
+    const dx = e.clientX - g.startX;
+    if (!g.moved && Math.abs(dx) < 6) return;
+
+    if (!g.moved) {
+      g.moved = true;
+      setPanning(true);
+      userScrollUntil.current = Date.now() + 1200;
+    }
+    // Drag right → reveal earlier timeline (classic editor pan)
+    scroller.scrollLeft = g.startScroll - dx;
+    userScrollUntil.current = Date.now() + 1200;
+  };
+
+  const endPanOrSeek = (e: ReactPointerEvent<HTMLDivElement>) => {
+    const g = panGesture.current;
+    if (!g || g.pointerId !== e.pointerId) return;
+    panGesture.current = null;
+    setPanning(false);
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {
+      /* ignore */
+    }
+
+    if (!g.moved) {
+      // Tap / click → seek
+      onSeek(relFromClientX(e.clientX));
+      onSelectBlock?.(null);
+    }
+  };
+
   return (
     <div
       className={cn(
-        "relative h-full w-full overflow-hidden",
+        "relative flex h-full w-full flex-col overflow-hidden",
         dark
           ? "rounded-[10px] border-0 bg-[#101011]"
           : "rounded-[16px] border border-[#ddd6fe] bg-white shadow-[0_8px_24px_rgba(20,20,40,0.06)]",
@@ -543,7 +625,7 @@ export function EditorTimeline({
                 dark ? "text-[#6c6c74]" : "text-[#7a738c]",
               )}
             >
-              Ctrl+scroll zoom · drag edges to trim
+              Drag to pan · click seek · Ctrl+scroll zoom
             </span>
           </p>
         </div>
@@ -626,11 +708,11 @@ export function EditorTimeline({
         </div>
       </div>
 
-      <div className="flex min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
         {/* Sticky track labels */}
         <div
           className={cn(
-            "z-10 flex w-[64px] shrink-0 flex-col pt-[20px]",
+            "z-10 flex w-[64px] shrink-0 flex-col pt-[20px] pb-3",
             dark
               ? "border-r border-[#232326] bg-[#17171a]"
               : "border-r border-[#ede9fe] bg-[#faf8ff]",
@@ -677,35 +759,26 @@ export function EditorTimeline({
 
         <div
           ref={scrollRef}
-          className="min-w-0 flex-1 overflow-x-auto overscroll-contain px-2 py-2 [scrollbar-width:thin]"
-          style={{ touchAction: "pan-x" }}
+          className={cn(
+            "editor-timeline-scroll min-w-0 flex-1 overflow-x-auto overflow-y-hidden overscroll-x-contain px-2 pt-2 pb-1",
+            panning ? "cursor-grabbing select-none" : "cursor-grab",
+          )}
+          style={{ touchAction: "pan-x", WebkitOverflowScrolling: "touch" }}
         >
           <div
             ref={trackRef}
-            className="relative will-change-[width]"
+            className="relative will-change-scroll pb-1"
             style={{
               width: `${zoom * 100}%`,
               minWidth: "100%",
-              transition: "width 140ms cubic-bezier(0.16, 1, 0.3, 1)",
             }}
-            onPointerDown={(e) => {
-              if ((e.target as HTMLElement).closest("button")) return;
-              if ((e.target as HTMLElement).closest("[data-text-track]"))
-                return;
-              if ((e.target as HTMLElement).closest("[data-caption-track]"))
-                return;
-              onSeek(relFromClientX(e.clientX));
-              onSelectBlock?.(null);
-            }}
+            onPointerDown={beginPanOrSeek}
+            onPointerMove={movePanOrSeek}
+            onPointerUp={endPanOrSeek}
+            onPointerCancel={endPanOrSeek}
           >
-            {/* Ruler — padded so edge labels aren't clipped */}
-            <div
-              className="relative mb-1.5 h-4"
-              onPointerDown={(e) => {
-                e.stopPropagation();
-                onSeek(relFromClientX(e.clientX));
-              }}
-            >
+            {/* Ruler — click seeks; drag still pans via parent handlers */}
+            <div className="relative mb-1.5 h-4">
               {ticks.map((t, i) => {
                 const pct = (i / Math.max(1, tickCount - 1)) * 100;
                 const align =
@@ -805,35 +878,43 @@ export function EditorTimeline({
                 className="relative overflow-hidden rounded-[10px] bg-[#1e1b4b] ring-1 ring-[#c4b5fd]/50"
                 style={{ height: filmH }}
               >
-                <div className="pointer-events-none absolute inset-0 flex">
-                  {frames.map((f, i) => (
-                    <div
-                      key={`${Math.round(f.t * 100)}-${i}`}
-                      className="relative h-full min-w-0 flex-1 overflow-hidden border-r border-white/10"
-                    >
-                      {f.url ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={f.url}
-                          alt=""
-                          className="h-full w-full object-cover"
-                          loading="lazy"
-                          draggable={false}
-                        />
-                      ) : (
-                        <div
-                          className="h-full w-full"
-                          style={{
-                            background:
-                              i % 2 === 0
-                                ? "linear-gradient(180deg,#312e81 0%,#1e1b4b 100%)"
-                                : "linear-gradient(180deg,#4338ca 0%,#312e81 100%)",
-                          }}
-                        />
-                      )}
-                    </div>
-                  ))}
-                </div>
+                {useCanvasStrip && mediaUrl ? (
+                  <VideoFilmstrip
+                    mediaUrl={mediaUrl}
+                    durationSec={safeDuration}
+                    frameCount={Math.min(40, frameCount)}
+                  />
+                ) : (
+                  <div className="pointer-events-none absolute inset-0 flex">
+                    {frames.map((f, i) => (
+                      <div
+                        key={`${Math.round(f.t * 100)}-${i}`}
+                        className="relative h-full min-w-0 flex-1 overflow-hidden border-r border-white/10"
+                      >
+                        {f.url ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={f.url}
+                            alt=""
+                            className="h-full w-full object-cover"
+                            loading="lazy"
+                            draggable={false}
+                          />
+                        ) : (
+                          <div
+                            className="h-full w-full"
+                            style={{
+                              background:
+                                i % 2 === 0
+                                  ? "linear-gradient(180deg,#312e81 0%,#1e1b4b 100%)"
+                                  : "linear-gradient(180deg,#4338ca 0%,#312e81 100%)",
+                            }}
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 

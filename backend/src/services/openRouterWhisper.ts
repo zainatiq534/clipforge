@@ -239,6 +239,42 @@ async function extractClipAudioMp3(mediaUrl: string): Promise<File> {
   }
 }
 
+function friendlyOpenRouterError(raw: string, status: number): string {
+  try {
+    const parsed = JSON.parse(raw) as {
+      error?: {
+        message?: string;
+        code?: number | string;
+        metadata?: { reason?: string; remedy?: string; limit_source?: string };
+      };
+      message?: string;
+    };
+    const msg =
+      parsed.error?.message ||
+      parsed.message ||
+      (typeof parsed.error === "string" ? parsed.error : null);
+    const reason = parsed.error?.metadata?.reason ?? "";
+    const source = parsed.error?.metadata?.limit_source ?? "";
+    if (
+      status === 402 ||
+      /credits|budget|payment|billing/i.test(`${msg ?? ""} ${reason} ${source}`)
+    ) {
+      return "OpenRouter is out of credits for captions. Add credits at openrouter.ai/settings/credits, or ClipForge will try Groq next if configured.";
+    }
+    if (status === 401 || /unauthorized|invalid.*key/i.test(msg ?? "")) {
+      return "OpenRouter API key was rejected. Check OPEN_ROUTER_API_KEY in backend/.env.";
+    }
+    if (msg && !msg.trim().startsWith("{")) return msg.slice(0, 280);
+  } catch {
+    /* not JSON */
+  }
+  const trimmed = raw.trim();
+  if (trimmed.startsWith("{")) {
+    return `OpenRouter caption request failed (HTTP ${status}). Check credits or API key.`;
+  }
+  return trimmed.slice(0, 280) || `OpenRouter Whisper HTTP ${status}`;
+}
+
 async function postOpenRouterTranscription(file: File): Promise<WhisperVerbose> {
   const apiKey = env.openRouter.apiKey;
   if (!apiKey) {
@@ -278,11 +314,11 @@ async function postOpenRouterTranscription(file: File): Promise<WhisperVerbose> 
 
   const raw = await res.text();
   if (!res.ok) {
-    const err = new Error(
-      raw.slice(0, 300) || `OpenRouter Whisper HTTP ${res.status}`,
-    );
-    (err as { status?: number }).status = res.status;
-    throw err;
+    throw Object.assign(new Error(friendlyOpenRouterError(raw, res.status)), {
+      status: res.status,
+      provider: "openrouter",
+      raw,
+    });
   }
 
   try {

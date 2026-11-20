@@ -76,8 +76,8 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
     setMessage(null);
     try {
       await loginWithEmail(email, password);
-      setMessage({ type: "success", text: "Signed in successfully." });
-      router.push("/dashboard");
+      router.replace("/dashboard");
+      return;
     } catch (error) {
       setMessage({ type: "error", text: firebaseAuthErrorMessage(error) });
     } finally {
@@ -90,8 +90,8 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
     setMessage(null);
     try {
       await loginWithGoogle();
-      setMessage({ type: "success", text: "Signed in with Google." });
-      router.push("/dashboard");
+      router.replace("/dashboard");
+      return;
     } catch (error) {
       setMessage({ type: "error", text: firebaseAuthErrorMessage(error) });
     } finally {

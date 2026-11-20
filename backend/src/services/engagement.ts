@@ -20,8 +20,8 @@ export const AI_CLIP_TARGET_SEC = 45;
 /** How many clips to aim for from a long video (scales with duration). */
 export function suggestedViralClipCount(durationSec: number): number {
   const duration = Math.max(30, durationSec);
-  // ~1 clip per ~75s of source, keep a useful range
-  return clamp(Math.round(duration / 75), 2, 15);
+  // Keep this small — each clip is trimmed + uploaded to R2.
+  return clamp(Math.round(duration / 120), 2, 5);
 }
 
 /**
@@ -30,8 +30,12 @@ export function suggestedViralClipCount(durationSec: number): number {
  * Windows are 30–60 seconds so Shorts/Reels stay watchable.
  */
 export async function findTopMostWatchedWindows(input: {
-  cloudName: string;
-  publicId: string;
+  /** Full public URL of the source video (R2 or legacy Cloudinary). */
+  sourceUrl: string;
+  /** @deprecated kept for call-site compatibility */
+  cloudName?: string;
+  /** @deprecated kept for call-site compatibility */
+  publicId?: string;
   durationSec: number;
   count?: number;
   clipLenSec?: number;
@@ -52,8 +56,7 @@ export async function findTopMostWatchedWindows(input: {
   const fillFallback = input.fillFallback !== false;
 
   const scanned = await scanEnergyWindows({
-    cloudName: input.cloudName,
-    publicId: input.publicId,
+    sourceUrl: input.sourceUrl,
     duration,
     clipLen,
     count,
@@ -82,8 +85,9 @@ export async function findTopMostWatchedWindows(input: {
 
 /** Back-compat single peak. */
 export async function findMostWatchedWindow(input: {
-  cloudName: string;
-  publicId: string;
+  sourceUrl: string;
+  cloudName?: string;
+  publicId?: string;
   durationSec: number;
   clipLenSec?: number;
 }): Promise<MostWatchedWindow | null> {
@@ -92,8 +96,7 @@ export async function findMostWatchedWindow(input: {
 }
 
 async function scanEnergyWindows(input: {
-  cloudName: string;
-  publicId: string;
+  sourceUrl: string;
   duration: number;
   clipLen: number;
   count: number;
@@ -108,10 +111,10 @@ async function scanEnergyWindows(input: {
   const usableStart = Math.min(10, Math.max(0, duration * 0.03));
   const usableEnd = Math.max(usableStart + clipLen, duration - 10);
   const span = Math.max(1, usableEnd - usableStart);
-  // Denser probes on longer videos so we don't miss secondary peaks
-  const probeCount = clamp(Math.round(span / 8), 16, 48);
+  // Fewer probes — remote ffmpeg seeks are expensive on long videos
+  const probeCount = clamp(Math.round(span / 20), 8, 18);
   const step = span / probeCount;
-  const probeDur = 2.5;
+  const probeDur = 2;
 
   const times: number[] = [];
   for (let i = 0; i < probeCount; i++) {
@@ -121,19 +124,18 @@ async function scanEnergyWindows(input: {
   }
 
   const scores: { t: number; rms: number }[] = [];
-  const concurrency = 4;
+  const concurrency = 3;
   for (let i = 0; i < times.length; i += concurrency) {
     const batch = times.slice(i, i + concurrency);
     const results = await Promise.all(
       batch.map(async (t) => {
         try {
-          const url = buildAudioSliceUrl(
-            input.cloudName,
-            input.publicId,
+          const rms = await measureRmsFromUrl(
+            ffmpegPath,
+            input.sourceUrl,
             t,
             probeDur,
           );
-          const rms = await measureRmsFromUrl(ffmpegPath, url);
           if (Number.isFinite(rms) && rms > 0) return { t, rms };
         } catch (error) {
           console.warn(
@@ -227,17 +229,6 @@ function fallbackSpread(
   });
 }
 
-function buildAudioSliceUrl(
-  cloudName: string,
-  publicId: string,
-  start: number,
-  duration: number,
-) {
-  const so = Math.max(0, Math.floor(start * 10) / 10);
-  const du = Math.max(1, Math.floor(duration * 10) / 10);
-  return `https://res.cloudinary.com/${cloudName}/video/upload/so_${so},du_${du},f_mp3,q_auto:low/${publicId}.mp3`;
-}
-
 function resolveFfmpegPath(): string | null {
   try {
     const mod = require("ffmpeg-static") as string | null;
@@ -247,16 +238,24 @@ function resolveFfmpegPath(): string | null {
   }
 }
 
-function measureRmsFromUrl(ffmpegPath: string, url: string): Promise<number> {
+function measureRmsFromUrl(
+  ffmpegPath: string,
+  url: string,
+  startSec = 0,
+  durationSec = 3,
+): Promise<number> {
   return new Promise((resolve, reject) => {
     const args = [
       "-hide_banner",
       "-loglevel",
       "error",
+      "-ss",
+      String(Math.max(0, startSec)),
       "-t",
-      "3",
+      String(Math.max(0.5, durationSec)),
       "-i",
       url,
+      "-vn",
       "-ac",
       "1",
       "-ar",

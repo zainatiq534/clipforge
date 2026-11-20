@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { cn } from "@/lib/cn";
 
@@ -23,7 +23,13 @@ function makeVariants(from: RevealProps["from"], reduced: boolean): Variants {
   }
 
   const offset =
-    from === "left" ? { x: -18, y: 0 } : from === "right" ? { x: 18, y: 0 } : from === "none" ? { x: 0, y: 0 } : { x: 0, y: 18 };
+    from === "left"
+      ? { x: -18, y: 0 }
+      : from === "right"
+        ? { x: 18, y: 0 }
+        : from === "none"
+          ? { x: 0, y: 0 }
+          : { x: 0, y: 18 };
 
   return {
     hidden: { opacity: 0, ...offset },
@@ -36,7 +42,11 @@ function makeVariants(from: RevealProps["from"], reduced: boolean): Variants {
   };
 }
 
-/** Soft fade/slide reveal — neat, once-on-view, reduced-motion safe */
+/**
+ * Soft fade/slide reveal.
+ * Content stays visible until the client mounts — avoids blank hero on phones
+ * when JS/hydration is slow or blocked.
+ */
 export function Reveal({
   children,
   className,
@@ -45,7 +55,18 @@ export function Reveal({
   immediate = false,
 }: RevealProps) {
   const reduced = useReducedMotion() ?? false;
-  const variants = makeVariants(from, reduced);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    setReady(true);
+  }, []);
+
+  // SSR + first paint: always show content (no opacity:0 flash / blank phone)
+  if (!ready || reduced) {
+    return <div className={cn(className)}>{children}</div>;
+  }
+
+  const variants = makeVariants(from, false);
 
   return (
     <motion.div
@@ -54,7 +75,10 @@ export function Reveal({
       initial="hidden"
       {...(immediate
         ? { animate: "show" }
-        : { whileInView: "show", viewport: { once: true, amount: 0.2, margin: "0px 0px -8% 0px" } })}
+        : {
+            whileInView: "show",
+            viewport: { once: true, amount: 0.05, margin: "0px 0px -40px 0px" },
+          })}
       transition={{ delay, duration: 0.55, ease }}
     >
       {children}
@@ -72,19 +96,28 @@ type StaggerProps = {
 /** Parent that staggers child Reveal items (or any motion children with variants) */
 export function Stagger({ children, className, stagger = 0.08 }: StaggerProps) {
   const reduced = useReducedMotion() ?? false;
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    setReady(true);
+  }, []);
+
+  if (!ready || reduced) {
+    return <div className={cn(className)}>{children}</div>;
+  }
 
   return (
     <motion.div
       className={cn(className)}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, amount: 0.15, margin: "0px 0px -6% 0px" }}
+      viewport={{ once: true, amount: 0.05, margin: "0px 0px -40px 0px" }}
       variants={{
         hidden: {},
         show: {
           transition: {
-            staggerChildren: reduced ? 0 : stagger,
-            delayChildren: reduced ? 0 : 0.04,
+            staggerChildren: stagger,
+            delayChildren: 0.04,
           },
         },
       }}
@@ -105,7 +138,17 @@ export function StaggerItem({
   from?: RevealProps["from"];
 }) {
   const reduced = useReducedMotion() ?? false;
-  const variants = makeVariants(from, reduced);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    setReady(true);
+  }, []);
+
+  if (!ready || reduced) {
+    return <div className={cn(className)}>{children}</div>;
+  }
+
+  const variants = makeVariants(from, false);
 
   return (
     <motion.div className={cn(className)} variants={variants}>

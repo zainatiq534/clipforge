@@ -148,13 +148,16 @@ export function UploadIntakePanel({
               type="url"
               value={link}
               disabled={busy}
-              placeholder="YouTube, Drive, Dropbox, or direct MP4 URL"
+              placeholder="Paste YouTube or direct MP4 URL"
               onChange={(e) => setLink(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
                   const value = link.trim();
-                  if (value) onPasteLink(value);
+                  if (value) {
+                    onPasteLink(value);
+                    setLink("");
+                  }
                 }
               }}
               className="min-w-0 flex-1 rounded-[12px] border border-[#e9e4ff] bg-[#faf5ff] px-3 py-2.5 font-sans text-[12px] text-[#111827] outline-none placeholder:text-[#9ca3af] focus:border-[#8b5cf6] focus:bg-white focus:ring-2 focus:ring-[#8b5cf6]/20"
@@ -164,7 +167,10 @@ export function UploadIntakePanel({
               disabled={busy || !link.trim()}
               onClick={() => {
                 const value = link.trim();
-                if (value) onPasteLink(value);
+                if (value) {
+                  onPasteLink(value);
+                  setLink("");
+                }
               }}
               className="shrink-0"
             >

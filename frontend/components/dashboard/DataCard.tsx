@@ -1,76 +1,6 @@
 "use client";
 
-import {
-  animate,
-  motion,
-  useMotionValue,
-  useReducedMotion,
-} from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
-
-const ease = [0.16, 1, 0.3, 1] as const;
-
-const LINE =
-  "M4 40 C18 38, 24 22, 38 24 S56 42, 70 30 S94 10, 116 16";
-const AREA =
-  "M4 40 C18 38, 24 22, 38 24 S56 42, 70 30 S94 10, 116 16 V52 H4 Z";
-
-const points = [
-  { cx: 38, cy: 24 },
-  { cx: 70, cy: 30 },
-  { cx: 116, cy: 16 },
-];
-
-function CountUp({
-  to,
-  duration = 1.2,
-  delay = 0,
-  decimals = 0,
-  format,
-  className,
-}: {
-  to: number;
-  duration?: number;
-  delay?: number;
-  decimals?: number;
-  format?: (n: number) => string;
-  className?: string;
-}) {
-  const reduce = useReducedMotion();
-  const motionValue = useMotionValue(0);
-  const [display, setDisplay] = useState(reduce ? to : 0);
-
-  useEffect(() => {
-    if (reduce) {
-      setDisplay(to);
-      return;
-    }
-    motionValue.set(0);
-    setDisplay(0);
-    const controls = animate(motionValue, to, {
-      duration,
-      delay,
-      ease,
-    });
-    const unsub = motionValue.on("change", (v) => {
-      const next =
-        decimals > 0 ? Number(v.toFixed(decimals)) : Math.round(v);
-      setDisplay(next);
-    });
-    return () => {
-      controls.stop();
-      unsub();
-    };
-  }, [to, duration, delay, decimals, motionValue, reduce]);
-
-  const text = format
-    ? format(display)
-    : decimals > 0
-      ? display.toFixed(decimals).replace(".", ",")
-      : String(display);
-
-  return <span className={className}>{text}</span>;
-}
+import { useMemo } from "react";
 
 type DataCardProps = {
   hours: number;
@@ -87,8 +17,6 @@ export function DataCard({
   storagePercent,
   loading,
 }: DataCardProps) {
-  const reduce = useReducedMotion();
-
   const percents = useMemo(() => {
     const clipDelta = Math.min(99, clipCount * 8);
     const uploadDelta = Math.min(99, uploadCount * 10);
@@ -115,20 +43,16 @@ export function DataCard({
     ];
   }, [clipCount, uploadCount, storagePercent]);
 
+  const hoursLabel = `${hours.toFixed(1).replace(".", ",")}h`;
+
   return (
     <section className="rounded-[22px] bg-white p-3.5 shadow-[0_10px_28px_rgba(20,20,40,0.06)]">
       <h2 className="font-sans text-[13px] font-bold text-[#1a1a1f]">Data</h2>
-      <p className="mt-3 font-display text-[1.55rem] leading-none font-extrabold tracking-tight text-[#1a1a1f] sm:text-[1.85rem]">
+      <p className="mt-3 font-display text-[1.55rem] leading-none font-extrabold tracking-tight text-[#1a1a1f] tabular-nums transition-opacity duration-300 sm:text-[1.85rem]">
         {loading ? (
-          "—"
+          <span className="inline-block h-[1.1em] w-16 animate-pulse rounded bg-[#f3f1f8]" />
         ) : (
-          <CountUp
-            to={hours}
-            decimals={1}
-            duration={1.35}
-            delay={0.1}
-            format={(n) => `${n.toFixed(1).replace(".", ",")}h`}
-          />
+          hoursLabel
         )}
       </p>
       <p className="mt-1 font-sans text-[10px] text-[#8b849c]">
@@ -153,29 +77,10 @@ export function DataCard({
                 <stop offset="50%" stopColor="#8b5cf6" />
                 <stop offset="100%" stopColor="#6366f1" />
               </linearGradient>
-              <filter id="dataGlow" x="-20%" y="-40%" width="140%" height="180%">
-                <feGaussianBlur stdDeviation="1.6" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-              <clipPath id="dataAreaClip">
-                <motion.rect
-                  x="0"
-                  y="0"
-                  width="120"
-                  height="52"
-                  initial={reduce ? false : { scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  style={{ originX: 0, originY: 0.5 }}
-                  transition={{ duration: 1.4, ease, delay: 0.2 }}
-                />
-              </clipPath>
             </defs>
 
-            {[16, 28, 40].map((y, i) => (
-              <motion.line
+            {[16, 28, 40].map((y) => (
+              <line
                 key={y}
                 x1="0"
                 x2="120"
@@ -183,36 +88,21 @@ export function DataCard({
                 y2={y}
                 stroke="#efeaf8"
                 strokeWidth="1"
-                initial={reduce ? false : { pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 1 }}
-                transition={{ duration: 0.7, delay: 0.05 + i * 0.08, ease }}
               />
             ))}
 
-            <motion.path
-              d={AREA}
-              fill="url(#dataAreaFill)"
-              clipPath="url(#dataAreaClip)"
-              initial={reduce ? false : { opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.9, delay: 0.55, ease }}
-            />
-
-            <motion.path
+            <path d={AREA} fill="url(#dataAreaFill)" />
+            <path
               d={LINE}
               fill="none"
               stroke="url(#dataStroke)"
               strokeWidth="2.8"
               strokeLinecap="round"
               strokeLinejoin="round"
-              filter="url(#dataGlow)"
-              initial={reduce ? false : { pathLength: 0, opacity: 0.35 }}
-              animate={{ pathLength: 1, opacity: 1 }}
-              transition={{ duration: 1.55, ease, delay: 0.18 }}
             />
 
-            {points.map((p, i) => (
-              <motion.circle
+            {points.map((p) => (
+              <circle
                 key={`${p.cx}-${p.cy}`}
                 cx={p.cx}
                 cy={p.cy}
@@ -220,35 +110,38 @@ export function DataCard({
                 fill="#fff"
                 stroke="#8b5cf6"
                 strokeWidth="2"
-                initial={reduce ? false : { scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 380,
-                  damping: 18,
-                  delay: 1.05 + i * 0.18,
-                }}
               />
             ))}
           </svg>
         </div>
 
-        <div className="space-y-1.5 font-sans text-[10px] font-semibold">
-          {percents.map((item, i) => (
-            <motion.p
-              key={`${item.suffix}`}
-              className={item.color}
-              initial={reduce ? false : { opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.85 + i * 0.12, ease }}
-            >
-              {item.prefix}
-              <CountUp to={item.value} duration={1} delay={0.9 + i * 0.12} />
-              {item.suffix}
-            </motion.p>
+        <div className="space-y-1.5 font-sans text-[10px] font-semibold tabular-nums">
+          {percents.map((item) => (
+            <p key={item.suffix} className={item.color}>
+              {loading ? (
+                <span className="inline-block h-3 w-14 animate-pulse rounded bg-[#f3f1f8]" />
+              ) : (
+                <>
+                  {item.prefix}
+                  {item.value}
+                  {item.suffix}
+                </>
+              )}
+            </p>
           ))}
         </div>
       </div>
     </section>
   );
 }
+
+const LINE =
+  "M4 40 C18 38, 24 22, 38 24 S56 42, 70 30 S94 10, 116 16";
+const AREA =
+  "M4 40 C18 38, 24 22, 38 24 S56 42, 70 30 S94 10, 116 16 V52 H4 Z";
+
+const points = [
+  { cx: 38, cy: 24 },
+  { cx: 70, cy: 30 },
+  { cx: 116, cy: 16 },
+];

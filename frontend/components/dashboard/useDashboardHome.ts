@@ -1,27 +1,25 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
+import type { StorageQuotaSnapshot, UserProfile } from "@/lib/api";
 import {
-  fetchMe,
-  fetchStorageQuota,
-  type StorageQuotaSnapshot,
-  type UserProfile,
-} from "@/lib/api";
+  loadDashboardBundle,
+  peekDashboardCache,
+  peekDashboardCacheStale,
+} from "@/lib/dashboardCache";
 import { getFirebaseAuth } from "@/lib/firebase";
-import {
-  listClips,
-  listUploads,
-  type VideoUpload,
-  type ViralClip,
-} from "@/lib/uploads";
+import type { VideoUpload, ViralClip } from "@/lib/uploads";
 
 export type DashboardHomeData = {
   user: UserProfile | null;
   storage: StorageQuotaSnapshot | null;
   uploads: VideoUpload[];
   clips: ViralClip[];
+  /** True only on first visit with no remembered data. */
   loading: boolean;
+  /** Soft background refresh — keep showing current numbers. */
+  refreshing: boolean;
   error: string | null;
   refresh: () => Promise<void>;
 };
@@ -47,60 +45,135 @@ function inRange(iso: string | undefined, from: Date, to?: Date) {
   return true;
 }
 
+function applyBundle(
+  bundle: {
+    user: UserProfile | null;
+    storage: StorageQuotaSnapshot | null;
+    uploads: VideoUpload[];
+    clips: ViralClip[];
+  },
+  setters: {
+    setUser: (u: UserProfile | null) => void;
+    setStorage: (s: StorageQuotaSnapshot | null) => void;
+    setUploads: (u: VideoUpload[]) => void;
+    setClips: (c: ViralClip[]) => void;
+  },
+) {
+  setters.setUser(bundle.user);
+  setters.setStorage(bundle.storage);
+  setters.setUploads(bundle.uploads);
+  setters.setClips(bundle.clips);
+}
+
 export function useDashboardHome(): DashboardHomeData {
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [storage, setStorage] = useState<StorageQuotaSnapshot | null>(null);
-  const [uploads, setUploads] = useState<VideoUpload[]>([]);
-  const [clips, setClips] = useState<ViralClip[]>([]);
-  const [loading, setLoading] = useState(true);
+  const stale = peekDashboardCacheStale();
+  const [user, setUser] = useState<UserProfile | null>(stale?.user ?? null);
+  const [storage, setStorage] = useState<StorageQuotaSnapshot | null>(
+    stale?.storage ?? null,
+  );
+  const [uploads, setUploads] = useState<VideoUpload[]>(stale?.uploads ?? []);
+  const [clips, setClips] = useState<ViralClip[]>(stale?.clips ?? []);
+  const [loading, setLoading] = useState(!stale);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [authReady, setAuthReady] = useState(false);
+  const mounted = useRef(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(getFirebaseAuth(), () => {
-      setAuthReady(true);
-    });
-    return () => unsub();
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
   }, []);
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (force = false) => {
     const authUser = getFirebaseAuth().currentUser;
     if (!authUser) {
+      if (!mounted.current) return;
       setUser(null);
       setStorage(null);
       setUploads([]);
       setClips([]);
       setLoading(false);
+      setRefreshing(false);
       return;
     }
 
-    setLoading(true);
+    const warm = peekDashboardCache();
+    const remembered = peekDashboardCacheStale();
+    const hasPaint = Boolean(remembered);
+
+    const revalidateQuietly = async () => {
+      setRefreshing(true);
+      try {
+        const idToken = await authUser.getIdToken();
+        const bundle = await loadDashboardBundle({ force: true, idToken });
+        if (!mounted.current) return;
+        applyBundle(bundle, { setUser, setStorage, setUploads, setClips });
+        setError(null);
+      } catch {
+        /* keep painted data */
+      } finally {
+        if (mounted.current) setRefreshing(false);
+      }
+    };
+
+    if (!force && (warm || remembered)) {
+      if (!mounted.current) return;
+      applyBundle((warm ?? remembered)!, {
+        setUser,
+        setStorage,
+        setUploads,
+        setClips,
+      });
+      setLoading(false);
+      await revalidateQuietly();
+      return;
+    }
+
+    // Cold start only — show skeleton once
+    if (!hasPaint) setLoading(true);
+    else setRefreshing(true);
+
     try {
       const idToken = await authUser.getIdToken();
-      const [meRes, storageRes, uploadsRes, clipsRes] = await Promise.all([
-        fetchMe(idToken),
-        fetchStorageQuota(idToken).catch(() => null),
-        listUploads().catch(() => ({ uploads: [] as VideoUpload[] })),
-        listClips().catch(() => ({ clips: [] as ViralClip[] })),
-      ]);
-      setUser(meRes.user);
-      setStorage(storageRes?.storage ?? null);
-      setUploads(uploadsRes.uploads);
-      setClips(clipsRes.clips);
+      const bundle = await loadDashboardBundle({ force: true, idToken });
+      if (!mounted.current) return;
+      applyBundle(bundle, { setUser, setStorage, setUploads, setClips });
       setError(null);
     } catch (err) {
+      if (!mounted.current) return;
       setError(
         err instanceof Error ? err.message : "Could not load dashboard data.",
       );
     } finally {
+      if (!mounted.current) return;
       setLoading(false);
+      setRefreshing(false);
     }
   }, []);
 
   useEffect(() => {
-    if (!authReady) return;
-    void refresh();
-  }, [authReady, refresh]);
+    const auth = getFirebaseAuth();
+    // Paint from session immediately, then sync
+    if (auth.currentUser) {
+      void refresh(false);
+    }
+    const unsub = onAuthStateChanged(auth, (nextUser) => {
+      if (!nextUser) {
+        setUser(null);
+        setStorage(null);
+        setUploads([]);
+        setClips([]);
+        setLoading(false);
+        setRefreshing(false);
+        return;
+      }
+      void refresh(false);
+    });
+    return () => unsub();
+    // Intentionally once on mount — refresh is stable enough via auth events
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     user,
@@ -108,8 +181,9 @@ export function useDashboardHome(): DashboardHomeData {
     uploads,
     clips,
     loading,
+    refreshing,
     error,
-    refresh,
+    refresh: () => refresh(true),
   };
 }
 
@@ -175,7 +249,9 @@ export function computeDashboardStats(
 
   const toPercents = (values: number[]) => {
     const max = Math.max(1, ...values);
-    return values.map((v) => Math.max(v === 0 ? 8 : Math.round((v / max) * 100), 8));
+    return values.map((v) =>
+      Math.max(v === 0 ? 8 : Math.round((v / max) * 100), 8),
+    );
   };
 
   return {
@@ -195,7 +271,6 @@ export function computeDashboardStats(
       bars: toPercents(weekBars),
       rawBars: weekBars,
       labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((_, i) => {
-        // Align labels to actual daysAgo strip (oldest → newest)
         const d = daysAgo(6 - i);
         return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][d.getDay()]!;
       }),

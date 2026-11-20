@@ -17,9 +17,12 @@ import { AppPageHero } from "@/components/dashboard/AppPageHero";
 import { DashboardMotion } from "@/components/dashboard/DashboardMotion";
 import { cn } from "@/lib/cn";
 import {
+  invalidateDashboardCache,
+  loadDashboardBundle,
+  peekDashboardCacheStale,
+} from "@/lib/dashboardCache";
+import {
   deleteUpload,
-  listClips,
-  listUploads,
   stashClipsForEditor,
   type VideoUpload,
   type ViralClip,
@@ -143,14 +146,21 @@ export function ProjectsPage() {
   const [menuId, setMenuId] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (force = false) => {
+    const warm = peekDashboardCacheStale();
+    if (!force && warm) {
+      setCards(buildCards(warm.uploads, warm.clips));
+      setLoading(false);
+      void loadDashboardBundle({ force: true })
+        .then((bundle) => setCards(buildCards(bundle.uploads, bundle.clips)))
+        .catch(() => undefined);
+      return;
+    }
+
     setLoading(true);
     try {
-      const [{ uploads }, clipsRes] = await Promise.all([
-        listUploads(),
-        listClips().catch(() => ({ clips: [] as ViralClip[] })),
-      ]);
-      setCards(buildCards(uploads, clipsRes.clips));
+      const bundle = await loadDashboardBundle({ force });
+      setCards(buildCards(bundle.uploads, bundle.clips));
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not load projects.");
@@ -206,6 +216,7 @@ export function ProjectsPage() {
     setMenuId(null);
     try {
       await deleteUpload(id);
+      invalidateDashboardCache();
       setCards((prev) => prev.filter((c) => c.id !== id));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not delete project.");

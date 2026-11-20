@@ -10,8 +10,10 @@ import { DashboardMotion } from "@/components/dashboard/DashboardMotion";
 import { GradientButton } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
 import {
-  listClips,
-  listUploads,
+  loadDashboardBundle,
+  peekDashboardCacheStale,
+} from "@/lib/dashboardCache";
+import {
   stashClipsForEditor,
   type VideoUpload,
   type ViralClip,
@@ -45,15 +47,26 @@ export function ViralPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (force = false) => {
+    const warm = peekDashboardCacheStale();
+    if (!force && warm) {
+      setClips(warm.clips);
+      setUploads(warm.uploads);
+      setLoading(false);
+      void loadDashboardBundle({ force: true })
+        .then((bundle) => {
+          setClips(bundle.clips);
+          setUploads(bundle.uploads);
+        })
+        .catch(() => undefined);
+      return;
+    }
+
     setLoading(true);
     try {
-      const [{ clips: nextClips }, { uploads: nextUploads }] = await Promise.all([
-        listClips(),
-        listUploads().catch(() => ({ uploads: [] as VideoUpload[] })),
-      ]);
-      setClips(nextClips);
-      setUploads(nextUploads);
+      const bundle = await loadDashboardBundle({ force });
+      setClips(bundle.clips);
+      setUploads(bundle.uploads);
       setError(null);
     } catch (err) {
       setError(

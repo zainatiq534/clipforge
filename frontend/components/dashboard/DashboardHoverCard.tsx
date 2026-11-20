@@ -1,15 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
-
-const spring = {
-  type: "spring" as const,
-  stiffness: 420,
-  damping: 28,
-  mass: 0.5,
-};
 
 type DashboardHoverCardProps = {
   children: ReactNode;
@@ -17,33 +9,22 @@ type DashboardHoverCardProps = {
 };
 
 /**
- * Smooth “pop” on hover: lifts, soft scales, and strengthens the card shadow.
+ * CSS hover lift — avoids Framer spring work on every card.
  */
 export function DashboardHoverCard({
   children,
   className,
 }: DashboardHoverCardProps) {
-  const reduce = useReducedMotion();
-
   return (
-    <motion.div
+    <div
       className={cn(
-        "group relative h-full will-change-transform [&>*]:h-full [&>*]:transition-[box-shadow,background-color] [&>*]:duration-300 [&>*]:ease-out",
-        "[&>*]:hover:bg-white [&>*]:hover:shadow-[0_22px_50px_rgba(15,15,25,0.12)]",
+        "group relative h-full transition-transform duration-200 ease-out will-change-transform hover:-translate-y-1 hover:z-20",
+        "[&>*]:h-full [&>*]:transition-[box-shadow,background-color] [&>*]:duration-200 [&>*]:ease-out",
+        "[&>*]:hover:bg-white [&>*]:hover:shadow-[0_18px_40px_rgba(15,15,25,0.1)]",
         className,
       )}
-      whileHover={
-        reduce
-          ? undefined
-          : {
-              y: -8,
-              scale: 1.03,
-              zIndex: 24,
-            }
-      }
-      transition={spring}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }

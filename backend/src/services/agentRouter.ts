@@ -9,7 +9,7 @@ import { env } from "../config/env.js";
 const require = createRequire(import.meta.url);
 const AI_TIMEOUT_MS = 25_000;
 
-function client() {
+function agentRouterChatClient() {
   const apiKey = env.agentRouter.apiKey;
   if (!apiKey) {
     throw new Error(
@@ -21,7 +21,55 @@ function client() {
     baseURL: env.agentRouter.baseUrl,
     timeout: AI_TIMEOUT_MS,
     maxRetries: 1,
+    defaultHeaders: {
+      Authorization: `Bearer ${apiKey}`,
+      "x-api-key": apiKey,
+    },
   });
+}
+
+function openRouterChatClient() {
+  const apiKey = env.openRouter.apiKey;
+  if (!apiKey) {
+    throw new Error("Missing OPEN_ROUTER_API_KEY in backend/.env.");
+  }
+  return new OpenAI({
+    apiKey,
+    baseURL: "https://openrouter.ai/api/v1",
+    timeout: AI_TIMEOUT_MS,
+    maxRetries: 1,
+    defaultHeaders: {
+      Authorization: `Bearer ${apiKey}`,
+      "HTTP-Referer": env.openRouter.referer,
+      "X-Title": env.openRouter.appTitle,
+    },
+  });
+}
+
+type ChatProvider = {
+  label: string;
+  model: string;
+  client: OpenAI;
+};
+
+function viralChatProviders(): ChatProvider[] {
+  const providers: ChatProvider[] = [];
+  // Prefer OpenRouter — AgentRouter currently returns 401 for this account
+  if (env.openRouter.apiKey) {
+    providers.push({
+      label: "openrouter",
+      model: env.openRouter.chatModel,
+      client: openRouterChatClient(),
+    });
+  }
+  if (env.agentRouter.apiKey) {
+    providers.push({
+      label: "agentrouter",
+      model: env.agentRouter.model,
+      client: agentRouterChatClient(),
+    });
+  }
+  return providers;
 }
 
 /** AgentRouter OpenAI-compatible client (chat + optional audio). */
@@ -182,18 +230,30 @@ async function pickViralSegmentViaAi(input: {
   durationSec: number;
   transcript: string;
 }): Promise<ViralSegment> {
-  const [first] = await pickViralSegmentsViaAi({
-    ...input,
-    count: 1,
-    occupied: [],
-  });
-  if (first) return first;
+  const providers = viralChatProviders();
+  for (const provider of providers) {
+    try {
+      const [first] = await pickViralSegmentsViaAi({
+        ...input,
+        count: 1,
+        occupied: [],
+        peakHints: [],
+        provider,
+      });
+      if (first) return first;
+    } catch (error) {
+      console.warn(
+        `[viral] single-clip ${provider.label} failed`,
+        error instanceof Error ? error.message : error,
+      );
+    }
+  }
   return heuristicViralSegment(input);
 }
 
 /**
- * Second-priority AI picks: moments the model thinks may go viral,
- * avoiding windows already covered by most-watched peaks.
+ * AI viral picks: moments the model thinks will perform on Shorts/Reels/TikTok.
+ * Uses OpenRouter first (AgentRouter often 401s), then AgentRouter, then heuristic.
  * Each clip is 30–60 seconds.
  */
 export async function pickViralSegments(input: {
@@ -202,39 +262,64 @@ export async function pickViralSegments(input: {
   transcript?: string;
   count: number;
   occupied: Array<{ startSec: number; endSec: number }>;
+  /** Peak-energy hotspots — hints for the model, not hard exclusions. */
+  peakHints?: Array<{
+    startSec: number;
+    endSec: number;
+    peakSec: number;
+    viralScore: number;
+  }>;
 }): Promise<ViralSegment[]> {
   if (input.count < 1) return [];
 
-  if (!env.agentRouter.apiKey) {
+  const providers = viralChatProviders();
+  if (providers.length === 0) {
+    console.warn("[viral] no chat API key — using heuristic segments");
     return heuristicViralSegments(input);
   }
 
-  try {
-    const ai = await withTimeout(
-      pickViralSegmentsViaAi({
-        fileName: input.fileName,
-        durationSec: input.durationSec,
-        transcript: input.transcript ?? "",
-        count: input.count,
-        occupied: input.occupied,
-      }),
-      AI_TIMEOUT_MS,
-      "AgentRouter multi-clip timed out",
-    );
-    if (ai.length >= input.count) return ai;
-    const extra = heuristicViralSegments({
-      ...input,
-      count: input.count - ai.length,
-      occupied: [...input.occupied, ...ai],
-    });
-    return [...ai, ...extra].slice(0, input.count);
-  } catch (error) {
-    console.warn(
-      "[agentRouter/pickViralSegments] falling back to heuristic",
-      error instanceof Error ? error.message : error,
-    );
-    return heuristicViralSegments(input);
+  let lastError: unknown;
+  for (const provider of providers) {
+    try {
+      const ai = await withTimeout(
+        pickViralSegmentsViaAi({
+          fileName: input.fileName,
+          durationSec: input.durationSec,
+          transcript: input.transcript ?? "",
+          count: input.count,
+          occupied: input.occupied,
+          peakHints: input.peakHints ?? [],
+          provider,
+        }),
+        AI_TIMEOUT_MS,
+        `${provider.label} multi-clip timed out`,
+      );
+      if (ai.length > 0) {
+        console.info(
+          `[viral] ${provider.label} returned ${ai.length}/${input.count} picks`,
+        );
+        if (ai.length >= input.count) return ai;
+        const extra = heuristicViralSegments({
+          ...input,
+          count: input.count - ai.length,
+          occupied: [...input.occupied, ...ai],
+        });
+        return [...ai, ...extra].slice(0, input.count);
+      }
+    } catch (error) {
+      lastError = error;
+      console.warn(
+        `[viral] ${provider.label} failed`,
+        error instanceof Error ? error.message : error,
+      );
+    }
   }
+
+  console.warn(
+    "[viral] all chat providers failed — heuristic fallback",
+    lastError instanceof Error ? lastError.message : lastError,
+  );
+  return heuristicViralSegments(input);
 }
 
 /** Spread mid-video 30–60s windows that avoid already-covered peaks. */
@@ -290,8 +375,14 @@ async function pickViralSegmentsViaAi(input: {
   transcript: string;
   count: number;
   occupied: Array<{ startSec: number; endSec: number }>;
+  peakHints: Array<{
+    startSec: number;
+    endSec: number;
+    peakSec: number;
+    viralScore: number;
+  }>;
+  provider: ChatProvider;
 }): Promise<ViralSegment[]> {
-  const openai = client();
   const minClip = 30;
   const maxClip = 60;
   const duration = Math.max(minClip + 5, input.durationSec);
@@ -303,32 +394,47 @@ async function pickViralSegmentsViaAi(input: {
               `#${i + 1}: ${o.startSec.toFixed(1)}s–${o.endSec.toFixed(1)}s`,
           )
           .join("; ")
-      : "(none yet)";
+      : "(none)";
+  const peakText =
+    input.peakHints.length > 0
+      ? input.peakHints
+          .map(
+            (p, i) =>
+              `#${i + 1}: peak@${p.peakSec.toFixed(1)}s window ${p.startSec.toFixed(1)}–${p.endSec.toFixed(1)}s (energy ${p.viralScore})`,
+          )
+          .join("\n")
+      : "(no audio peaks available)";
 
-  const system = `You are ClipForge, an expert short-form video editor for TikTok/Reels/Shorts.
-Return up to ${input.count} viral clip windows from a long-form video.
+  const system = `You are ClipForge, an expert short-form editor for TikTok / Reels / YouTube Shorts.
+Pick the MOST VIRAL ${input.count} clip windows from a long-form video — moments that make people stop scrolling, comment, and share.
+Optimize for: strong hook in first 3s, punchlines, hot takes, emotional peaks, surprising reveals, quotable lines, story payoffs.
 Rules:
-- Each clip length MUST be between ${minClip} and ${maxClip} seconds (never shorter than ${minClip})
-- Cover DISTINCT high-potential moments across the video (do not cluster)
-- Prefer strong hooks in the first 3 seconds of each clip
-- Avoid silence, long intros, outros, ads, and windows already occupied
-- startSec/endSec must be within 0..durationSec and must NOT heavily overlap occupied windows
-- Return ONLY valid JSON (no markdown): an array of objects with keys
+- Exactly prefer ${input.count} distinct clips (or as many as clearly viral)
+- Each clip MUST be ${minClip}–${maxClip} seconds
+- Spread across the runtime — do not cluster near one chapter
+- Skip cold opens, outros, ads, silence, and low-stakes filler
+- You MAY bias toward audio peak-energy hints when they align with a strong story beat
+- startSec/endSec within 0..durationSec; avoid heavy overlap with occupied windows or each other
+- Return ONLY valid JSON (no markdown): array of objects with keys
   startSec, endSec, title, hook, viralScore (0-100), reason`;
 
-  const user = `Video file: ${input.fileName}
-Duration seconds: ${duration}
-Already covered (most-watched) windows — avoid overlapping these:
+  const user = `Video: ${input.fileName}
+Duration: ${duration} seconds
+
+Audio peak-energy hotspots (optional hints — use if they feel viral, ignore if not):
+${peakText}
+
+Occupied windows to avoid overlapping:
 ${occupiedText}
 
 Transcript / content notes:
-${input.transcript || "(No transcript — pick strong mid-video talking-head / story beats spaced through the runtime.)"}
+${input.transcript || "(No transcript — infer from typical long-form structure: skip intro, prioritize mid-video hooks, debates, reveals, and climax beats. Bias toward peak-energy timestamps when choosing.)"}
 
-Return JSON array of up to ${input.count} viral clips.`;
+Return a JSON array of up to ${input.count} viral clips, ranked best-first.`;
 
-  const response = await openai.chat.completions.create({
-    model: env.agentRouter.model,
-    temperature: 0.45,
+  const response = await input.provider.client.chat.completions.create({
+    model: input.provider.model,
+    temperature: 0.4,
     messages: [
       { role: "system", content: system },
       { role: "user", content: user },
@@ -416,7 +522,11 @@ export async function transcribeClipCaptions(
 ): Promise<CaptionSegment[]> {
   const provider = env.captionsProvider;
 
-  if (provider === "openrouter" || (provider !== "local" && provider !== "groq" && env.openRouter.apiKey)) {
+  const openRouterPreferred =
+    provider === "openrouter" ||
+    (provider !== "local" && provider !== "groq" && Boolean(env.openRouter.apiKey));
+
+  if (openRouterPreferred) {
     if (!env.openRouter.apiKey) {
       throw Object.assign(
         new Error(
@@ -436,11 +546,51 @@ export async function transcribeClipCaptions(
         "OpenRouter caption transcription timed out",
       );
     } catch (error) {
-      console.error(
-        "[captions] OpenRouter Whisper failed",
-        error instanceof Error ? error.message : error,
+      const message = error instanceof Error ? error.message : String(error);
+      const status =
+        typeof error === "object" &&
+        error &&
+        "status" in error &&
+        typeof (error as { status: unknown }).status === "number"
+          ? (error as { status: number }).status
+          : 0;
+      const creditIssue =
+        status === 402 ||
+        /credits|budget|payment|billing/i.test(message);
+
+      console.error("[captions] OpenRouter Whisper failed", message);
+
+      // Auto-fallback so captions still work when OpenRouter is out of credits
+      if (creditIssue && env.groq.apiKey) {
+        console.warn("[captions] OpenRouter credits exhausted — falling back to Groq…");
+        try {
+          return await withTimeout(
+            transcribeVerboseViaGroq(mediaUrl),
+            90_000,
+            "Caption transcription timed out",
+          );
+        } catch (groqErr) {
+          console.error(
+            "[captions] Groq fallback failed",
+            groqErr instanceof Error ? groqErr.message : groqErr,
+          );
+          throw Object.assign(
+            new Error(
+              "OpenRouter is out of credits, and Groq fallback also failed. Add OpenRouter credits or check GROQ_API_KEY.",
+            ),
+            { status: 402 },
+          );
+        }
+      }
+
+      throw Object.assign(
+        new Error(
+          creditIssue
+            ? "OpenRouter is out of credits for captions. Add credits at openrouter.ai/settings/credits, or set CAPTIONS_PROVIDER=groq in backend/.env."
+            : message,
+        ),
+        { status: status || 500 },
       );
-      throw error;
     }
   }
 
@@ -464,6 +614,7 @@ export async function transcribeClipCaptions(
 
   if (provider === "groq" || env.groq.apiKey) {
     try {
+      console.info("[captions] using Groq Whisper…");
       return await withTimeout(
         transcribeVerboseViaGroq(mediaUrl),
         90_000,
@@ -473,7 +624,7 @@ export async function transcribeClipCaptions(
       if (isUnauthorizedAiError(error)) {
         throw Object.assign(
           new Error(
-            "Groq returned 401. Use CAPTIONS_PROVIDER=openrouter or check GROQ_API_KEY.",
+            "Groq returned 401. Check GROQ_API_KEY in backend/.env.",
           ),
           { status: 401 },
         );
@@ -1013,9 +1164,21 @@ function withTimeout<T>(
 function extractJson(text: string): string {
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
   if (fenced?.[1]) return fenced[1].trim();
-  const start = text.indexOf("{");
-  const end = text.lastIndexOf("}");
-  if (start >= 0 && end > start) return text.slice(start, end + 1);
+  const arrStart = text.indexOf("[");
+  const arrEnd = text.lastIndexOf("]");
+  const objStart = text.indexOf("{");
+  const objEnd = text.lastIndexOf("}");
+  // Prefer array payload for multi-clip viral picks
+  if (
+    arrStart >= 0 &&
+    arrEnd > arrStart &&
+    (objStart < 0 || arrStart <= objStart)
+  ) {
+    return text.slice(arrStart, arrEnd + 1);
+  }
+  if (objStart >= 0 && objEnd > objStart) {
+    return text.slice(objStart, objEnd + 1);
+  }
   throw new Error("Model did not return JSON for viral clip selection.");
 }
 

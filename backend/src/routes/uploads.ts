@@ -1,6 +1,12 @@
 import { Router } from "express";
 import { ZodError, z } from "zod";
-import { createVideoUploadSignature } from "../config/cloudinary.js";
+import { Readable } from "node:stream";
+import { env } from "../config/env.js";
+import {
+  createPresignedUpload,
+  objectKeyFromParts,
+  storageIdFromParts,
+} from "../config/r2.js";
 import { requireAuth, type AuthedRequest } from "../middleware/auth.js";
 import {
   createManualClipsForUpload,
@@ -15,12 +21,17 @@ import {
   listUploadsForUser,
   markUploadFailed,
 } from "../services/uploads.js";
+import { importVideoFromUrl } from "../services/urlImport.js";
 import { transcribeClipCaptions } from "../services/agentRouter.js";
 
 export const uploadsRouter = Router();
 
 const transcribeClipSchema = z.object({
   mediaUrl: z.string().url(),
+});
+
+const fromUrlSchema = z.object({
+  url: z.string().url().max(2000),
 });
 
 const signSchema = z.object({
@@ -53,7 +64,95 @@ function routeUploadId(req: AuthedRequest): string {
   return typeof id === "string" ? id : id[0]!;
 }
 
+function isAllowedMediaProxyUrl(raw: string): boolean {
+  try {
+    const u = new URL(raw);
+    if (!/^https?:$/i.test(u.protocol)) return false;
+    const host = u.hostname.toLowerCase();
+    const publicHost = env.r2.publicUrl
+      ? new URL(env.r2.publicUrl).hostname.toLowerCase()
+      : "";
+    if (publicHost && host === publicHost) return true;
+    if (host.endsWith(".r2.dev")) return true;
+    if (host.includes("res.cloudinary.com")) return true;
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Same-origin media proxy so the browser can composite captions onto R2 clips
+ * (avoids tainted-canvas / CORS blocks during export).
+ */
+uploadsRouter.get("/media-proxy", async (req, res) => {
+  try {
+    const raw = String(req.query.url ?? "").trim();
+    if (!raw || !isAllowedMediaProxyUrl(raw)) {
+      res.status(400).json({ error: "Media URL not allowed." });
+      return;
+    }
+    const upstream = await fetch(raw, {
+      signal: AbortSignal.timeout(10 * 60_000),
+    });
+    if (!upstream.ok || !upstream.body) {
+      res.status(502).json({ error: `Upstream media failed (${upstream.status}).` });
+      return;
+    }
+    const contentType =
+      upstream.headers.get("content-type") || "video/mp4";
+    const contentLength = upstream.headers.get("content-length");
+    res.setHeader("Content-Type", contentType);
+    res.setHeader("Cache-Control", "private, max-age=300");
+    if (contentLength) res.setHeader("Content-Length", contentLength);
+    // Allow the editor origin to read this response for canvas export
+    res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
+    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+
+    const nodeStream = Readable.fromWeb(
+      upstream.body as import("node:stream/web").ReadableStream,
+    );
+    nodeStream.pipe(res);
+  } catch (error) {
+    console.error("[uploads/media-proxy]", error);
+    if (!res.headersSent) {
+      res.status(502).json({ error: "Could not proxy media." });
+    }
+  }
+});
+
 uploadsRouter.use(requireAuth);
+
+/** Import YouTube / direct video URL → R2 upload record. */
+uploadsRouter.post("/from-url", async (req: AuthedRequest, res) => {
+  try {
+    const body = fromUrlSchema.parse(req.body);
+    const upload = await importVideoFromUrl({
+      uid: req.uid!,
+      url: body.url,
+    });
+    res.status(201).json({ upload });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      res.status(400).json({ error: "Enter a valid video URL." });
+      return;
+    }
+    const status =
+      typeof error === "object" &&
+      error &&
+      "status" in error &&
+      typeof (error as { status: unknown }).status === "number"
+        ? (error as { status: number }).status
+        : 500;
+    console.error("[uploads/from-url]", error);
+    res.status(status).json({
+      error:
+        error instanceof Error
+          ? error.message
+          : "Could not import this video link.",
+    });
+  }
+});
 
 uploadsRouter.get("/", async (req: AuthedRequest, res) => {
   try {
@@ -203,16 +302,21 @@ uploadsRouter.post("/sign", async (req: AuthedRequest, res) => {
       contentType: body.contentType,
     });
 
-    const timestamp = Math.floor(Date.now() / 1000);
-    const signed = createVideoUploadSignature({
-      folder: record.folder,
-      publicId: record.publicId,
-      timestamp,
+    const key = objectKeyFromParts(record.folder, record.publicId, "mp4");
+    const storageId = storageIdFromParts(record.folder, record.publicId);
+    const signed = await createPresignedUpload({
+      key,
+      contentType: body.contentType || "video/mp4",
     });
 
     res.status(201).json({
       upload: record,
-      cloudinary: signed,
+      r2: {
+        ...signed,
+        storageId,
+        folder: record.folder,
+        publicId: record.publicId,
+      },
     });
   } catch (error) {
     if (error instanceof ZodError) {

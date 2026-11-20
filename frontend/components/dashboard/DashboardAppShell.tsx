@@ -1,9 +1,10 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { DASHBOARD_NAV } from "@/components/dashboard/dashboardNav";
 import { DashboardMobileNav } from "@/components/dashboard/DashboardMobileNav";
-import { DashboardMotion } from "@/components/dashboard/DashboardMotion";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { cn } from "@/lib/cn";
 
@@ -13,19 +14,25 @@ type DashboardAppShellProps = {
 
 export function DashboardAppShell({ children }: DashboardAppShellProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const isEditor = pathname?.startsWith("/dashboard/editor");
   const isSettings = pathname?.startsWith("/dashboard/settings");
+
+  // Warm sibling dashboard routes so sidebar clicks feel instant
+  useEffect(() => {
+    for (const item of DASHBOARD_NAV) {
+      router.prefetch(item.href);
+    }
+    router.prefetch("/dashboard/settings");
+    router.prefetch("/dashboard/editor");
+  }, [router]);
 
   if (isEditor) {
     return (
       <div className="flex h-dvh w-full flex-col overflow-hidden bg-[#f7f5fc] text-[#1a1a1f] md:flex-row">
-        <DashboardMotion
-          direction="left"
-          delay={0.02}
-          className="hidden h-full shrink-0 self-stretch p-2 md:block"
-        >
+        <div className="hidden h-full shrink-0 self-stretch p-2 md:block">
           <DashboardSidebar />
-        </DashboardMotion>
+        </div>
         <div className="min-h-0 min-w-0 flex-1 overflow-hidden p-2 pb-[calc(4.25rem+env(safe-area-inset-bottom))] md:pb-2">
           {children}
         </div>
@@ -60,13 +67,9 @@ export function DashboardAppShell({ children }: DashboardAppShellProps) {
           "p-2 pb-[calc(4.5rem+env(safe-area-inset-bottom))] sm:p-3 md:p-4 md:pb-4",
         )}
       >
-        <DashboardMotion
-          direction="left"
-          delay={0.05}
-          className="sticky top-3 z-20 hidden h-[calc(100dvh-1.5rem)] shrink-0 self-start sm:top-4 sm:h-[calc(100dvh-2rem)] md:block [&>*]:h-full"
-        >
+        <div className="sticky top-3 z-20 hidden h-[calc(100dvh-1.5rem)] shrink-0 self-start sm:top-4 sm:h-[calc(100dvh-2rem)] md:block [&>*]:h-full">
           <DashboardSidebar />
-        </DashboardMotion>
+        </div>
         <div
           className={cn(
             "min-w-0 flex-1 overflow-x-hidden",

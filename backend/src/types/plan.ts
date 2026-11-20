@@ -31,7 +31,7 @@ export const PLAN_CATALOG: Record<PlanId, PlanDefinition> = {
     label: "Studio",
     storageBytesLimit: 100 * 1024 ** 3, // 100 GB
     maxUploads: 1000,
-    priceLabel: "$49/mo",
+    priceLabel: "$60/mo",
     blurb: "High quota for teams and heavy clipping.",
   },
 };

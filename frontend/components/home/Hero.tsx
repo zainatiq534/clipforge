@@ -16,11 +16,11 @@ export function Hero({ className }: HeroProps) {
   return (
     <section
       className={cn(
-        "relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-5 pb-16 pt-6 sm:px-8 sm:pb-20 sm:pt-10",
+        "relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-4 pb-14 pt-4 sm:px-8 sm:pb-20 sm:pt-10",
         className,
       )}
     >
-      <div className="flex flex-col items-center">
+      <div className="flex w-full flex-col items-center">
         <Reveal immediate delay={0.05}>
           <Badge icon={<Icon icon={Sparkles} size="sm" strokeWidth={2} />}>
             AI-Powered Video Repurposing
@@ -32,15 +32,20 @@ export function Hero({ className }: HeroProps) {
             as="h1"
             variant="display"
             tone="white"
-            className="mt-6 max-w-3xl text-center text-balance"
+            className="mt-5 max-w-3xl text-center text-balance text-[2rem] leading-[1.12] sm:mt-6 sm:text-5xl lg:text-[3.5rem]"
           >
             Turn Long Videos Into{" "}
             <span className="relative inline-block">
-              <Typography as="span" variant="display" tone="gradient">
+              <Typography
+                as="span"
+                variant="display"
+                tone="gradient"
+                className="text-[2rem] leading-[1.12] sm:text-5xl lg:text-[3.5rem]"
+              >
                 Viral-Ready Clips
               </Typography>
               <span
-                className="pointer-events-none absolute right-0 -bottom-1 left-0 h-[0.35rem] rounded-full bg-gradient-to-r from-[#b56cff] via-[#9b6bff] to-transparent opacity-90"
+                className="pointer-events-none absolute right-0 -bottom-1 left-0 h-[0.28rem] rounded-full bg-gradient-to-r from-[#b56cff] via-[#9b6bff] to-transparent opacity-90 sm:h-[0.35rem]"
                 aria-hidden
               />
             </span>
@@ -52,7 +57,7 @@ export function Hero({ className }: HeroProps) {
             as="p"
             variant="body"
             tone="muted"
-            className="mt-5 max-w-2xl text-center text-pretty"
+            className="mt-4 max-w-2xl px-1 text-center text-pretty text-[0.95rem] sm:mt-5 sm:text-lg"
           >
             Upload your long videos and let ClipForge turn them into{" "}
             <Typography as="span" variant="body" tone="white" weight="semibold">
@@ -63,17 +68,17 @@ export function Hero({ className }: HeroProps) {
         </Reveal>
 
         <Reveal immediate delay={0.28}>
-          <PlatformPills className="mt-7" />
+          <PlatformPills className="mt-6 sm:mt-7" />
         </Reveal>
 
         <Reveal immediate delay={0.36}>
-          <div className="mt-8 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4">
+          <div className="mt-7 flex w-full max-w-md flex-col items-stretch justify-center gap-3 sm:mt-8 sm:max-w-none sm:w-auto sm:flex-row sm:items-center sm:gap-4">
             <GradientButton
               size="lg"
               href="#start"
               leftIcon={<Icon icon={Sparkles} size="md" />}
               rightIcon={<Icon icon={ArrowRight} size="md" />}
-              className="w-full sm:w-auto"
+              className="w-full justify-center sm:w-auto"
             >
               Start Creating Clips
             </GradientButton>

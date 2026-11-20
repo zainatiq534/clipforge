@@ -42,7 +42,7 @@ const plans = [
     id: "team",
     name: "Team / Agency",
     description: "Built for teams, agencies and high-volume creators.",
-    price: 49,
+    price: 60,
     cta: "Contact Sales",
     href: "#contact",
     featured: false,

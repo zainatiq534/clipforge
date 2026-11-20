@@ -23,13 +23,13 @@ const trustItems = [
 export default function Home() {
   return (
     <div className="flex min-h-dvh flex-col overflow-x-clip">
-      <div className="relative flex min-h-dvh flex-col overflow-x-clip">
+      <div className="relative flex min-h-[100svh] flex-col overflow-x-clip sm:min-h-dvh">
         <div className="absolute inset-0 overflow-hidden" aria-hidden>
           <BackgroundImage src="/hero-bg.jpg" />
         </div>
         <FloatingClips />
 
-        <div className="relative z-10 flex min-h-dvh flex-col pt-20">
+        <div className="relative z-10 flex min-h-[100svh] flex-col pt-[4.5rem] sm:min-h-dvh sm:pt-20">
           <Hero />
         </div>
       </div>

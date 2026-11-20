@@ -27,9 +27,44 @@ export async function apiFetch<T>(
 
   const data = (await res.json().catch(() => ({}))) as T & ApiErrorBody;
   if (!res.ok) {
-    throw new Error(data.error ?? data.message ?? `Request failed (${res.status})`);
+    throw new Error(
+      humanizeApiError(data.error ?? data.message, res.status),
+    );
   }
   return data;
+}
+
+/** Unwrap nested OpenRouter/API JSON blobs into a short user-facing message. */
+function humanizeApiError(raw: string | undefined, status: number): string {
+  if (!raw || !raw.trim()) return `Request failed (${status})`;
+  let text = raw.trim();
+  // Sometimes the backend/error body is stringified JSON
+  for (let i = 0; i < 2; i++) {
+    if (!text.startsWith("{")) break;
+    try {
+      const parsed = JSON.parse(text) as {
+        error?: { message?: string; metadata?: { reason?: string } } | string;
+        message?: string;
+      };
+      const nested =
+        (typeof parsed.error === "object" && parsed.error?.message) ||
+        (typeof parsed.error === "string" ? parsed.error : null) ||
+        parsed.message;
+      if (nested && nested.trim()) {
+        text = nested.trim();
+        continue;
+      }
+    } catch {
+      break;
+    }
+  }
+  if (
+    status === 402 ||
+    /credits|budget|payment|billing|weight_exceeds/i.test(text)
+  ) {
+    return "Caption credits ran out on OpenRouter. Add credits, or ClipForge will try Groq automatically if configured.";
+  }
+  return text.slice(0, 280);
 }
 
 export type RegisterPayload = {

@@ -71,12 +71,22 @@ export type PeakWindow = {
 
 export type ExportRatio = "natural" | "yt-shorts" | "instagram" | "tiktok";
 
+/** Preview URL for a trim range. R2 uses media fragments; Cloudinary uses transforms. */
 export function buildCloudinaryClipUrl(
   cloudName: string,
   publicId: string,
   startSec: number,
   endSec: number,
+  previewUrl?: string,
 ) {
+  const start = Math.max(0, Math.round(startSec * 10) / 10);
+  const end = Math.max(start + 0.1, Math.round(endSec * 10) / 10);
+  if (previewUrl && (!cloudName || cloudName === "r2")) {
+    return `${previewUrl.split("#")[0]}#t=${start},${end}`;
+  }
+  if (previewUrl && !previewUrl.includes("res.cloudinary.com")) {
+    return `${previewUrl.split("#")[0]}#t=${start},${end}`;
+  }
   const duration = Math.max(1, Math.round((endSec - startSec) * 10) / 10);
   const so = Math.round(startSec * 10) / 10;
   return `https://res.cloudinary.com/${cloudName}/video/upload/so_${so},du_${duration},f_mp4,q_auto/${publicId}.mp4`;
@@ -231,14 +241,14 @@ export async function downloadClipToDevice(input: {
 
 type SignResponse = {
   upload: VideoUpload;
-  cloudinary: {
-    cloudName: string;
-    apiKey: string;
-    timestamp: number;
+  r2: {
+    uploadUrl: string;
+    publicUrl: string;
+    key: string;
+    storageId: string;
+    contentType: string;
     folder: string;
     publicId: string;
-    signature: string;
-    uploadUrl: string;
   };
 };
 
@@ -252,6 +262,47 @@ async function authHeader() {
 export async function listUploads() {
   const headers = await authHeader();
   return apiFetch<{ uploads: VideoUpload[] }>("/uploads", { headers });
+}
+
+/** Import YouTube / direct video URL into R2 as a normal upload. */
+export async function importVideoFromUrl(url: string) {
+  const headers = await authHeader();
+  const API_BASE =
+    process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "http://localhost:4000";
+  const controller = new AbortController();
+  // YouTube download + R2 upload can take a while
+  const timer = setTimeout(() => controller.abort(), 15 * 60_000);
+  try {
+    const res = await fetch(`${API_BASE}/uploads/from-url`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...headers,
+      },
+      body: JSON.stringify({ url }),
+      signal: controller.signal,
+    });
+    const data = (await res.json().catch(() => ({}))) as {
+      upload?: VideoUpload;
+      error?: string;
+      message?: string;
+    };
+    if (!res.ok || !data.upload) {
+      throw new Error(
+        data.error ?? data.message ?? `Import failed (${res.status})`,
+      );
+    }
+    return { upload: data.upload };
+  } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new Error(
+        "Import timed out. Try a shorter video, or upload the file instead.",
+      );
+    }
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 export async function deleteUpload(id: string) {
@@ -323,7 +374,7 @@ export async function createViralClips(uploadId: string) {
   return postClips(
     `/uploads/${uploadId}/clip`,
     "{}",
-    150_000,
+    20 * 60_000,
     "AI clipping failed",
   );
 }
@@ -341,7 +392,7 @@ export async function createManualClips(
   return postClips(
     `/uploads/${uploadId}/clip/manual`,
     JSON.stringify({ segments }),
-    60_000,
+    15 * 60_000,
     "Manual clipping failed",
   );
 }
@@ -390,6 +441,7 @@ export async function generateEnglishCaptions(mediaUrl: string) {
   );
 }
 
+/** Upload a local video file to Cloudflare R2 via presigned PUT. */
 export async function uploadVideoToCloudinary(
   file: File,
   onProgress?: (pct: number) => void,
@@ -406,56 +458,47 @@ export async function uploadVideoToCloudinary(
     }),
   });
 
-  const form = new FormData();
-  form.append("file", file);
-  form.append("api_key", signed.cloudinary.apiKey);
-  form.append("timestamp", String(signed.cloudinary.timestamp));
-  form.append("signature", signed.cloudinary.signature);
-  form.append("folder", signed.cloudinary.folder);
-  form.append("public_id", signed.cloudinary.publicId);
+  if (!signed.r2?.uploadUrl) {
+    throw new Error("Storage is not configured. Check R2 env vars on the backend.");
+  }
 
-  const cloudResult = await new Promise<{
-    secure_url: string;
-    public_id: string;
-    bytes?: number;
-    duration?: number;
-  }>((resolve, reject) => {
+  await new Promise<void>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", signed.cloudinary.uploadUrl);
+    xhr.open("PUT", signed.r2.uploadUrl);
+    xhr.setRequestHeader(
+      "Content-Type",
+      signed.r2.contentType || file.type || "video/mp4",
+    );
     xhr.upload.onprogress = (event) => {
       if (!event.lengthComputable || !onProgress) return;
       onProgress(Math.round((event.loaded / event.total) * 100));
     };
     xhr.onload = () => {
-      try {
-        const json = JSON.parse(xhr.responseText) as {
-          secure_url?: string;
-          public_id?: string;
-          bytes?: number;
-          duration?: number;
-          error?: { message?: string };
-        };
-        if (xhr.status >= 200 && xhr.status < 300 && json.secure_url && json.public_id) {
-          resolve({
-            secure_url: json.secure_url,
-            public_id: json.public_id,
-            bytes: json.bytes,
-            duration: json.duration,
-          });
-          return;
-        }
-        reject(
-          new Error(
-            json.error?.message ?? `Cloudinary upload failed (${xhr.status})`,
-          ),
-        );
-      } catch {
-        reject(new Error(`Cloudinary upload failed (${xhr.status})`));
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve();
+        return;
       }
+      reject(
+        new Error(
+          `R2 upload failed (${xhr.status}). If this is CORS, add localhost to your R2 bucket CORS rules.`,
+        ),
+      );
     };
-    xhr.onerror = () => reject(new Error("Network error while uploading to Cloudinary."));
-    xhr.send(form);
+    xhr.onerror = () =>
+      reject(
+        new Error(
+          "Network error uploading to R2. Check bucket CORS allows PUT from this origin.",
+        ),
+      );
+    xhr.send(file);
   });
+
+  let durationSec: number | undefined;
+  try {
+    durationSec = await probeBrowserDuration(file);
+  } catch {
+    durationSec = undefined;
+  }
 
   try {
     const completed = await apiFetch<{ upload: VideoUpload }>(
@@ -464,10 +507,10 @@ export async function uploadVideoToCloudinary(
         method: "POST",
         headers,
         body: JSON.stringify({
-          secureUrl: cloudResult.secure_url,
-          cloudinaryPublicId: cloudResult.public_id,
-          bytes: cloudResult.bytes,
-          durationSec: cloudResult.duration,
+          secureUrl: signed.r2.publicUrl,
+          cloudinaryPublicId: signed.r2.storageId,
+          bytes: file.size,
+          durationSec,
         }),
       },
     );
@@ -480,4 +523,22 @@ export async function uploadVideoToCloudinary(
     }).catch(() => undefined);
     throw error;
   }
+}
+
+function probeBrowserDuration(file: File): Promise<number | undefined> {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const video = document.createElement("video");
+    video.preload = "metadata";
+    const done = (value?: number) => {
+      URL.revokeObjectURL(url);
+      resolve(value);
+    };
+    video.onloadedmetadata = () => {
+      const d = Number(video.duration);
+      done(Number.isFinite(d) && d > 0 ? d : undefined);
+    };
+    video.onerror = () => done(undefined);
+    video.src = url;
+  });
 }

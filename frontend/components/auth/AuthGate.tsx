@@ -9,29 +9,40 @@ type AuthGateProps = {
   children: ReactNode;
 };
 
-/** Protects dashboard routes — redirects to /login when signed out. */
+/**
+ * Protects dashboard routes.
+ * Always renders `{children}` so Next.js can keep navigations instant
+ * (never replace the page tree with a blank "Checking session…" screen).
+ */
 export function AuthGate({ children }: AuthGateProps) {
   const router = useRouter();
-  const [ready, setReady] = useState(false);
+  const [blocking, setBlocking] = useState(
+    () => !getFirebaseAuth().currentUser,
+  );
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(getFirebaseAuth(), (user) => {
+    const auth = getFirebaseAuth();
+    if (auth.currentUser) setBlocking(false);
+
+    const unsub = onAuthStateChanged(auth, (user) => {
       if (!user) {
+        setBlocking(true);
         router.replace("/login");
         return;
       }
-      setReady(true);
+      setBlocking(false);
     });
     return () => unsub();
   }, [router]);
 
-  if (!ready) {
-    return (
-      <div className="flex min-h-dvh items-center justify-center bg-[#f7f5fc] font-sans text-sm text-[#6b7280]">
-        Checking session…
-      </div>
-    );
-  }
-
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      {blocking ? (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#f7f5fc]/92 font-sans text-sm text-[#6b7280] backdrop-blur-[2px]">
+          Checking session…
+        </div>
+      ) : null}
+    </>
+  );
 }

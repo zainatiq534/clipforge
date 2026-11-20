@@ -51,19 +51,31 @@ export const env = {
     apiKey: optional("CLOUDINARY_API_KEY"),
     apiSecret: optional("CLOUDINARY_API_SECRET"),
   },
+  r2: {
+    accountId: optional("R2_ACCOUNT_ID"),
+    accessKeyId: optional("R2_ACCESS_KEY_ID"),
+    secretAccessKey: optional("R2_SECRET_ACCESS_KEY"),
+    bucket: optional("R2_BUCKET_NAME"),
+    endpoint: optional("R2_ENDPOINT"),
+    publicUrl: optional("R2_PUBLIC_URL"),
+  },
   agentRouter: {
     apiKey: optional("AGENT_ROUTER_API_KEY"),
     model: optional("AGENT_ROUTER_MODEL") ?? "deepseek-v4-flash",
     baseUrl:
       optional("AGENT_ROUTER_BASE_URL") ?? "https://agentrouter.org/v1",
   },
-  /** OpenRouter Whisper — same path as Lykhaari (openai/whisper-1) */
+  /** OpenRouter — Whisper + chat (viral clip picks when AgentRouter is down) */
   openRouter: {
     apiKey: openRouterApiKey,
     model:
       optional("OPEN_ROUTER_API_MODEL") ??
       optional("OPENROUTER_STT_MODEL") ??
       "openai/whisper-1",
+    chatModel:
+      optional("OPENROUTER_CHAT_MODEL") ??
+      optional("OPEN_ROUTER_CHAT_MODEL") ??
+      "openai/gpt-4o-mini",
     referer:
       optional("OPENROUTER_HTTP_REFERER") ??
       optional("CORS_ORIGIN") ??
@@ -94,5 +106,20 @@ export function requireCloudinary() {
     cloudName: required("CLOUDINARY_CLOUD_NAME"),
     apiKey: required("CLOUDINARY_API_KEY"),
     apiSecret: required("CLOUDINARY_API_SECRET"),
+  };
+}
+
+export function requireR2() {
+  const accountId = required("R2_ACCOUNT_ID");
+  const endpoint =
+    optional("R2_ENDPOINT") ??
+    `https://${accountId}.r2.cloudflarestorage.com`;
+  return {
+    accountId,
+    accessKeyId: required("R2_ACCESS_KEY_ID"),
+    secretAccessKey: required("R2_SECRET_ACCESS_KEY"),
+    bucket: required("R2_BUCKET_NAME"),
+    endpoint,
+    publicUrl: required("R2_PUBLIC_URL").replace(/\/+$/, ""),
   };
 }

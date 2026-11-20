@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
+import { VideoFilmstrip } from "@/components/dashboard/VideoFilmstrip";
+import { useVideoFrameStrip } from "@/lib/useVideoFrameStrip";
 
 type CapCutTrimBarProps = {
   durationSec: number;
@@ -13,6 +15,8 @@ type CapCutTrimBarProps = {
   onActivateTimeline?: () => void;
   cloudName?: string;
   publicId?: string;
+  /** Full preview video URL (R2) for film-strip frames */
+  mediaUrl?: string;
   minClipSec?: number;
   className?: string;
   cropMarkers?: { startRel: number; endRel: number; color: string }[];
@@ -30,11 +34,6 @@ function formatTs(sec: number) {
   return `${m}:${String(r).padStart(2, "0")}`;
 }
 
-function frameUrl(cloudName: string, publicId: string, atSec: number) {
-  const so = Math.max(0, Math.floor(atSec * 10) / 10);
-  return `https://res.cloudinary.com/${cloudName}/video/upload/so_${so},w_96,h_54,c_fill,q_auto,f_jpg/${publicId}.jpg`;
-}
-
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
 }
@@ -49,6 +48,7 @@ export function CapCutTrimBar({
   onActivateTimeline,
   cloudName,
   publicId,
+  mediaUrl,
   minClipSec = 3,
   className,
   cropMarkers = [],
@@ -62,19 +62,19 @@ export function CapCutTrimBar({
   const [zoom, setZoom] = useState(1);
 
   const frameCount = Math.min(72, Math.max(14, Math.round(10 + zoom * 5.5)));
+  const useCanvasStrip = Boolean(
+    mediaUrl && (!cloudName || cloudName === "r2"),
+  );
 
-  const frames = useMemo(() => {
-    if (!cloudName || !publicId || durationSec <= 0) {
-      return Array.from({ length: frameCount }, (_, i) => ({
-        t: (durationSec * i) / Math.max(1, frameCount - 1),
-        url: null as string | null,
-      }));
-    }
-    return Array.from({ length: frameCount }, (_, i) => {
-      const t = (durationSec * i) / Math.max(1, frameCount - 1);
-      return { t, url: frameUrl(cloudName, publicId, t) };
-    });
-  }, [cloudName, publicId, durationSec, frameCount]);
+  const frames = useVideoFrameStrip({
+    durationSec,
+    frameCount,
+    cloudName,
+    publicId,
+    mediaUrl: useCanvasStrip ? undefined : mediaUrl,
+    width: 96,
+    height: 54,
+  });
 
   const tickCount = Math.min(32, Math.max(6, Math.round(4 + zoom * 2.5)));
   const ticks = useMemo(
@@ -273,34 +273,43 @@ export function CapCutTrimBar({
               }
             }}
           >
-            <div className="pointer-events-none absolute inset-0 flex">
-              {frames.map((f, i) => (
-                <div
-                  key={`${Math.round(f.t * 10)}-${i}`}
-                  className="relative h-full min-w-0 flex-1 overflow-hidden border-r border-white/10"
-                >
-                  {f.url ? (
-                    <img
-                      src={f.url}
-                      alt=""
-                      className="h-full w-full object-cover"
-                      loading="lazy"
-                      draggable={false}
-                    />
-                  ) : (
-                    <div
-                      className="h-full w-full"
-                      style={{
-                        background:
-                          i % 2 === 0
-                            ? "linear-gradient(180deg,#ddd6fe 0%,#e9e4ff 100%)"
-                            : "linear-gradient(180deg,#e0e7ff 0%,#ede9fe 100%)",
-                      }}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
+            {useCanvasStrip && mediaUrl ? (
+              <VideoFilmstrip
+                mediaUrl={mediaUrl}
+                durationSec={durationSec}
+                frameCount={Math.min(36, frameCount)}
+              />
+            ) : (
+              <div className="pointer-events-none absolute inset-0 flex">
+                {frames.map((f, i) => (
+                  <div
+                    key={`${Math.round(f.t * 10)}-${i}`}
+                    className="relative h-full min-w-0 flex-1 overflow-hidden border-r border-white/10"
+                  >
+                    {f.url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={f.url}
+                        alt=""
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                        draggable={false}
+                      />
+                    ) : (
+                      <div
+                        className="h-full w-full"
+                        style={{
+                          background:
+                            i % 2 === 0
+                              ? "linear-gradient(180deg,#ddd6fe 0%,#e9e4ff 100%)"
+                              : "linear-gradient(180deg,#e0e7ff 0%,#ede9fe 100%)",
+                        }}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
 
             {cropMarkers.map((m, i) => {
               const left = (m.startRel / durationSec) * 100;

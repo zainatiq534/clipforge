@@ -133,6 +133,13 @@ function formatClock(sec: number) {
 function parseCloudinary(clipUrl: string, sourcePublicId?: string) {
   try {
     const u = new URL(clipUrl);
+    // R2 / non-Cloudinary clip — no transform-based frame thumbs
+    if (!u.hostname.includes("res.cloudinary.com")) {
+      return {
+        cloudName: "r2" as string | undefined,
+        publicId: sourcePublicId,
+      };
+    }
     const parts = u.pathname.split("/").filter(Boolean);
     // /cloudName/video/upload/.../publicId.ext
     const cloudName = parts[0];
@@ -140,7 +147,6 @@ function parseCloudinary(clipUrl: string, sourcePublicId?: string) {
     let publicId = sourcePublicId;
     if (!publicId && uploadIdx >= 0) {
       const after = parts.slice(uploadIdx + 1);
-      const file = after[after.length - 1] ?? "";
       const maybeTransforms = after.length > 1 && after[0]?.includes(",");
       const idParts = maybeTransforms ? after.slice(1) : after;
       publicId = idParts.join("/").replace(/\.[^.]+$/, "");
@@ -375,7 +381,7 @@ export function EditorPage() {
     setExportError(null);
     const wasPlaying = !videoRef.current?.paused;
     try {
-      // Prefer the ratio currently selected in Crop; fall back to applied preview.
+      // Export exactly what the editor shows: selected crop + live styles.
       const exportRatio = draftRatio || appliedRatio;
       if (exportRatio !== appliedRatio) {
         setAppliedRatio(exportRatio);
@@ -391,7 +397,7 @@ export function EditorPage() {
           xPct: t.xPct,
           yPct: t.yPct,
           scale: t.scale,
-          widthPct: t.widthPct,
+          widthPct: t.widthPct ?? 70,
           styleId: t.styleId,
         })),
         ...captions.map((c) => ({
@@ -402,7 +408,7 @@ export function EditorPage() {
           xPct: c.xPct,
           yPct: c.yPct,
           scale: c.scale,
-          widthPct: c.widthPct,
+          widthPct: c.widthPct ?? 72,
           captionPackId: activeCaptionPackId,
           align: captionAlign,
         })),
@@ -798,21 +804,21 @@ export function EditorPage() {
       }
       headerRight={
         <>
-          <div className="flex max-w-[min(100%,28rem)] flex-wrap items-center justify-end gap-1.5 overflow-y-auto">
+          <div className="editor-short-chips" role="tablist" aria-label="Shorts">
             {clipCards.map((clip, index) => {
               const selected = active?.id === clip.id;
               return (
                 <button
                   key={clip.id}
                   type="button"
+                  role="tab"
+                  aria-selected={selected}
                   onClick={() => {
                     if ("clipUrl" in clip && clip.clipUrl) selectClip(clip.id);
                   }}
                   className={cn(
-                    "rounded-[10px] px-2.5 py-1.5 font-sans text-[11px] font-semibold transition",
-                    selected
-                      ? "bg-gradient-to-r from-[#a78bfa] via-[#8b5cf6] to-[#3b82f6] text-white"
-                      : "bg-[#f5f3ff] text-[#5b21b6] hover:bg-[#ede9fe]",
+                    "editor-short-chip font-sans",
+                    selected && "is-active",
                   )}
                 >
                   Short {index + 1}
@@ -820,7 +826,7 @@ export function EditorPage() {
               );
             })}
           </div>
-          <div className="flex flex-col items-end gap-1">
+          <div className="flex shrink-0 flex-col items-end gap-1">
             <GradientButton
               size="sm"
               disabled={exporting || !active?.clipUrl}
@@ -1364,7 +1370,7 @@ export function EditorPage() {
                     next,
                   )
                 }
-                chrome="caption"
+                chrome="none"
                 contentClassName={
                   captionAlign === "center" ? "text-center" : "text-left"
                 }
@@ -1385,35 +1391,37 @@ export function EditorPage() {
       }
       playerBar={
         <>
-          <button
-            type="button"
-            aria-label="Back 1s"
-            onClick={() => seekBy(-1)}
-            className={PLAYER_GHOST}
-          >
-            <SkipBack className="h-3.5 w-3.5" />
-          </button>
-          <button
-            type="button"
-            aria-label={playing ? "Pause" : "Play"}
-            onClick={togglePlay}
-            className={PLAYER_ACCENT}
-          >
-            {playing ? (
-              <Pause className="h-3.5 w-3.5 fill-current" />
-            ) : (
-              <Play className="h-3.5 w-3.5 fill-current" />
-            )}
-          </button>
-          <button
-            type="button"
-            aria-label="Forward 1s"
-            onClick={() => seekBy(1)}
-            className={PLAYER_GHOST}
-          >
-            <SkipForward className="h-3.5 w-3.5" />
-          </button>
-          <span className="ml-2 font-sans text-[11px] font-semibold tabular-nums text-white/80">
+          <div className="editor-player-bar__controls">
+            <button
+              type="button"
+              aria-label="Back 1s"
+              onClick={() => seekBy(-1)}
+              className={PLAYER_GHOST}
+            >
+              <SkipBack className="h-3.5 w-3.5" />
+            </button>
+            <button
+              type="button"
+              aria-label={playing ? "Pause" : "Play"}
+              onClick={togglePlay}
+              className={PLAYER_ACCENT}
+            >
+              {playing ? (
+                <Pause className="h-3.5 w-3.5 fill-current" />
+              ) : (
+                <Play className="h-3.5 w-3.5 fill-current" />
+              )}
+            </button>
+            <button
+              type="button"
+              aria-label="Forward 1s"
+              onClick={() => seekBy(1)}
+              className={PLAYER_GHOST}
+            >
+              <SkipForward className="h-3.5 w-3.5" />
+            </button>
+          </div>
+          <span className="editor-player-bar__time">
             {formatClock(currentTime)} / {formatClock(clipDuration)}
           </span>
         </>
@@ -1426,6 +1434,7 @@ export function EditorPage() {
           onSeek={onSeek}
           cloudName={cloud.cloudName}
           publicId={cloud.publicId}
+          mediaUrl={active?.clipUrl}
           sourceOffsetSec={active?.startSec ?? 0}
           textBlocks={textBlocks}
           captionBlocks={captionBlocks}

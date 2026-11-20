@@ -18,13 +18,17 @@ import { DashboardMotion } from "@/components/dashboard/DashboardMotion";
 import { GradientButton } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
 import {
+  invalidateDashboardCache,
+  loadDashboardBundle,
+  peekDashboardCacheStale,
+} from "@/lib/dashboardCache";
+import {
   buildCloudinaryClipUrl,
   createManualClips,
   createViralClips,
   deleteUpload,
   fetchPeakWindow,
-  listClips,
-  listUploads,
+  importVideoFromUrl,
   stashClipsForEditor,
   uploadVideoToCloudinary,
   type ExportRatio,
@@ -34,6 +38,9 @@ import {
 } from "@/lib/uploads";
 
 type ClipMode = "ai" | "manual";
+
+/** Set true to show Manual crop mode again on the upload page. */
+const SHOW_MANUAL_CLIP_MODE = false;
 
 type RowItem = {
   id: string;
@@ -179,6 +186,8 @@ export function UploadPage() {
   const [clipping, setClipping] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<ClipMode>("ai");
+  // Keep AI-only while Manual is hidden
+  const effectiveMode: ClipMode = SHOW_MANUAL_CLIP_MODE ? mode : "ai";
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [resultClips, setResultClips] = useState<ViralClip[]>([]);
   const [activeClip, setActiveClip] = useState<ViralClip | null>(null);
@@ -232,13 +241,27 @@ export function UploadPage() {
     [playOnRight],
   );
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (force = false) => {
     try {
-      const [{ uploads }, clipsRes] = await Promise.all([
-        listUploads(),
-        listClips().catch(() => ({ clips: [] as ViralClip[] })),
-      ]);
-      const nextRows = uploads.map(toRow);
+      const warm = !force ? peekDashboardCacheStale() : null;
+      const bundle =
+        warm ??
+        (await loadDashboardBundle({
+          force,
+        }));
+      if (warm) {
+        void loadDashboardBundle({ force: true }).then((fresh) => {
+          const rows = fresh.uploads.map(toRow);
+          setRows(rows);
+          setResultClips((prev) => {
+            if (prev.length) return prev;
+            const firstUpload = rows[0]?.id;
+            if (!firstUpload) return prev;
+            return fresh.clips.filter((c) => c.uploadId === firstUpload);
+          });
+        });
+      }
+      const nextRows = bundle.uploads.map(toRow);
       setRows(nextRows);
       setError(null);
 
@@ -257,7 +280,7 @@ export function UploadPage() {
         if (prev.length) return prev;
         const firstUpload = nextRows[0]?.id;
         if (!firstUpload) return prev;
-        return clipsRes.clips.filter((c) => c.uploadId === firstUpload);
+        return bundle.clips.filter((c) => c.uploadId === firstUpload);
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not load uploads.");
@@ -341,6 +364,7 @@ export function UploadPage() {
               ),
             );
           });
+          invalidateDashboardCache();
           setRows((prev) => [
             toRow(uploaded),
             ...prev.filter((r) => r.id !== tempId && r.id !== uploaded.id),
@@ -377,18 +401,34 @@ export function UploadPage() {
   };
 
   const handlePasteLink = (url: string) => {
-    try {
-      const parsed = new URL(url);
-      if (!/^https?:$/i.test(parsed.protocol)) {
-        throw new Error("invalid");
+    void (async () => {
+      try {
+        const parsed = new URL(url.trim());
+        if (!/^https?:$/i.test(parsed.protocol)) {
+          throw new Error("invalid");
+        }
+        setError(null);
+        setPasteLinkHint(
+          "Importing from YouTube… downloading, then uploading. Large videos can take several minutes — keep this tab open.",
+        );
+        setBusy(true);
+        const { upload } = await importVideoFromUrl(parsed.toString());
+        invalidateDashboardCache();
+        setPasteLinkHint(`Imported “${upload.name}”. Ready to clip.`);
+        setUploadPanelOpen(false);
+        await refresh(true);
+        setSelectedId(upload.id);
+      } catch (err) {
+        setPasteLinkHint(null);
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Could not import that video link.",
+        );
+      } finally {
+        setBusy(false);
       }
-      setPasteLinkHint(
-        `Link saved: ${parsed.hostname} — direct link import is next; for now use Upload files.`,
-      );
-      setError(null);
-    } catch {
-      setError("Enter a valid video link (https://…).");
-    }
+    })();
   };
 
   useEffect(() => {
@@ -407,6 +447,7 @@ export function UploadPage() {
     }
     try {
       await deleteUpload(id);
+      invalidateDashboardCache();
       setRows((prev) => prev.filter((r) => r.id !== id));
       if (selectedId === id) setSelectedId(null);
       if (activeClip?.uploadId === id) setActiveClip(null);
@@ -437,6 +478,7 @@ export function UploadPage() {
 
     try {
       const { clips } = await createViralClips(readyTarget.id);
+      invalidateDashboardCache();
       setRows((prev) =>
         prev.map((r) =>
           r.id === readyTarget.id
@@ -480,6 +522,7 @@ export function UploadPage() {
       peakWindow.publicId,
       startSec,
       endSec,
+      peakWindow.previewUrl || peakWindow.secureUrl,
     );
     const next: DraftCrop = {
       id: `draft-${Date.now()}-${draftCrops.length}`,
@@ -552,6 +595,7 @@ export function UploadPage() {
         endSec: d.endSec,
       }));
       const { clips } = await createManualClips(readyTarget.id, segments);
+      invalidateDashboardCache();
       setRows((prev) =>
         prev.map((r) =>
           r.id === readyTarget.id
@@ -592,7 +636,7 @@ export function UploadPage() {
 
   const continueToEditor = () => {
     const clipsForEditor =
-      mode === "manual" && draftCrops.length
+      effectiveMode === "manual" && draftCrops.length
         ? draftCrops.map((d, i) => ({
             id: d.id,
             uploadId: peakWindow?.uploadId ?? "",
@@ -709,50 +753,52 @@ export function UploadPage() {
               >
                 <div>
                   <h2 className="font-sans text-[13px] font-bold text-[#111827]">
-                    {mode === "manual"
+                    {effectiveMode === "manual"
                       ? "Manual crop editor"
                       : resultClips.length
                         ? `Your ${resultClips.length} AI clips`
                         : "Your AI clips"}
                   </h2>
                   <p className="font-sans text-[10px] text-[#7a738c]">
-                    {mode === "manual"
+                    {effectiveMode === "manual"
                       ? "Timeline shows video frames · crops go left · tap a crop to play in the center"
                       : resultClips.length
                         ? "Most-watched first, then AI viral picks · 30–60s each · tap to play"
                         : "Run AI clipping — covers all strong viral moments"}
                   </p>
                 </div>
-                <div className="inline-flex rounded-[12px] bg-[#f5f3ff] p-1">
-                  <button
-                    type="button"
-                    onClick={() => setMode("ai")}
-                    disabled={clipping}
-                    className={cn(
-                      "inline-flex items-center gap-1.5 rounded-[10px] px-2.5 py-1.5 font-sans text-[11px] font-semibold transition",
-                      mode === "ai"
-                        ? "bg-white text-[#111827] shadow-sm"
-                        : "text-[#6b6680]",
-                    )}
-                  >
-                    <Sparkles className="h-3 w-3" />
-                    AI
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setMode("manual")}
-                    disabled={clipping}
-                    className={cn(
-                      "inline-flex items-center gap-1.5 rounded-[10px] px-2.5 py-1.5 font-sans text-[11px] font-semibold transition",
-                      mode === "manual"
-                        ? "bg-white text-[#111827] shadow-sm"
-                        : "text-[#6b6680]",
-                    )}
-                  >
-                    <Scissors className="h-3 w-3" />
-                    Manual
-                  </button>
-                </div>
+                {SHOW_MANUAL_CLIP_MODE ? (
+                  <div className="inline-flex rounded-[12px] bg-[#f5f3ff] p-1">
+                    <button
+                      type="button"
+                      onClick={() => setMode("ai")}
+                      disabled={clipping}
+                      className={cn(
+                        "inline-flex items-center gap-1.5 rounded-[10px] px-2.5 py-1.5 font-sans text-[11px] font-semibold transition",
+                        mode === "ai"
+                          ? "bg-white text-[#111827] shadow-sm"
+                          : "text-[#6b6680]",
+                      )}
+                    >
+                      <Sparkles className="h-3 w-3" />
+                      AI
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMode("manual")}
+                      disabled={clipping}
+                      className={cn(
+                        "inline-flex items-center gap-1.5 rounded-[10px] px-2.5 py-1.5 font-sans text-[11px] font-semibold transition",
+                        mode === "manual"
+                          ? "bg-white text-[#111827] shadow-sm"
+                          : "text-[#6b6680]",
+                      )}
+                    >
+                      <Scissors className="h-3 w-3" />
+                      Manual
+                    </button>
+                  </div>
+                ) : null}
               </div>
 
               <div
@@ -760,7 +806,7 @@ export function UploadPage() {
                 aria-hidden={uploadPanelOpen}
               >
               {/* AI: viral clip cards */}
-              {mode === "ai" ? (
+              {effectiveMode === "ai" ? (
                 <div className="mt-3 grid min-h-[148px] grid-cols-1 gap-2.5 sm:grid-cols-3">
                   <AnimatePresence mode="popLayout">
                     {resultClips.length ? (
@@ -965,6 +1011,9 @@ export function UploadPage() {
                               playheadRel={playhead}
                               cloudName={peakWindow.cloudName}
                               publicId={peakWindow.publicId}
+                              mediaUrl={
+                                peakWindow.previewUrl || peakWindow.secureUrl
+                              }
                               onActivateTimeline={() => {
                                 showFullVideoInCenter();
                               }}
@@ -1022,7 +1071,7 @@ export function UploadPage() {
                 </div>
               )}
 
-              {mode === "ai" ? (
+              {effectiveMode === "ai" ? (
                 <div className="mt-3">
                   <GradientButton
                     size="sm"
@@ -1106,7 +1155,7 @@ export function UploadPage() {
               )}
             </div>
 
-            {mode === "manual" ? (
+            {effectiveMode === "manual" ? (
               <div className="mt-3 rounded-[14px] bg-[#f5f3ff] px-3 py-3">
                 <p className="font-sans text-[10px] font-bold tracking-wide text-[#7c3aed] uppercase">
                   Manual · {RATIO_LABEL[ratio]}
@@ -1173,7 +1222,9 @@ export function UploadPage() {
                 fullWidth
                 className="mt-3 from-[#6366f1] via-[#8b5cf6] to-[#a78bfa]"
                 disabled={
-                  mode === "ai" ? !resultClips.length : draftCrops.length === 0
+                  effectiveMode === "ai"
+                    ? !resultClips.length
+                    : draftCrops.length === 0
                 }
                 onClick={continueToEditor}
               >
