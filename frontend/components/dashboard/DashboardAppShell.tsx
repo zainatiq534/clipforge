@@ -33,8 +33,8 @@ export function DashboardAppShell({ children }: DashboardAppShellProps) {
         <div className="hidden h-full shrink-0 self-stretch p-2 md:block">
           <DashboardSidebar />
         </div>
-        <div className="min-h-0 min-w-0 flex-1 overflow-hidden p-2 pb-[calc(4.25rem+env(safe-area-inset-bottom))] md:pb-2">
-          {children}
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden p-2 pb-[calc(4.25rem+env(safe-area-inset-bottom))] md:pb-2">
+          <div className="min-h-0 min-w-0 flex-1">{children}</div>
         </div>
         <DashboardMobileNav />
       </div>

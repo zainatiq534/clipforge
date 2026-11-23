@@ -19,14 +19,14 @@ const ease = [0.16, 1, 0.3, 1] as const;
 function sectionVariants(direction: FeaturesMotionDirection): Variants {
   const hidden =
     direction === "left"
-      ? { opacity: 0, x: -28, y: 6 }
+      ? { opacity: 0, x: -14, y: 4 }
       : direction === "right"
-        ? { opacity: 0, x: 28, y: 6 }
+        ? { opacity: 0, x: 14, y: 4 }
         : direction === "scale"
-          ? { opacity: 0, scale: 0.98, y: 14 }
+          ? { opacity: 0, scale: 0.99, y: 8 }
           : direction === "fade"
             ? { opacity: 0 }
-            : { opacity: 0, y: 28 };
+            : { opacity: 0, y: 14 };
 
   return {
     hidden,
@@ -36,22 +36,22 @@ function sectionVariants(direction: FeaturesMotionDirection): Variants {
       y: 0,
       scale: 1,
       transition: {
-        duration: 0.95,
+        duration: 0.36,
         ease,
         when: "beforeChildren",
-        staggerChildren: 0.1,
-        delayChildren: 0.06,
+        staggerChildren: 0.05,
+        delayChildren: 0.02,
       },
     },
   };
 }
 
 const childVariants: Variants = {
-  hidden: { opacity: 0, y: 12 },
+  hidden: { opacity: 0, y: 8 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, ease },
+    transition: { duration: 0.28, ease },
   },
 };
 

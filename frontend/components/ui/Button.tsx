@@ -1,5 +1,10 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
+
+function isInternalHref(href: string) {
+  return href.startsWith("/") && !href.startsWith("//");
+}
 
 export type ButtonVariant =
   | "gradient"
@@ -72,7 +77,7 @@ export function Button({
   fullWidth = false,
 }: ButtonProps) {
   const classes = cn(
-    "inline-flex items-center justify-center overflow-hidden font-sans font-semibold transition-colors duration-200 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a78bfa] disabled:pointer-events-none disabled:opacity-50",
+    "inline-flex items-center justify-center overflow-hidden font-sans font-semibold transition-[color,background-color,box-shadow,filter,transform] duration-150 ease-out hover:brightness-[1.03] active:scale-[0.985] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a78bfa] disabled:pointer-events-none disabled:opacity-50",
     variantClass[variant],
     sizeClass[size],
     fullWidth && "w-full",
@@ -88,6 +93,13 @@ export function Button({
   );
 
   if (href) {
+    if (isInternalHref(href)) {
+      return (
+        <Link href={href} prefetch className={classes}>
+          {content}
+        </Link>
+      );
+    }
     return (
       <a href={href} className={classes}>
         {content}

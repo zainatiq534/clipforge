@@ -16,6 +16,7 @@ import {
 import { registerUser } from "@/lib/api";
 import { firebaseAuthErrorMessage, loginWithEmail } from "@/lib/auth";
 import { cn } from "@/lib/cn";
+import { softPush } from "@/lib/softNavigate";
 
 /** Original signup/login card used on the video diagonal page. */
 export function SignupForm() {
@@ -64,7 +65,7 @@ export function SignupForm() {
       await registerUser({ email, password, address, phone });
       await loginWithEmail(email, password);
       setMessage({ type: "success", text: "Account created. Welcome to ClipForge." });
-      router.push("/dashboard");
+      softPush(router, "/dashboard");
     } catch (error) {
       setMessage({ type: "error", text: firebaseAuthErrorMessage(error) });
     } finally {

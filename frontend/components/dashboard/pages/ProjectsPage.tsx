@@ -21,6 +21,7 @@ import {
   loadDashboardBundle,
   peekDashboardCacheStale,
 } from "@/lib/dashboardCache";
+import { softPush } from "@/lib/softNavigate";
 import {
   deleteUpload,
   stashClipsForEditor,
@@ -195,7 +196,7 @@ export function ProjectsPage() {
   }, [cards, filter]);
 
   const openUpload = (id: string) => {
-    router.push(`/dashboard/upload?upload=${encodeURIComponent(id)}`);
+    softPush(router, `/dashboard/upload?upload=${encodeURIComponent(id)}`);
   };
 
   const openEditor = (card: ProjectCard) => {
@@ -208,7 +209,7 @@ export function ProjectsPage() {
       ratio: "natural",
       uploadId: card.id,
     });
-    router.push("/dashboard/editor");
+    softPush(router, "/dashboard/editor");
   };
 
   const removeProject = async (id: string) => {
@@ -234,7 +235,7 @@ export function ProjectsPage() {
           actions={[
             {
               label: "+ New project",
-              onClick: () => router.push("/dashboard/upload"),
+              onClick: () => softPush(router, "/dashboard/upload"),
             },
           ]}
         />

@@ -13,6 +13,7 @@ import {
   loadDashboardBundle,
   peekDashboardCacheStale,
 } from "@/lib/dashboardCache";
+import { softPush } from "@/lib/softNavigate";
 import {
   stashClipsForEditor,
   type VideoUpload,
@@ -128,7 +129,7 @@ export function ViralPage() {
       ratio: "natural",
       uploadId: clip.uploadId,
     });
-    router.push("/dashboard/editor");
+    softPush(router, "/dashboard/editor");
   };
 
   const rescore = () => {
@@ -137,10 +138,13 @@ export function ViralPage() {
       uploads.find((u) => u.status === "ready")?.id;
 
     if (targetId) {
-      router.push(`/dashboard/upload?upload=${encodeURIComponent(targetId)}`);
+      softPush(
+        router,
+        `/dashboard/upload?upload=${encodeURIComponent(targetId)}`,
+      );
       return;
     }
-    router.push("/dashboard/upload");
+    softPush(router, "/dashboard/upload");
   };
 
   return (

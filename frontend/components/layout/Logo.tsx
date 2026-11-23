@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { AppImage } from "@/components/ui/Image";
 import { Typography } from "@/components/ui/Typography";
 import { cn } from "@/lib/cn";
@@ -11,10 +12,11 @@ type LogoProps = {
 
 export function Logo({ className, href = "/", tone = "dark" }: LogoProps) {
   return (
-    <a
+    <Link
       href={href}
+      prefetch
       className={cn(
-        "inline-flex items-center gap-2.5 transition-opacity hover:opacity-90",
+        "inline-flex items-center gap-2.5 transition-opacity duration-150 hover:opacity-90 active:opacity-80",
         className,
       )}
       aria-label="ClipForge home"
@@ -38,6 +40,6 @@ export function Logo({ className, href = "/", tone = "dark" }: LogoProps) {
       >
         ClipForge
       </Typography>
-    </a>
+    </Link>
   );
 }

@@ -10,6 +10,7 @@ import {
   loginWithGoogle,
 } from "@/lib/auth";
 import { cn } from "@/lib/cn";
+import { softPush, softReplace } from "@/lib/softNavigate";
 
 function GoogleGlyph({ className }: { className?: string }) {
   return (
@@ -68,7 +69,7 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
     }
 
     if (isSignup) {
-      router.push("/signup");
+      softPush(router, "/signup");
       return;
     }
 
@@ -76,7 +77,7 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
     setMessage(null);
     try {
       await loginWithEmail(email, password);
-      router.replace("/dashboard");
+      softReplace(router, "/dashboard");
       return;
     } catch (error) {
       setMessage({ type: "error", text: firebaseAuthErrorMessage(error) });
@@ -90,7 +91,7 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
     setMessage(null);
     try {
       await loginWithGoogle();
-      router.replace("/dashboard");
+      softReplace(router, "/dashboard");
       return;
     } catch (error) {
       setMessage({ type: "error", text: firebaseAuthErrorMessage(error) });

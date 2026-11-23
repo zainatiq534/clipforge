@@ -37,7 +37,7 @@ function makeVariants(from: RevealProps["from"], reduced: boolean): Variants {
       opacity: 1,
       x: 0,
       y: 0,
-      transition: { duration: 0.55, ease },
+      transition: { duration: 0.32, ease },
     },
   };
 }
@@ -79,7 +79,7 @@ export function Reveal({
             whileInView: "show",
             viewport: { once: true, amount: 0.05, margin: "0px 0px -40px 0px" },
           })}
-      transition={{ delay, duration: 0.55, ease }}
+      transition={{ delay, duration: 0.32, ease }}
     >
       {children}
     </motion.div>
@@ -94,7 +94,7 @@ type StaggerProps = {
 };
 
 /** Parent that staggers child Reveal items (or any motion children with variants) */
-export function Stagger({ children, className, stagger = 0.08 }: StaggerProps) {
+export function Stagger({ children, className, stagger = 0.045 }: StaggerProps) {
   const reduced = useReducedMotion() ?? false;
   const [ready, setReady] = useState(false);
 

@@ -2,13 +2,27 @@
 
 import dynamic from "next/dynamic";
 import type { ReactNode } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 /** Routes whose top section is a dark hero — header uses white/muted nav. */
 const DARK_HERO_ROUTES = new Set(["/", "/features", "/blog"]);
 
 /** App routes skip marketing chrome entirely. */
 const APP_PREFIXES = ["/dashboard"];
+
+const MARKETING_PREFETCH = [
+  "/",
+  "/features",
+  "/how-it-works",
+  "/blog",
+  "/login",
+  "/signup",
+  "/dashboard",
+  "/dashboard/upload",
+  "/dashboard/projects",
+  "/dashboard/viral",
+];
 
 const Header = dynamic(
   () =>
@@ -31,9 +45,16 @@ type SiteShellProps = {
  */
 export function SiteShell({ children }: SiteShellProps) {
   const pathname = usePathname() || "/";
+  const router = useRouter();
   const isApp = APP_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );
+
+  useEffect(() => {
+    for (const href of MARKETING_PREFETCH) {
+      router.prefetch(href);
+    }
+  }, [router]);
 
   if (isApp) {
     return <>{children}</>;

@@ -28,10 +28,13 @@ export function DashboardMobileNav() {
             <Link
               key={item.key}
               href={item.href}
+              prefetch
               aria-label={item.label}
               aria-current={active ? "page" : undefined}
+              onMouseEnter={() => router.prefetch(item.href)}
+              onTouchStart={() => router.prefetch(item.href)}
               className={cn(
-                "flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-[14px] px-1 py-1.5 transition-colors",
+                "flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-[14px] px-1 py-1.5 transition-colors duration-150 active:scale-[0.97]",
                 active
                   ? "bg-gradient-to-br from-[#ede9fe] to-[#dbeafe] text-[#6d28d9]"
                   : "text-[#7a738c] hover:text-[#111827]",

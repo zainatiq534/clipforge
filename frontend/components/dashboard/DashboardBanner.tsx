@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { BrandOrbs } from "@/components/dashboard/BrandOrbs";
 import { GradientButton } from "@/components/ui/Button";
 import type { UserProfile } from "@/lib/api";
+import { softPush } from "@/lib/softNavigate";
 
 type DashboardBannerProps = {
   user: UserProfile | null;
@@ -38,7 +39,7 @@ export function DashboardBanner({
         <GradientButton
           size="sm"
           className="mt-4"
-          onClick={() => router.push("/dashboard/upload")}
+          onClick={() => softPush(router, "/dashboard/upload")}
         >
           {uploadCount ? "+ New upload" : "+ Upload video"}
         </GradientButton>

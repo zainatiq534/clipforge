@@ -41,7 +41,7 @@ export function DashboardShell() {
 
         <div
           className={cn(
-            "transition-opacity duration-300 ease-out",
+            "transition-opacity duration-150 ease-out",
             refreshing && !cold ? "opacity-[0.92]" : "opacity-100",
           )}
         >
@@ -55,7 +55,7 @@ export function DashboardShell() {
 
         <div
           className={cn(
-            "grid grid-cols-1 gap-3 transition-opacity duration-300 ease-out xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+            "grid grid-cols-1 gap-3 transition-opacity duration-150 ease-out xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
             refreshing && !cold ? "opacity-[0.92]" : "opacity-100",
           )}
         >
@@ -83,7 +83,7 @@ export function DashboardShell() {
 
         <div
           className={cn(
-            "grid grid-cols-1 gap-3 transition-opacity duration-300 ease-out xl:grid-cols-[minmax(0,1.35fr)_minmax(0,0.85fr)]",
+            "grid grid-cols-1 gap-3 transition-opacity duration-150 ease-out xl:grid-cols-[minmax(0,1.35fr)_minmax(0,0.85fr)]",
             refreshing && !cold ? "opacity-[0.92]" : "opacity-100",
           )}
         >
@@ -113,7 +113,7 @@ export function DashboardShell() {
 
       <div
         className={cn(
-          "flex min-w-0 flex-col gap-3 transition-opacity duration-300 ease-out",
+          "flex min-w-0 flex-col gap-3 transition-opacity duration-150 ease-out",
           refreshing && !cold ? "opacity-[0.92]" : "opacity-100",
         )}
       >

@@ -22,6 +22,7 @@ import {
   loadDashboardBundle,
   peekDashboardCacheStale,
 } from "@/lib/dashboardCache";
+import { softPush } from "@/lib/softNavigate";
 import {
   buildCloudinaryClipUrl,
   createManualClips,
@@ -667,7 +668,7 @@ export function UploadPage() {
       ratio,
       uploadId: clipsForEditor[0]?.uploadId,
     });
-    router.push("/dashboard/editor");
+    softPush(router, "/dashboard/editor");
   };
 
   const readyCount = rows.filter((r) => r.status === "Ready").length;

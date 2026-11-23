@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { ArrowRight, Mail } from "lucide-react";
 import { Logo } from "@/components/layout/Logo";
 import { Reveal } from "@/components/ui/Reveal";
@@ -146,12 +147,13 @@ function FooterColumn({
       <ul className="mt-4 flex flex-col gap-2.5">
         {links.map((link) => (
           <li key={link.label}>
-            <a
+            <Link
               href={link.href}
-              className="font-sans text-sm text-white/85 transition-colors hover:text-white"
+              prefetch
+              className="font-sans text-sm text-white/85 transition-colors duration-150 hover:text-white"
             >
               {link.label}
-            </a>
+            </Link>
           </li>
         ))}
       </ul>

@@ -32,9 +32,9 @@ export function UploadIntakePanel({
       role="dialog"
       aria-modal="true"
       aria-label="Upload video"
-      initial={reduce ? false : { opacity: 0, y: 10 }}
+      initial={reduce ? false : { opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease }}
+      transition={{ duration: 0.2, ease }}
       className="relative overflow-hidden rounded-[18px] bg-gradient-to-br from-[#f5f3ff] via-white to-[#eff6ff] ring-1 ring-[#ddd6fe]/80"
     >
       <div className="pointer-events-none absolute -top-12 -right-8 h-36 w-36 rounded-full bg-[#a78bfa]/20 blur-3xl" />

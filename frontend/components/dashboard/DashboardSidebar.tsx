@@ -64,7 +64,7 @@ export function DashboardSidebar({ dark = false }: { dark?: boolean }) {
   return (
     <aside
       className={cn(
-        "flex h-full flex-col overflow-hidden py-4 transition-[width] duration-300 ease-out",
+        "flex h-full flex-col overflow-hidden py-4 transition-[width] duration-150 ease-out",
         expanded ? "w-[200px] items-stretch px-3" : "w-[64px] items-center px-0",
         dark
           ? "rounded-[10px] border border-[#232326] bg-[#101011]"
@@ -121,12 +121,16 @@ export function DashboardSidebar({ dark = false }: { dark?: boolean }) {
             <Link
               key={item.key}
               href={item.href}
+              prefetch
               title={item.label}
               aria-label={item.label}
-              onMouseEnter={() => setHovered(item.key)}
+              onMouseEnter={() => {
+                setHovered(item.key);
+                router.prefetch(item.href);
+              }}
               onFocus={() => setHovered(item.key)}
               className={cn(
-                "relative inline-flex h-10 shrink-0 items-center transition-colors duration-300",
+                "relative inline-flex h-10 shrink-0 items-center transition-colors duration-150",
                 expanded ? "w-full gap-3 px-2.5" : "w-10 justify-center",
                 itemRounded,
                 active || isHovered ? "text-white" : "text-white/55",
@@ -180,7 +184,7 @@ export function DashboardSidebar({ dark = false }: { dark?: boolean }) {
             })();
           }}
           className={cn(
-            "relative inline-flex h-10 shrink-0 items-center transition-colors duration-300",
+            "relative inline-flex h-10 shrink-0 items-center transition-colors duration-150",
             expanded ? "w-full gap-3 px-2.5" : "w-10 justify-center",
             itemRounded,
             hovered === "logout" ? "text-white" : "text-white/55",

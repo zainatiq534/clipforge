@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, Menu, X } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { Logo } from "@/components/layout/Logo";
 import {
@@ -42,13 +43,18 @@ export function Header({ className, tone = "dark" }: HeaderProps) {
 
         <nav className="hidden items-center gap-7 md:flex" aria-label="Primary">
           {navLinks.map((link) => (
-            <a key={link.href} href={link.href} className="group">
+            <Link
+              key={link.href}
+              href={link.href}
+              prefetch
+              className="group"
+            >
               <Typography
                 as="span"
                 variant="nav"
                 tone={isLight ? "mutedInk" : "muted"}
                 className={cn(
-                  "transition-colors",
+                  "transition-colors duration-150",
                   isLight
                     ? "group-hover:text-[#111827]"
                     : "group-hover:text-white",
@@ -56,7 +62,7 @@ export function Header({ className, tone = "dark" }: HeaderProps) {
               >
                 {link.label}
               </Typography>
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -85,7 +91,7 @@ export function Header({ className, tone = "dark" }: HeaderProps) {
           <button
             type="button"
             className={cn(
-              "inline-flex h-10 w-10 items-center justify-center rounded-full md:hidden",
+              "inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors duration-150 md:hidden",
               isLight
                 ? "bg-black/5 text-[#111827]"
                 : "bg-white/10 text-white",
@@ -107,6 +113,7 @@ export function Header({ className, tone = "dark" }: HeaderProps) {
         <div
           className={cn(
             "mt-3 overflow-hidden rounded-[18px] border p-3 shadow-lg md:hidden",
+            "animate-[cf-page-enter_200ms_cubic-bezier(0.16,1,0.3,1)_both]",
             isLight
               ? "border-[#e9e4f5] bg-white"
               : "border-white/15 bg-[#0b1020]/95 backdrop-blur-xl",
@@ -114,19 +121,20 @@ export function Header({ className, tone = "dark" }: HeaderProps) {
         >
           <nav className="flex flex-col gap-1" aria-label="Mobile">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.href}
                 href={link.href}
+                prefetch
                 onClick={() => setOpen(false)}
                 className={cn(
-                  "rounded-[12px] px-3 py-2.5 font-sans text-[14px] font-semibold transition",
+                  "rounded-[12px] px-3 py-2.5 font-sans text-[14px] font-semibold transition-colors duration-150",
                   isLight
                     ? "text-[#374151] hover:bg-[#f5f3ff]"
                     : "text-white/85 hover:bg-white/10",
                 )}
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
           <div className="mt-2 flex flex-col gap-2 border-t border-white/10 pt-3">

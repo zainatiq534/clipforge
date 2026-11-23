@@ -94,5 +94,7 @@ function createApp(): App {
 export const firebaseApp = createApp();
 export const auth = getAuth(firebaseApp);
 export const db = getFirestore(firebaseApp);
+// Auth profiles often omit photoURL/displayName — don't crash on undefined
+db.settings({ ignoreUndefinedProperties: true });
 
 export const USERS_COLLECTION = "users";

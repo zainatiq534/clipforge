@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { GradientButton } from "@/components/ui/Button";
+import { softPush } from "@/lib/softNavigate";
 
 type UpgradeCardProps = {
   planLabel?: string;
@@ -26,7 +27,7 @@ export function UpgradeCard({
       <GradientButton
         size="sm"
         className="relative z-10 mt-4"
-        onClick={() => router.push("/dashboard/settings")}
+        onClick={() => softPush(router, "/dashboard/settings?tab=storage")}
       >
         {planLabel === "Studio" ? "Manage plan" : "Upgrade plan"}
       </GradientButton>

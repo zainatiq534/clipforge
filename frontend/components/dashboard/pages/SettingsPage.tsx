@@ -27,7 +27,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   DEFAULT_USER_PREFERENCES,
   fetchMe,
@@ -58,6 +58,20 @@ type FormState = {
 };
 
 type SettingsTab = "profile" | "storage" | "alerts" | "account";
+
+const SETTINGS_TABS = new Set<SettingsTab>([
+  "profile",
+  "storage",
+  "alerts",
+  "account",
+]);
+
+function parseSettingsTab(value: string | null): SettingsTab | null {
+  if (!value) return null;
+  return SETTINGS_TABS.has(value as SettingsTab)
+    ? (value as SettingsTab)
+    : null;
+}
 
 const TABS: { id: SettingsTab; label: string; icon: LucideIcon }[] = [
   { id: "profile", label: "Profile", icon: User },
@@ -264,8 +278,11 @@ function SaveBtn({
 
 export function SettingsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const reduce = useReducedMotion();
-  const [tab, setTab] = useState<SettingsTab>("profile");
+  const initialTab =
+    parseSettingsTab(searchParams.get("tab")) ?? "profile";
+  const [tab, setTab] = useState<SettingsTab>(initialTab);
   const [form, setForm] = useState<FormState | null>(null);
   const [storage, setStorage] = useState<StorageQuotaSnapshot | null>(null);
   const [loading, setLoading] = useState(true);
@@ -281,6 +298,18 @@ export function SettingsPage() {
   const [resetBusy, setResetBusy] = useState(false);
 
   const isPasswordAccount = form?.provider !== "google";
+
+  const selectTab = useCallback(
+    (next: SettingsTab) => {
+      setTab(next);
+      const href =
+        next === "profile"
+          ? "/dashboard/settings"
+          : `/dashboard/settings?tab=${next}`;
+      router.replace(href, { scroll: false });
+    },
+    [router],
+  );
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -308,6 +337,23 @@ export function SettingsPage() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  // Keep tab in sync with ?tab= (Upgrade card deep-link)
+  useEffect(() => {
+    const fromQuery = parseSettingsTab(searchParams.get("tab"));
+    setTab(fromQuery ?? "profile");
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (loading || tab !== "storage" || !storage) return;
+    if (searchParams.get("tab") !== "storage") return;
+    const target = document.getElementById("settings-upgrade");
+    if (!target) return;
+    const t = window.setTimeout(() => {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
+    return () => window.clearTimeout(t);
+  }, [loading, tab, storage, searchParams]);
 
   const save = async () => {
     if (!form) return;
@@ -486,7 +532,7 @@ export function SettingsPage() {
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() => setTab(item.id)}
+                    onClick={() => selectTab(item.id)}
                     className={cn(
                       "relative flex flex-1 items-center justify-center gap-1.5 rounded-[16px] px-2 py-2.5 font-[family-name:var(--font-outfit)] text-[11px] font-semibold transition-colors sm:gap-2 sm:px-3 sm:text-[13px]",
                       active
@@ -672,7 +718,7 @@ export function SettingsPage() {
                   ))}
                 </div>
 
-                <div className="mt-7">
+                <div id="settings-upgrade" className="mt-7 scroll-mt-6">
                   <p className="mb-3 font-[family-name:var(--font-outfit)] text-[12px] font-bold uppercase tracking-[0.12em] text-[#9b8bb8]">
                     Upgrade storage
                   </p>

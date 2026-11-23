@@ -35,6 +35,32 @@ export type UpdateUserSettingsInput = {
   };
 };
 
+function cleanOptionalString(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  return trimmed.length ? trimmed : undefined;
+}
+
+/** Firestore rejects `undefined` fields — drop them before writes. */
+function stripUndefined<T extends Record<string, unknown>>(obj: T): T {
+  const out: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (value === undefined) continue;
+    if (
+      value &&
+      typeof value === "object" &&
+      !Array.isArray(value) &&
+      !(value instanceof Date) &&
+      typeof (value as { toMillis?: unknown }).toMillis !== "function"
+    ) {
+      out[key] = stripUndefined(value as Record<string, unknown>);
+      continue;
+    }
+    out[key] = value;
+  }
+  return out as T;
+}
+
 export function normalizeUserProfile(
   raw: Partial<UserProfile> & { uid: string; email: string },
 ): UserProfile {
@@ -44,9 +70,9 @@ export function normalizeUserProfile(
     email: raw.email.toLowerCase(),
     address: raw.address ?? "",
     phone: raw.phone ?? "",
-    displayName: raw.displayName,
-    photoURL: raw.photoURL,
-    provider: raw.provider,
+    displayName: cleanOptionalString(raw.displayName),
+    photoURL: cleanOptionalString(raw.photoURL),
+    provider: cleanOptionalString(raw.provider),
     workspaceName: raw.workspaceName ?? "ClipForge Studio",
     plan: resolvePlan(raw.plan).id,
     preferences: {
@@ -96,11 +122,13 @@ export async function createUserWithProfile(
     updatedAt: now,
   });
 
-  await db.collection(USERS_COLLECTION).doc(user.uid).set({
-    ...profile,
-    createdAtServer: FieldValue.serverTimestamp(),
-    updatedAtServer: FieldValue.serverTimestamp(),
-  });
+  await db.collection(USERS_COLLECTION).doc(user.uid).set(
+    stripUndefined({
+      ...profile,
+      createdAtServer: FieldValue.serverTimestamp(),
+      updatedAtServer: FieldValue.serverTimestamp(),
+    }),
+  );
 
   return profile;
 }
@@ -146,10 +174,10 @@ export async function ensureUserProfile(
       updatedAt: now,
     });
     await ref.set(
-      {
+      stripUndefined({
         ...next,
         updatedAtServer: FieldValue.serverTimestamp(),
-      },
+      }),
       { merge: true },
     );
     return next;
@@ -169,11 +197,13 @@ export async function ensureUserProfile(
     updatedAt: now,
   });
 
-  await ref.set({
-    ...profile,
-    createdAtServer: FieldValue.serverTimestamp(),
-    updatedAtServer: FieldValue.serverTimestamp(),
-  });
+  await ref.set(
+    stripUndefined({
+      ...profile,
+      createdAtServer: FieldValue.serverTimestamp(),
+      updatedAtServer: FieldValue.serverTimestamp(),
+    }),
+  );
 
   return profile;
 }
@@ -238,10 +268,10 @@ export async function updateUserSettings(
   });
 
   await ref.set(
-    {
+    stripUndefined({
       ...next,
       updatedAtServer: FieldValue.serverTimestamp(),
-    },
+    }),
     { merge: true },
   );
 
@@ -285,10 +315,10 @@ export async function updateUserPlan(
   });
 
   await ref.set(
-    {
+    stripUndefined({
       ...next,
       updatedAtServer: FieldValue.serverTimestamp(),
-    },
+    }),
     { merge: true },
   );
   return next;
