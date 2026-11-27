@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import { env } from "./config/env.js";
 import { authRouter } from "./routes/auth.js";
+import { paddleRouter } from "./routes/paddle.js";
 import { uploadsRouter } from "./routes/uploads.js";
 
 const app = express();
@@ -30,6 +31,14 @@ app.use(
     credentials: true,
   }),
 );
+
+// Paddle needs the raw body for signature verification
+app.use(
+  "/billing/paddle/webhook",
+  express.raw({ type: "application/json" }),
+  paddleRouter,
+);
+
 app.use(express.json({ limit: "2mb" }));
 
 app.get("/health", (_req, res) => {

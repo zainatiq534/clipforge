@@ -1,4 +1,5 @@
-import { ArrowRight, Check } from "lucide-react";
+import { Check } from "lucide-react";
+import { PricingCta } from "@/components/home/PricingCta";
 import { AppImage } from "@/components/ui/Image";
 import { Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
 import { SectionLabel } from "@/components/ui/SectionLabel";
@@ -203,18 +204,11 @@ function PricingCard({ plan }: { plan: Plan }) {
         ))}
       </ul>
 
-      <a
-        href={plan.href}
-        className={cn(
-          "mt-8 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl font-sans text-sm font-semibold transition-colors duration-200 sm:h-[3.15rem] sm:text-[0.95rem]",
-          plan.featured
-            ? "bg-[#7c3aed] text-white shadow-[0_10px_28px_rgba(124,58,237,0.35)] hover:bg-[#6d28d9]"
-            : "border border-[#111827] bg-white text-[#111827] hover:bg-[#f9fafb]",
-        )}
-      >
-        {plan.cta}
-        <ArrowRight className="h-4 w-4" strokeWidth={2.25} />
-      </a>
+      <PricingCta
+        planId={plan.id}
+        label={plan.cta}
+        featured={plan.featured}
+      />
     </article>
   );
 }

@@ -19,6 +19,7 @@ const navLinks = [
   { label: "Pricing", href: "/#pricing" },
   { label: "Testimonials", href: "/#testimonials" },
   { label: "Blogs", href: "/blog" },
+  { label: "Contact", href: "/contact" },
 ];
 
 type HeaderProps = {

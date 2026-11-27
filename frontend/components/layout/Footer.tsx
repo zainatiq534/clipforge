@@ -5,27 +5,20 @@ import { Logo } from "@/components/layout/Logo";
 import { Reveal } from "@/components/ui/Reveal";
 
 const productLinks = [
-  { label: "Features", href: "/#features" },
+  { label: "Features", href: "/features" },
   { label: "How It Works", href: "/how-it-works" },
   { label: "Pricing", href: "/#pricing" },
-  { label: "Templates", href: "/#templates" },
-  { label: "Changelog", href: "/#changelog" },
 ] as const;
 
 const companyLinks = [
-  { label: "About Us", href: "/#about" },
-  { label: "Careers", href: "/#careers" },
-  { label: "Blog", href: "/#blog" },
-  { label: "Affiliates", href: "/#affiliates" },
-  { label: "Contact", href: "/#contact" },
+  { label: "About Us", href: "/about" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact", href: "/contact" },
 ] as const;
 
 const legalLinks = [
-  { label: "Terms of Service", href: "/#terms" },
-  { label: "Privacy Policy", href: "/#privacy" },
-  { label: "Cookie Policy", href: "/#cookies" },
-  { label: "Acceptable Use", href: "/#acceptable-use" },
-  { label: "Brand Guidelines", href: "/#brand" },
+  { label: "Terms of Service", href: "/terms" },
+  { label: "Privacy Policy", href: "/privacy" },
 ] as const;
 
 /** Site footer — shared by home and how-it-works (same as home). */

@@ -324,3 +324,34 @@ export async function updateUserPlan(
   return next;
 }
 
+export type PaddleBillingState = {
+  customerId: string | null;
+  subscriptionId: string | null;
+  status: string;
+  priceId: string | null;
+};
+
+/** Entitlement writes from Paddle webhooks only. */
+export async function updateUserPlanFromPaddle(
+  uid: string,
+  planId: PlanId,
+  paddle: PaddleBillingState,
+): Promise<UserProfile> {
+  const profile = await updateUserPlan(uid, planId);
+  const ref = db.collection(USERS_COLLECTION).doc(uid);
+  await ref.set(
+    stripUndefined({
+      paddle: {
+        customerId: paddle.customerId,
+        subscriptionId: paddle.subscriptionId,
+        status: paddle.status,
+        priceId: paddle.priceId,
+        updatedAt: new Date().toISOString(),
+      },
+      updatedAtServer: FieldValue.serverTimestamp(),
+    }),
+    { merge: true },
+  );
+  return profile;
+}
+

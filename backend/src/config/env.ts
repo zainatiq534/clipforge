@@ -99,6 +99,20 @@ export const env = {
     quantized:
       (optional("LOCAL_WHISPER_QUANTIZED") ?? "true").toLowerCase() !== "false",
   },
+  /** Paddle Billing — paid Creator / Studio plans */
+  paddle: {
+    apiKey: optional("PADDLE_API_KEY") ?? "",
+    webhookSecret: optional("PADDLE_WEBHOOK_SECRET") ?? "",
+    priceCreator:
+      optional("PADDLE_PRICE_CREATOR") ??
+      optional("NEXT_PUBLIC_PADDLE_PRICE_CREATOR") ??
+      "pri_01m8ee8xeby9jsfacn088y2jw2",
+    priceStudio:
+      optional("PADDLE_PRICE_STUDIO") ??
+      optional("NEXT_PUBLIC_PADDLE_PRICE_STUDIO") ??
+      "pri_01m8eeerccdbmthwg4dv3zrb73",
+    env: (optional("PADDLE_ENV") ?? "sandbox").toLowerCase(),
+  },
 };
 
 export function requireCloudinary() {

@@ -46,6 +46,8 @@ import {
 } from "@/lib/auth";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { cn } from "@/lib/cn";
+import { usePaddle } from "@/lib/usePaddle";
+import type { PaidPlanId } from "@/lib/paddle-catalog";
 
 type FormState = {
   displayName: string;
@@ -280,6 +282,7 @@ export function SettingsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const reduce = useReducedMotion();
+  const { openCheckout, configured: paddleConfigured } = usePaddle();
   const initialTab =
     parseSettingsTab(searchParams.get("tab")) ?? "profile";
   const [tab, setTab] = useState<SettingsTab>(initialTab);
@@ -393,10 +396,39 @@ export function SettingsPage() {
         router.replace("/login");
         return;
       }
-      const idToken = await user.getIdToken();
-      const res = await upgradeStoragePlan(idToken, planId);
-      setStorage(res.storage);
-      setMessage(`Plan updated to ${res.storage.planLabel}.`);
+
+      // Free = cancel path via API; paid = Paddle checkout
+      if (planId === "free") {
+        const idToken = await user.getIdToken();
+        const res = await upgradeStoragePlan(idToken, planId);
+        setStorage(res.storage);
+        setMessage(`Plan updated to ${res.storage.planLabel}.`);
+        return;
+      }
+
+      if (!paddleConfigured) {
+        setError(
+          "Paddle checkout is not configured yet. Add NEXT_PUBLIC_PADDLE_CLIENT_TOKEN to frontend/.env.local.",
+        );
+        return;
+      }
+
+      const ok = openCheckout({
+        plan: planId as PaidPlanId,
+        uid: user.uid,
+        email: user.email ?? undefined,
+        onCompleted: () => {
+          void load();
+          setMessage(
+            "Payment received — your plan will unlock in a few seconds after Paddle confirms.",
+          );
+        },
+      });
+      if (!ok) {
+        setError("Could not open Paddle checkout. Check your client token.");
+      } else {
+        setMessage("Complete payment in the Paddle window to unlock this plan.");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not upgrade plan.");
     } finally {

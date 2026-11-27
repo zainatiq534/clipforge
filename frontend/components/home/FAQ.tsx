@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import Link from "next/link";
 import { ArrowRight, Headphones, Minus, Plus } from "lucide-react";
 import { Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
 import { SectionLabel } from "@/components/ui/SectionLabel";
@@ -189,14 +190,15 @@ export function FAQ({ className }: FAQProps) {
                 need. We typically reply within a few hours.
               </p>
 
-              <a
-                href="#contact"
+              <Link
+                href="/contact"
+                prefetch
                 className="mt-5 inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-[#8b5cf6] via-[#7c3aed] to-[#6d28d9] px-4 font-sans text-sm font-semibold text-white shadow-[0_10px_28px_rgba(124,58,237,0.35)] transition-brightness hover:brightness-110 sm:h-[3.15rem] sm:text-[0.95rem]"
               >
                 <Headphones className="h-4 w-4 shrink-0" strokeWidth={2.25} />
                 <span>Contact Support</span>
                 <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
-              </a>
+              </Link>
             </div>
           </aside>
           </Reveal>

@@ -179,6 +179,14 @@ authRouter.post("/storage/plan", requireAuth, async (req: AuthedRequest, res) =>
       return;
     }
     const body = planSchema.parse(req.body ?? {});
+    // Paid plans must come from Paddle webhook — clients can only move to Free.
+    if (body.planId !== "free") {
+      res.status(400).json({
+        error:
+          "Paid plans are unlocked via Paddle checkout. Use Upgrade to open payment.",
+      });
+      return;
+    }
     const user = await updateUserPlan(req.uid, body.planId);
     const storage = await getStorageQuotaForUser(req.uid);
     res.json({ user, storage });
